@@ -51,9 +51,11 @@ final class HelperInstallerTests: XCTestCase {
 
     func testInstallRunsOsascriptAndMapsCancellation() async {
         var received: [String] = []
+        var capturedScript: String?
         let installer = HelperInstaller(fileExists: { _ in true }, run: { executable, arguments in
             received.append(executable)
             XCTAssertEqual(arguments.first, "-e")
+            capturedScript = arguments.count > 1 ? arguments[1] : nil
             return CommandOutput(status: 0, text: "TAURINE_AUTH_CANCELLED")
         })
         do {
@@ -62,6 +64,27 @@ final class HelperInstallerTests: XCTestCase {
         } catch PowerError.cancelled {
         } catch { XCTFail("unexpected \(error)") }
         XCTAssertEqual(received, ["/usr/bin/osascript"])
+        let script = try? XCTUnwrap(capturedScript)
+        XCTAssertTrue(script?.contains("do shell script") ?? false)
+        XCTAssertTrue(script?.contains("with administrator privileges") ?? false)
+        XCTAssertTrue(script?.contains("'/Applications/Taurine.app/Contents/Library/LaunchDaemons/dev.taurine.helper'") ?? false)
+    }
+
+    func testAppleScriptWrapperCompiles() async throws {
+        let bundlePath = "/Users/a b/It's \"odd\"\\path/Taurine.app"
+        let installScript = HelperInstaller.appleScript(for: HelperInstaller.installationScript(bundlePath: bundlePath, uid: 501))
+        try await self.assertAppleScriptCompiles(installScript)
+        let removeScript = HelperInstaller.appleScript(for: HelperInstaller.removalScript())
+        try await self.assertAppleScriptCompiles(removeScript)
+    }
+
+    func testAppleScriptEscapesBackslashesAndQuotes() {
+        let shellScript = "printf '%s\\n' " + HelperInstaller.shellQuote("/a\\b/c\"d/e'f")
+        let result = HelperInstaller.appleScript(for: shellScript)
+        let expectedQuoted = "printf '%s\\\\n' '/a\\\\b/c\\\"d/e'\\\\''f'"
+        XCTAssertTrue(result.contains(expectedQuoted))
+        XCTAssertTrue(result.contains("with administrator privileges"))
+        XCTAssertTrue(result.contains("if errorNumber is -128 then"))
     }
 
     func testInstallFailsIfFilesStillMissing() async {
@@ -78,6 +101,18 @@ final class HelperInstallerTests: XCTestCase {
         defer { try? FileManager.default.removeItem(at: path) }
         try script.write(to: path, atomically: true, encoding: .utf8)
         let result = try await CommandRunner.run("/bin/sh", arguments: ["-n", path.path])
+        XCTAssertEqual(result.status, 0, result.text)
+    }
+
+    private func assertAppleScriptCompiles(_ script: String) async throws {
+        let source = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".applescript")
+        let compiled = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".scpt")
+        defer {
+            try? FileManager.default.removeItem(at: source)
+            try? FileManager.default.removeItem(at: compiled)
+        }
+        try script.write(to: source, atomically: true, encoding: .utf8)
+        let result = try await CommandRunner.run("/usr/bin/osacompile", arguments: ["-o", compiled.path, source.path])
         XCTAssertEqual(result.status, 0, result.text)
     }
 }
