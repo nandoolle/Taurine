@@ -9,8 +9,8 @@ class TaurineViewModel: ObservableObject {
     @Published private(set) var timeRemaining: TimeInterval?
 
     @Published private(set) var batteryReading: BatteryReading = .unavailable
-    @Published private(set) var authorizationConfigured = PermanentAuthorization.isConfigured
-    @Published private(set) var configuringAuthorization = false
+    @Published private(set) var installingHelper = false
+    private let installer = HelperInstaller()
     let session: PowerSession
     private let battery: SystemBattery
     private var batterySource: CFRunLoopSource?
@@ -26,14 +26,16 @@ class TaurineViewModel: ObservableObject {
 
     var isActive: Bool { self.session.state == .active }
     var needsRecovery: Bool { self.session.state == .recovery }
-    var isBusy: Bool { self.configuringAuthorization || self.session.isBusy || self.session.state == .checking }
+    var isBusy: Bool { self.installingHelper || self.session.isBusy || self.session.state == .checking }
+    var needsHelper: Bool { self.session.state == .needsHelper }
+    var helperOutdated: Bool { self.session.helperOutdated }
 
     init() {
         UserDefaults.standard.register(defaults: [PreferenceKeys.batteryThreshold: BatteryPolicy.defaultThreshold, PreferenceKeys.batteryProtectionEnabled: true, PreferenceKeys.playActivationSound: true])
         let battery = SystemBattery()
         self.battery = battery
         self.session = PowerSession(
-            settings: PMSetController(), assertions: WakeAssertions(), journal: SessionJournal(),
+            settings: HelperPowerSettings(), assertions: WakeAssertions(), journal: SessionJournal(),
             battery: battery,
             batteryThreshold: { UserDefaults.standard.integer(forKey: PreferenceKeys.batteryThreshold) },
             batteryProtectionEnabled: { UserDefaults.standard.bool(forKey: PreferenceKeys.batteryProtectionEnabled) }
@@ -88,7 +90,7 @@ class TaurineViewModel: ObservableObject {
         }
         let timer = Timer(timeInterval: 1, repeats: true) { [weak self] _ in
             Task { @MainActor in
-                guard let self, !self.configuringAuthorization else { return }
+                guard let self, !self.installingHelper else { return }
                 self.timeRemaining = self.session.deadline.map { max(0, $0.timeIntervalSinceNow) }
                 if self.ticks % 5 == 0 { await self.checkBattery() }
                 await self.session.expireIfNeeded()
@@ -102,7 +104,9 @@ class TaurineViewModel: ObservableObject {
 
     func toggleActive() {
         guard !self.isBusy else { return }
-        if self.session.requiresRestoration {
+        if self.needsHelper {
+            self.installHelper(thenActivate: true)
+        } else if self.session.requiresRestoration {
             self.deactivate()
         } else {
             self.activate()
@@ -141,7 +145,7 @@ class TaurineViewModel: ObservableObject {
 
     func checkBattery() async {
         self.batteryReading = self.battery.read()
-        guard !self.configuringAuthorization else { return }
+        guard !self.installingHelper else { return }
         await self.session.enforceBatteryLimit()
     }
 
@@ -149,23 +153,36 @@ class TaurineViewModel: ObservableObject {
         Task { await self.checkBattery() }
     }
 
-    func configureAuthorization(removing: Bool = false) {
+    func installHelper(thenActivate: Bool = false) {
         guard !self.isBusy else { return }
-        self.configuringAuthorization = true
+        self.installingHelper = true
         Task {
-            defer {
-                self.authorizationConfigured = PermanentAuthorization.isConfigured
-                self.configuringAuthorization = false
+            defer { self.installingHelper = false }
+            do {
+                try await self.installer.install(bundlePath: Bundle.main.bundlePath)
+                await self.session.helperInstallationChanged()
+                if thenActivate, self.session.state == .inactive { self.activate() }
+            } catch PowerError.cancelled {
+                // Cancelar deixa o estado needsHelper visível.
+            } catch {
+                self.session.errorMessage = error.localizedDescription
             }
-            if removing {
-                await self.session.refresh()
+        }
+    }
+
+    func removeHelper() {
+        guard !self.isBusy else { return }
+        self.installingHelper = true
+        Task {
+            defer { self.installingHelper = false }
+            await self.session.refresh()
+            if self.session.requiresRestoration {
                 guard await self.session.deactivate() else { return }
             }
             do {
-                try await PermanentAuthorization().configure(removing: removing)
-                if !removing { await self.session.enforceBatteryLimit() }
+                try await self.installer.remove()
+                await self.session.helperInstallationChanged()
             } catch PowerError.cancelled {
-                // A cancelled setup leaves the protection visibly unconfigured.
             } catch {
                 self.session.errorMessage = error.localizedDescription
             }
@@ -196,6 +213,7 @@ class TaurineViewModel: ObservableObject {
     func formattedTimeRemaining() -> String? {
         if self.isBusy { return String(localized: "Updating sleep settings…") }
         if self.needsRecovery { return String(localized: "Sleep needs to be restored") }
+        if self.needsHelper { return self.helperOutdated ? String(localized: "Helper needs an update") : String(localized: "Helper not installed") }
         guard self.isActive else { return self.session.automaticStopMessage ?? String(localized: "Taurine is inactive") }
         if let remaining = self.session.deadline?.timeIntervalSinceNow, remaining > 0 {
             let seconds = Int(ceil(remaining))

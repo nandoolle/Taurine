@@ -124,7 +124,8 @@ class MenuBarController: NSObject {
         }
 
         let toggleItem = NSMenuItem(
-            title: self.viewModel.needsRecovery ? String(localized: "Restore sleep…") :
+            title: self.viewModel.needsHelper ? (self.viewModel.helperOutdated ? String(localized: "Update helper…") : String(localized: "Install helper…")) :
+                self.viewModel.needsRecovery ? String(localized: "Restore sleep…") :
                 (self.viewModel.isActive ? String(localized: "Deactivate Taurine…") : String(localized: "Activate Taurine…")),
             action: #selector(toggleActive(_:)), keyEquivalent: ""
         )
@@ -138,7 +139,7 @@ class MenuBarController: NSObject {
             action: nil,
             keyEquivalent: ""
         )
-        activateForItem.isEnabled = !self.viewModel.isBusy && !self.viewModel.needsRecovery
+        activateForItem.isEnabled = !self.viewModel.isBusy && !self.viewModel.needsRecovery && !self.viewModel.needsHelper
         let submenu = NSMenu()
 
         var durations: [(String, Int)] = [
@@ -228,7 +229,7 @@ class MenuBarController: NSObject {
         alert.messageText = String(localized: "Could not complete the sleep change")
         alert.informativeText = message
         if self.viewModel.needsRecovery {
-            alert.informativeText += "\n\n" + String(localized: "Sleep may still be disabled. Use Restore sleep in the Taurine menu and authorize the change.")
+            alert.informativeText += "\n\n" + String(localized: "Sleep may still be disabled. Use Restore sleep in the Taurine menu.")
         }
         alert.alertStyle = .warning
         alert.runModal()

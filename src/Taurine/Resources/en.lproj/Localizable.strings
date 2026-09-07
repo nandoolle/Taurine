@@ -57,9 +57,22 @@
 "Deactivate Taurine…" = "Deactivate Taurine…";
 "Activate Taurine…" = "Activate Taurine…";
 "Could not complete the sleep change" = "Could not complete the sleep change";
-"Sleep may still be disabled. Use Restore sleep in the Taurine menu and authorize the change." = "Sleep may still be disabled. Use Restore sleep in the Taurine menu and authorize the change.";
-"Administrator authorization is required to turn Taurine on and off, including when a timer ends. If authorization is cancelled, sleep may remain disabled. After a forced quit, reopen Taurine to restore sleep." = "Administrator authorization is required to turn Taurine on and off, including when a timer ends. If authorization is cancelled, sleep may remain disabled. After a forced quit, reopen Taurine to restore sleep.";
 "Based on Caffeine (MIT).\n\n© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nSource code:\nhttps://github.com/domzilla/Caffeine" = "Based on Caffeine (MIT).\n\n© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nSource code:\nhttps://github.com/domzilla/Caffeine";
+"The Taurine helper is not installed." = "The Taurine helper is not installed.";
+"The Taurine helper needs to be updated." = "The Taurine helper needs to be updated.";
+"Could not reach the Taurine helper." = "Could not reach the Taurine helper.";
+"The Taurine helper could not be removed." = "The Taurine helper could not be removed.";
+"Another Taurine session is already active." = "Another Taurine session is already active.";
+"The Taurine helper refused the request." = "The Taurine helper refused the request.";
+"Helper not installed" = "Helper not installed";
+"Helper needs an update" = "Helper needs an update";
+"Helper installed" = "Helper installed";
+"Install helper…" = "Install helper…";
+"Update helper…" = "Update helper…";
+"Remove helper…" = "Remove helper…";
+"Sleep may still be disabled. Use Restore sleep in the Taurine menu." = "Sleep may still be disabled. Use Restore sleep in the Taurine menu.";
+"Taurine needs a small system helper to keep the Mac awake with the lid closed. Installing it asks for your password once. The helper restores sleep whenever Taurine quits, crashes, or the Mac restarts." = "Taurine needs a small system helper to keep the Mac awake with the lid closed. Installing it asks for your password once. The helper restores sleep whenever Taurine quits, crashes, or the Mac restarts.";
+"Toggles, timers and battery protection work without password prompts. Sleep is restored automatically if Taurine quits unexpectedly or the Mac restarts." = "Toggles, timers and battery protection work without password prompts. Sleep is restored automatically if Taurine quits unexpectedly or the Mac restarts.";
 
 /* Battery protection and permanent authorization */
 "Preferences" = "Preferences";
@@ -71,16 +84,9 @@
 "Connected to power · %d%%" = "Connected to power · %d%%";
 "No internal battery" = "No internal battery";
 "Battery level unavailable" = "Battery level unavailable";
-"Automatic protection is ready" = "Automatic protection is ready";
-"One-time authorization" = "One-time authorization";
-"Toggles, timers and battery protection work without password prompts." = "Toggles, timers and battery protection work without password prompts.";
-"Authorize the two sleep-control commands for your account so protection can work automatically." = "Authorize the two sleep-control commands for your account so protection can work automatically.";
-"Remove…" = "Remove…";
-"Authorize once…" = "Authorize once…";
 "Sleep protection runs while Taurine is open." = "Sleep protection runs while Taurine is open.";
 "Sleep protection stopped at %d%% battery." = "Sleep protection stopped at %d%% battery.";
 "Sleep protection stopped because the battery level could not be read." = "Sleep protection stopped because the battery level could not be read.";
-"Authorize Taurine in Preferences to enable automatic sleep protection without password prompts." = "Authorize Taurine in Preferences to enable automatic sleep protection without password prompts.";
 
 /* Compact battery controls */
 "Current battery: %d%%" = "Current battery: %d%%";

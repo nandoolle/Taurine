@@ -112,27 +112,28 @@ struct PreferencesView: View {
             .background(.quaternary.opacity(0.55), in: RoundedRectangle(cornerRadius: 22))
 
             HStack(spacing: 14) {
-                Image(systemName: self.viewModel.authorizationConfigured ? "checkmark.shield" : "lock.shield")
+                Image(systemName: self.viewModel.needsHelper ? "lock.shield" : "checkmark.shield")
                     .font(.title2)
-                    .foregroundStyle(self.viewModel.authorizationConfigured ? Color.green : Color.secondary)
+                    .foregroundStyle(self.viewModel.needsHelper ? Color.secondary : Color.green)
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(self.viewModel.authorizationConfigured ? "Automatic protection is ready" : "One-time authorization (optional)")
+                    Text(self.viewModel.needsHelper ? "Helper not installed" : "Helper installed")
                         .font(.headline)
-                    Text(self.viewModel.authorizationConfigured
-                         ? "Toggles, timers and battery protection work without password prompts."
-                         : "Without this, macOS asks for your password when changing sleep settings. Timers and battery cutoff also need approval; sleep remains blocked until you approve.")
+                    Text(self.viewModel.needsHelper
+                         ? "Taurine needs a small system helper to keep the Mac awake with the lid closed. Installing it asks for your password once. The helper restores sleep whenever Taurine quits, crashes, or the Mac restarts."
+                         : "Toggles, timers and battery protection work without password prompts. Sleep is restored automatically if Taurine quits unexpectedly or the Mac restarts.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 Spacer(minLength: 0)
-                if self.viewModel.configuringAuthorization {
+                if self.viewModel.installingHelper {
                     ProgressView().controlSize(.small)
+                } else if self.viewModel.needsHelper {
+                    Button(self.viewModel.helperOutdated ? "Update helper…" : "Install helper…") { self.viewModel.installHelper() }
+                        .disabled(self.viewModel.isBusy)
                 } else {
-                    Button(self.viewModel.authorizationConfigured ? "Remove…" : "Authorize once…") {
-                        self.viewModel.configureAuthorization(removing: self.viewModel.authorizationConfigured)
-                    }
-                    .disabled(self.viewModel.isBusy)
+                    Button("Remove helper…") { self.viewModel.removeHelper() }
+                        .disabled(self.viewModel.isBusy)
                 }
             }
 
