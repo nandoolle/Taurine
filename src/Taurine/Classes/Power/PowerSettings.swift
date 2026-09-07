@@ -8,9 +8,12 @@ enum PowerError: LocalizedError {
     case unreadableState
     case verificationFailed
     case assertionFailed(Int32)
+    case helperNotInstalled
 
     var errorDescription: String? {
         switch self {
+        case .helperNotInstalled:
+            return String(localized: "The Taurine helper is not installed.")
         case .authorizationRequired:
             return String(localized: "Sleep still needs to be restored. Use Restore sleep in the Taurine menu to authorize it, or enable optional one-time authorization in Preferences.")
         case .cancelled:
