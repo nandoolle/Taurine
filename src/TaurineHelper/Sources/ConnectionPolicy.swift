@@ -25,7 +25,9 @@ enum ConnectionPolicy {
 
     static func bundleIdentifier(ofExecutableAt path: String) -> String? {
         var candidate = path
-        while candidate != "/" {
+        // deletingLastPathComponent de "" devolve "": sem este guard o laço
+        // nunca termina para caminho vazio ou relativo.
+        while candidate != "/", !candidate.isEmpty {
             if candidate.hasSuffix(".app") { return Bundle(path: candidate)?.bundleIdentifier }
             candidate = (candidate as NSString).deletingLastPathComponent
         }

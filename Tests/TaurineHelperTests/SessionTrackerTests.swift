@@ -4,11 +4,7 @@ import XCTest
 final class SessionTrackerTests: XCTestCase {
     func testOnlyOneOwnerAtATime() async {
         let tracker = SessionTracker()
-        // As conexões devem continuar vivas: ObjectIdentifier de temporários
-        // colide, porque o alocador reusa o endereço liberado.
-        let objectA = NSObject(), objectB = NSObject()
-        let a = ObjectIdentifier(objectA), b = ObjectIdentifier(objectB)
-        XCTAssertNotEqual(a, b)
+        let a = SessionToken(), b = SessionToken()
         let first = await tracker.begin(a)
         let second = await tracker.begin(b)
         let again = await tracker.begin(a)
@@ -23,5 +19,24 @@ final class SessionTrackerTests: XCTestCase {
         XCTAssertFalse(ownerAfter)
         let bNow = await tracker.begin(b)
         XCTAssertTrue(bNow)
+    }
+
+    func testIsActiveTracksOwnershipOnly() async {
+        let tracker = SessionTracker()
+        let a = SessionToken(), b = SessionToken()
+        let idleA = await tracker.isActive(a)
+        XCTAssertFalse(idleA)
+        _ = await tracker.begin(a)
+        let activeA = await tracker.isActive(a)
+        let activeB = await tracker.isActive(b)
+        XCTAssertTrue(activeA)
+        XCTAssertFalse(activeB)
+        _ = await tracker.end(a)
+        let endedA = await tracker.isActive(a)
+        XCTAssertFalse(endedA)
+    }
+
+    func testFreshTokensNeverCollide() {
+        XCTAssertNotEqual(SessionToken(), SessionToken())
     }
 }

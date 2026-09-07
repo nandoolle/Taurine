@@ -1,19 +1,23 @@
 import Foundation
 
-actor SessionTracker {
-    private var owner: ObjectIdentifier?
+/// Token de sessão emitido por conexão aceita. Um UUID novo por conexão evita
+/// que uma conexão futura reuse a identidade de uma já encerrada.
+typealias SessionToken = UUID
 
-    func begin(_ id: ObjectIdentifier) -> Bool {
+actor SessionTracker {
+    private var owner: SessionToken?
+
+    func begin(_ id: SessionToken) -> Bool {
         if let owner, owner != id { return false }
         self.owner = id
         return true
     }
 
-    func end(_ id: ObjectIdentifier) -> Bool {
+    func end(_ id: SessionToken) -> Bool {
         guard self.owner == id else { return false }
         self.owner = nil
         return true
     }
 
-    func isActive(_ id: ObjectIdentifier) -> Bool { self.owner == id }
+    func isActive(_ id: SessionToken) -> Bool { self.owner == id }
 }

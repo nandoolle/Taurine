@@ -15,11 +15,11 @@ final class HelperService: NSObject, NSXPCListenerDelegate, @unchecked Sendable 
         guard ConnectionPolicy.accepts(peerUID: connection.effectiveUserIdentifier, consoleUID: ConnectionPolicy.consoleUser(), bundleIdentifier: bundleID) else {
             return false
         }
-        let id = ObjectIdentifier(connection)
+        let token = SessionToken()
         connection.exportedInterface = NSXPCInterface(with: HelperProtocol.self)
-        connection.exportedObject = ConnectionHandler(id: id, sleep: self.sleep, tracker: self.tracker)
+        connection.exportedObject = ConnectionHandler(token: token, sleep: self.sleep, tracker: self.tracker)
         let ended: @Sendable () -> Void = { [sleep, tracker] in
-            Task { await Self.connectionEnded(id, sleep: sleep, tracker: tracker) }
+            Task { await Self.connectionEnded(token, sleep: sleep, tracker: tracker) }
         }
         connection.invalidationHandler = ended
         connection.interruptionHandler = ended
@@ -28,8 +28,16 @@ final class HelperService: NSObject, NSXPCListenerDelegate, @unchecked Sendable 
     }
 
     // Fallback de segurança: o app morreu sem desativar. Cobre crash, SIGKILL e logout.
-    private static func connectionEnded(_ id: ObjectIdentifier, sleep: SleepControl, tracker: SessionTracker) async {
-        guard await tracker.end(id) else { return }
+    static func connectionEnded(_ token: SessionToken, sleep: SleepControl, tracker: SessionTracker) async {
+        guard await tracker.end(token) else { return }
+        await SleepRevert.revertIfDisabled(sleep)
+    }
+}
+
+/// Reverte `disablesleep` quando ninguém mais é dono da sessão. Erros são
+/// engolidos de propósito: é caminho de limpeza, não há a quem reportar.
+enum SleepRevert {
+    static func revertIfDisabled(_ sleep: SleepControl) async {
         if (try? await sleep.isDisabled()) == true {
             try? await sleep.setDisabled(false)
         }
@@ -37,12 +45,12 @@ final class HelperService: NSObject, NSXPCListenerDelegate, @unchecked Sendable 
 }
 
 final class ConnectionHandler: NSObject, HelperProtocol, @unchecked Sendable {
-    private let id: ObjectIdentifier
+    private let token: SessionToken
     private let sleep: SleepControl
     private let tracker: SessionTracker
 
-    init(id: ObjectIdentifier, sleep: SleepControl, tracker: SessionTracker) {
-        self.id = id
+    init(token: SessionToken, sleep: SleepControl, tracker: SessionTracker) {
+        self.token = token
         self.sleep = sleep
         self.tracker = tracker
     }
@@ -61,7 +69,7 @@ final class ConnectionHandler: NSObject, HelperProtocol, @unchecked Sendable {
     func setSleepDisabled(_ disabled: Bool, appPath: String, reply: @escaping (NSError?) -> Void) {
         Task {
             if disabled {
-                guard await self.tracker.begin(self.id) else {
+                guard await self.tracker.begin(self.token) else {
                     reply(HelperFailure(code: .busy).nsError)
                     return
                 }
@@ -69,10 +77,15 @@ final class ConnectionHandler: NSObject, HelperProtocol, @unchecked Sendable {
             do {
                 try await self.sleep.setDisabled(disabled)
                 Self.recordAppPath(appPath)
-                if !disabled { _ = await self.tracker.end(self.id) }
+                if !disabled { _ = await self.tracker.end(self.token) }
                 reply(nil)
             } catch {
-                if disabled { _ = await self.tracker.end(self.id) }
+                // pmset pode ter gravado antes de a verificação falhar; não deixe
+                // a máquina acordada sem dono.
+                if disabled {
+                    await SleepRevert.revertIfDisabled(self.sleep)
+                    _ = await self.tracker.end(self.token)
+                }
                 reply(Self.bridge(error))
             }
         }
@@ -84,7 +97,9 @@ final class ConnectionHandler: NSObject, HelperProtocol, @unchecked Sendable {
 
     private static func recordAppPath(_ path: String) {
         let manager = FileManager.default
-        try? manager.createDirectory(atPath: HelperPaths.stateDirectory, withIntermediateDirectories: true, attributes: [.posixPermissions: 0o700])
+        try? manager.createDirectory(atPath: HelperPaths.stateDirectory, withIntermediateDirectories: true)
+        // createDirectory(attributes:) não reaplica o modo em diretório existente.
+        try? manager.setAttributes([.posixPermissions: 0o700], ofItemAtPath: HelperPaths.stateDirectory)
         try? Data((path + "\n").utf8).write(to: URL(fileURLWithPath: HelperPaths.appPathFile), options: .atomic)
     }
 }

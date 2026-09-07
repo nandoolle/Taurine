@@ -26,4 +26,10 @@ final class ConnectionPolicyTests: XCTestCase {
         XCTAssertEqual(ConnectionPolicy.bundleIdentifier(ofExecutableAt: executable), "dev.taurine.app")
         XCTAssertNil(ConnectionPolicy.bundleIdentifier(ofExecutableAt: "/usr/bin/true"))
     }
+
+    func testBundleIdentifierTerminatesOnEmptyAndRelativePaths() {
+        XCTAssertNil(ConnectionPolicy.bundleIdentifier(ofExecutableAt: ""))
+        XCTAssertNil(ConnectionPolicy.bundleIdentifier(ofExecutableAt: "Fake/Contents/MacOS/Fake"))
+        XCTAssertNil(ConnectionPolicy.bundleIdentifier(ofExecutableAt: "relative"))
+    }
 }
