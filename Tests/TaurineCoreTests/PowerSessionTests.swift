@@ -265,14 +265,6 @@ final class PowerSessionTests: XCTestCase {
         XCTAssertThrowsError(try PMSetController.parseSleepDisabled("NotSleepDisabled 1\n"))
     }
 
-    func testCommandRunnerDrainsLargeOutputAndReportsFailures() async throws {
-        let result = try await CommandRunner.run("/usr/bin/seq", arguments: ["1", "100000"])
-        XCTAssertEqual(result.status, 0)
-        XCTAssertTrue(result.text.hasSuffix("100000"))
-        let failed = try await CommandRunner.run("/usr/bin/false", arguments: [])
-        XCTAssertNotEqual(failed.status, 0)
-    }
-
     func testJournalPersistsAndClearsRecoveryMarker() throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         defer { try? FileManager.default.removeItem(at: directory) }

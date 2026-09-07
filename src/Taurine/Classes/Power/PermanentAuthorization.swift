@@ -1,5 +1,6 @@
 import Darwin
 import Foundation
+import TaurineShared
 
 @MainActor
 final class PermanentAuthorization {

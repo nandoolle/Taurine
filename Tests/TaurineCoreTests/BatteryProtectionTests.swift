@@ -1,6 +1,7 @@
 import Foundation
 import IOKit.ps
 import XCTest
+import TaurineShared
 @testable import TaurineCore
 
 @MainActor
