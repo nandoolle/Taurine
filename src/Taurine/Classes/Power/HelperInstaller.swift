@@ -47,6 +47,8 @@ final class HelperInstaller {
         let binary = self.shellQuote(bundlePath + "/" + HelperPaths.bundleBinary)
         let plist = self.shellQuote(bundlePath + "/" + HelperPaths.bundlePlist)
         let app = self.shellQuote(bundlePath)
+        // The recorded helper-version is informational only: compatibility is
+        // decided by the XPC `version()` call.
         return """
         set -eu
         export LC_ALL=C

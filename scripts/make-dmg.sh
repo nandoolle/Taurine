@@ -1,7 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
-[ -d build/Taurine.app ] || ./scripts/build.sh
+# Sempre reconstrói: empacotar um bundle obsoleto passaria despercebido.
+rm -rf build/Taurine.app
+./scripts/build.sh
 version=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' build/Taurine.app/Contents/Info.plist)
 staging=$(mktemp -d)
 trap 'rm -rf "$staging"' EXIT

@@ -42,6 +42,25 @@ final class BootstrapTests: XCTestCase {
         XCTAssertTrue(paths.isEmpty)
     }
 
+    func testRunRevertsWhenSleepStateIsUnreadable() async {
+        let recorder = CommandRecorder(outputs: [
+            CommandOutput(status: 1, text: "pmset: read denied"),
+            CommandOutput(status: 0, text: ""),
+            CommandOutput(status: 0, text: " SleepDisabled 0\n"),
+        ])
+        let env = BootstrapEnvironment(
+            fileExists: { $0 == "/Users/me/Taurine.app" },
+            isOnRootVolume: { _ in true },
+            readAppPath: { "/Users/me/Taurine.app" },
+            removeItem: { _ in XCTFail("must not remove") },
+            bootout: { XCTFail("must not bootout") }
+        )
+        let outcome = await Bootstrap.run(sleep: SleepControl(run: { try await recorder.run($0, $1) }), environment: env)
+        XCTAssertEqual(outcome, .serving)
+        let calls = await recorder.calls
+        XCTAssertEqual(calls[1], ["/usr/bin/pmset", "-a", "disablesleep", "0"])
+    }
+
     func testRunUninstallsWhenAppIsGone() async {
         let recorder = CommandRecorder(outputs: [CommandOutput(status: 0, text: " SleepDisabled 0\n")])
         let removed = Removed()

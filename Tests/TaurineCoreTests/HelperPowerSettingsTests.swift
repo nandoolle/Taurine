@@ -30,8 +30,6 @@ final class FakeHelperProxy: HelperProxy {
         if let failure { throw failure.nsError }
         self.disabled = disabled
     }
-
-    func invalidate() { self.calls.append("invalidate") }
 }
 
 @MainActor

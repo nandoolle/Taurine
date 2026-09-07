@@ -39,6 +39,18 @@ final class SleepControlTests: XCTestCase {
         } catch { XCTFail("unexpected \(error)") }
     }
 
+    func testReadFailureThrowsCommandFailedWithOutput() async {
+        let recorder = CommandRecorder(outputs: [CommandOutput(status: 1, text: "pmset: read denied")])
+        let control = SleepControl(run: { try await recorder.run($0, $1) })
+        do {
+            _ = try await control.isDisabled()
+            XCTFail("expected commandFailed")
+        } catch let failure as HelperFailure {
+            XCTAssertEqual(failure.code, .commandFailed)
+            XCTAssertEqual(failure.message, "pmset: read denied")
+        } catch { XCTFail("unexpected \(error)") }
+    }
+
     func testCommandErrorCarriesOutputText() async {
         let recorder = CommandRecorder(outputs: [CommandOutput(status: 1, text: "pmset: not permitted")])
         let control = SleepControl(run: { try await recorder.run($0, $1) })

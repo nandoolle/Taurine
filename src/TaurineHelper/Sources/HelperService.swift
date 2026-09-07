@@ -38,7 +38,9 @@ final class HelperService: NSObject, NSXPCListenerDelegate, @unchecked Sendable 
 /// engolidos de propósito: é caminho de limpeza, não há a quem reportar.
 enum SleepRevert {
     static func revertIfDisabled(_ sleep: SleepControl) async {
-        if (try? await sleep.isDisabled()) == true {
+        // Unknown state counts as "needs revert": a failed read after a successful
+        // `disablesleep 1` write would otherwise strand the Mac awake with no owner.
+        if (try? await sleep.isDisabled()) != false {
             try? await sleep.setDisabled(false)
         }
     }
@@ -48,11 +50,13 @@ final class ConnectionHandler: NSObject, HelperProtocol, @unchecked Sendable {
     private let token: SessionToken
     private let sleep: SleepControl
     private let tracker: SessionTracker
+    private let stateDirectory: String
 
-    init(token: SessionToken, sleep: SleepControl, tracker: SessionTracker) {
+    init(token: SessionToken, sleep: SleepControl, tracker: SessionTracker, stateDirectory: String = HelperPaths.stateDirectory) {
         self.token = token
         self.sleep = sleep
         self.tracker = tracker
+        self.stateDirectory = stateDirectory
     }
 
     func version(reply: @escaping (Int) -> Void) {
@@ -77,10 +81,17 @@ final class ConnectionHandler: NSObject, HelperProtocol, @unchecked Sendable {
                     reply(HelperFailure(code: .busy).nsError)
                     return
                 }
+            } else {
+                // Releasing is allowed with no owner (recovery from an external
+                // `disablesleep 1`), but never over another connection's block.
+                guard await self.tracker.canRelease(self.token) else {
+                    reply(HelperFailure(code: .busy).nsError)
+                    return
+                }
             }
             do {
                 try await self.sleep.setDisabled(disabled)
-                Self.recordAppPath(appPath)
+                self.recordAppPath(appPath)
                 if !disabled { _ = await self.tracker.end(self.token) }
                 reply(nil)
             } catch {
@@ -99,11 +110,15 @@ final class ConnectionHandler: NSObject, HelperProtocol, @unchecked Sendable {
         (error as? HelperFailure ?? HelperFailure(code: .commandFailed, message: error.localizedDescription)).nsError
     }
 
-    private static func recordAppPath(_ path: String) {
+    // The path comes from the client: only record a plausible bundle path. A bad
+    // path is skipped silently, the pmset change it accompanied already succeeded.
+    private func recordAppPath(_ path: String) {
+        guard path.hasPrefix("/"), (path as NSString).pathExtension == "app" else { return }
         let manager = FileManager.default
-        try? manager.createDirectory(atPath: HelperPaths.stateDirectory, withIntermediateDirectories: true)
+        try? manager.createDirectory(atPath: self.stateDirectory, withIntermediateDirectories: true)
         // createDirectory(attributes:) não reaplica o modo em diretório existente.
-        try? manager.setAttributes([.posixPermissions: 0o700], ofItemAtPath: HelperPaths.stateDirectory)
-        try? Data((path + "\n").utf8).write(to: URL(fileURLWithPath: HelperPaths.appPathFile), options: .atomic)
+        try? manager.setAttributes([.posixPermissions: 0o700], ofItemAtPath: self.stateDirectory)
+        let file = (self.stateDirectory as NSString).appendingPathComponent((HelperPaths.appPathFile as NSString).lastPathComponent)
+        try? Data((path + "\n").utf8).write(to: URL(fileURLWithPath: file), options: .atomic)
     }
 }

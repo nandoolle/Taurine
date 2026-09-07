@@ -54,9 +54,12 @@ Manter o Mac acordado com a tampa fechada exige `pmset -a disablesleep 1`, uma c
 
 O componente conversa com o app por XPC. Quando a conexão do app cai (fechamento, falha, encerramento forçado, logout), ele restaura o repouso. Em todo boot ele restaura o repouso incondicionalmente, e se o app tiver sido apagado, remove-se sozinho. Não há mais uso de `sudoers` nem pedido de senha a cada ativação.
 
+Restaure o repouso **antes** de remover o componente: depois da remoção não resta nada capaz de restaurá-lo.
+
 Para remover manualmente: Preferências → **Remover componente auxiliar…**, ou como administrador:
 
 ```sh
+sudo pmset -a disablesleep 0
 sudo launchctl bootout system/dev.taurine.helper
 sudo rm -f /Library/PrivilegedHelperTools/dev.taurine.helper /Library/LaunchDaemons/dev.taurine.helper.plist
 sudo rm -rf /var/db/taurine

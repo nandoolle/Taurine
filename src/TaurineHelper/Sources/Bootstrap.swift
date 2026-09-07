@@ -33,7 +33,8 @@ enum Bootstrap {
 
     static func run(sleep: SleepControl, environment env: BootstrapEnvironment) async -> BootstrapOutcome {
         // Regra de negócio: no boot o Taurine está sempre desligado.
-        if (try? await sleep.isDisabled()) == true {
+        // Unknown state counts as disabled: the boot revert is unconditional.
+        if (try? await sleep.isDisabled()) != false {
             try? await sleep.setDisabled(false)
         }
         guard let appPath = env.readAppPath() else { return .serving }

@@ -6,7 +6,6 @@ protocol HelperProxy: AnyObject {
     func version() async throws -> Int
     func sleepIsDisabled() async throws -> Bool
     func setSleepDisabled(_ disabled: Bool, appPath: String) async throws
-    func invalidate()
 }
 
 @MainActor
@@ -60,11 +59,6 @@ final class XPCHelperProxy: HelperProxy {
                 if let error { continuation.resume(throwing: error) } else { continuation.resume() }
             }
         }
-    }
-
-    func invalidate() {
-        self.connection?.invalidate()
-        self.connection = nil
     }
 }
 
