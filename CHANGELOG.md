@@ -7,6 +7,10 @@
 - O componente remove-se sozinho no boot seguinte se o app tiver sido apagado.
 - Remove a opção de autorização permanente via `sudoers.d`; a regra antiga é apagada ao instalar o componente.
 - Adiciona `scripts/make-dmg.sh` para gerar a imagem de distribuição.
+- O componente auxiliar é instalado apenas pelo botão em Preferências; o menu apenas leva até lá.
+- Chamadas ao componente têm limite de 10 s; se ele não responder, o app informa o erro em vez de travar.
+- A remoção do componente restaura o repouso antes de apagar os arquivos.
+- Novo ícone do app.
 
 ## 0.2.3 — 2026-09-07
 
