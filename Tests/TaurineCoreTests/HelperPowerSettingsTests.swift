@@ -9,12 +9,14 @@ final class FakeHelperProxy: HelperProxy {
     var disabled = false
     var failure: HelperFailure?
     var unavailable = false
+    var hangs = false
     var calls: [String] = []
     var appPaths: [String] = []
 
     func version() async throws -> Int {
         self.calls.append("version")
         if self.unavailable { throw PowerError.helperUnavailable }
+        if self.hangs { try await Task.sleep(for: .seconds(60)) }
         return self.reportedVersion
     }
 
@@ -34,6 +36,19 @@ final class FakeHelperProxy: HelperProxy {
 
 @MainActor
 final class HelperPowerSettingsTests: XCTestCase {
+    func testUnresponsiveHelperTimesOutAsUnavailable() async {
+        let proxy = FakeHelperProxy()
+        proxy.hangs = true
+        let settings = HelperPowerSettings(proxy: proxy, appPath: { "/x" }, timeout: .milliseconds(50))
+        let started = ContinuousClock.now
+        do {
+            _ = try await settings.sleepIsDisabled()
+            XCTFail("expected helperUnavailable")
+        } catch PowerError.helperUnavailable {
+        } catch { XCTFail("unexpected \(error)") }
+        XCTAssertLessThan(ContinuousClock.now - started, .seconds(5))
+    }
+
     func testWritesSendBundlePathAndVerifyVersionFirst() async throws {
         let proxy = FakeHelperProxy()
         let settings = HelperPowerSettings(proxy: proxy, appPath: { "/Applications/Taurine.app" })

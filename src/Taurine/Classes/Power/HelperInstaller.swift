@@ -71,6 +71,7 @@ final class HelperInstaller {
         """
         set -u
         export LC_ALL=C
+        /usr/bin/pmset -a disablesleep 0 || true
         /bin/launchctl bootout system/\(HelperPaths.label) 2>/dev/null || true
         /bin/rm -f \(HelperPaths.installedBinary) \(HelperPaths.installedPlist)
         /bin/rm -rf \(HelperPaths.stateDirectory)

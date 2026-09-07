@@ -47,6 +47,10 @@ final class HelperInstallerTests: XCTestCase {
             XCTAssertTrue(script.contains(path), path)
         }
         XCTAssertTrue(script.contains("launchctl bootout system/dev.taurine.helper"))
+        let restore = script.range(of: "/usr/bin/pmset -a disablesleep 0")
+        let bootout = script.range(of: "launchctl bootout")
+        XCTAssertNotNil(restore)
+        XCTAssertTrue(restore!.upperBound < bootout!.lowerBound, "sleep must be restored before the helper is removed")
     }
 
     func testInstallRunsOsascriptAndMapsCancellation() async {

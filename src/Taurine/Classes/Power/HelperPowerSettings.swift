@@ -66,11 +66,13 @@ final class XPCHelperProxy: HelperProxy {
 final class HelperPowerSettings: PowerSettings {
     private let proxy: HelperProxy
     private let appPath: () -> String
+    private let timeout: Duration
 
     // The default is built in the body: default argument expressions are evaluated off the MainActor.
-    init(proxy: HelperProxy? = nil, appPath: @escaping () -> String = { Bundle.main.bundlePath }) {
+    init(proxy: HelperProxy? = nil, appPath: @escaping () -> String = { Bundle.main.bundlePath }, timeout: Duration = .seconds(10)) {
         self.proxy = proxy ?? XPCHelperProxy()
         self.appPath = appPath
+        self.timeout = timeout
     }
 
     func sleepIsDisabled() async throws -> Bool {
@@ -88,9 +90,20 @@ final class HelperPowerSettings: PowerSettings {
         guard version == HelperVersion.current else { throw PowerError.helperOutdated }
     }
 
-    private func translating<T>(_ operation: () async throws -> T) async throws -> T {
+    // launchd queues XPC messages to a daemon that never starts (e.g. crash loop), so a
+    // reply may never come; the deadline keeps the app usable instead of busy forever.
+    private func translating<T: Sendable>(_ operation: @escaping @MainActor () async throws -> T) async throws -> T {
         do {
-            return try await operation()
+            return try await withThrowingTaskGroup(of: T.self) { group in
+                group.addTask { @MainActor in try await operation() }
+                group.addTask { [timeout] in
+                    try await Task.sleep(for: timeout)
+                    throw PowerError.helperUnavailable
+                }
+                let result = try await group.next()!
+                group.cancelAll()
+                return result
+            }
         } catch let error as PowerError {
             throw error
         } catch {

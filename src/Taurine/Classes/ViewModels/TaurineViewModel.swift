@@ -176,9 +176,9 @@ class TaurineViewModel: ObservableObject {
         Task {
             defer { self.installingHelper = false }
             await self.session.refresh()
-            if self.session.requiresRestoration {
-                guard await self.session.deactivate() else { return }
-            }
+            // Best effort: the removal script restores sleep itself, so an
+            // unreachable helper must not block its own removal.
+            if self.session.requiresRestoration { _ = await self.session.deactivate() }
             do {
                 try await self.installer.remove()
                 await self.session.helperInstallationChanged()
