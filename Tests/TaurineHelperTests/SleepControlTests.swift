@@ -16,7 +16,7 @@ final class SleepControlTests: XCTestCase {
             CommandOutput(status: 0, text: ""),
             CommandOutput(status: 0, text: " SleepDisabled 1\n"),
         ])
-        let control = SleepControl(run: recorder.run)
+        let control = SleepControl(run: { try await recorder.run($0, $1) })
         try await control.setDisabled(true)
         let calls = await recorder.calls
         XCTAssertEqual(calls, [
@@ -30,7 +30,7 @@ final class SleepControlTests: XCTestCase {
             CommandOutput(status: 0, text: ""),
             CommandOutput(status: 0, text: " SleepDisabled 1\n"),
         ])
-        let control = SleepControl(run: recorder.run)
+        let control = SleepControl(run: { try await recorder.run($0, $1) })
         do {
             try await control.setDisabled(false)
             XCTFail("expected verificationFailed")
@@ -41,7 +41,7 @@ final class SleepControlTests: XCTestCase {
 
     func testCommandErrorCarriesOutputText() async {
         let recorder = CommandRecorder(outputs: [CommandOutput(status: 1, text: "pmset: not permitted")])
-        let control = SleepControl(run: recorder.run)
+        let control = SleepControl(run: { try await recorder.run($0, $1) })
         do {
             try await control.setDisabled(true)
             XCTFail("expected commandFailed")

@@ -34,7 +34,7 @@ final class BootstrapTests: XCTestCase {
             removeItem: { path in await removed.add(path) },
             bootout: { await removed.add("bootout") }
         )
-        let outcome = await Bootstrap.run(sleep: SleepControl(run: recorder.run), environment: env)
+        let outcome = await Bootstrap.run(sleep: SleepControl(run: { try await recorder.run($0, $1) }), environment: env)
         XCTAssertEqual(outcome, .serving)
         let calls = await recorder.calls
         XCTAssertEqual(calls[1], ["/usr/bin/pmset", "-a", "disablesleep", "0"])
@@ -52,7 +52,7 @@ final class BootstrapTests: XCTestCase {
             removeItem: { path in await removed.add(path) },
             bootout: { await removed.add("bootout") }
         )
-        let outcome = await Bootstrap.run(sleep: SleepControl(run: recorder.run), environment: env)
+        let outcome = await Bootstrap.run(sleep: SleepControl(run: { try await recorder.run($0, $1) }), environment: env)
         XCTAssertEqual(outcome, .uninstalled)
         let paths = await removed.paths
         XCTAssertEqual(paths, [HelperPaths.installedBinary, HelperPaths.installedPlist, HelperPaths.stateDirectory, "bootout"])
@@ -64,7 +64,7 @@ final class BootstrapTests: XCTestCase {
             fileExists: { _ in false }, isOnRootVolume: { _ in true }, readAppPath: { nil },
             removeItem: { _ in XCTFail("must not remove") }, bootout: { XCTFail("must not bootout") }
         )
-        let outcome = await Bootstrap.run(sleep: SleepControl(run: recorder.run), environment: env)
+        let outcome = await Bootstrap.run(sleep: SleepControl(run: { try await recorder.run($0, $1) }), environment: env)
         XCTAssertEqual(outcome, .serving)
     }
 }
