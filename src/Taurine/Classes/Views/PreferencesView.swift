@@ -23,6 +23,11 @@ struct PreferencesView: View {
         self.thresholdText = String(BatteryPolicy.threshold(self.batteryThreshold))
     }
 
+    private var helperHeadline: LocalizedStringKey {
+        guard self.viewModel.needsHelper else { return "Helper installed" }
+        return self.viewModel.helperOutdated ? "Helper needs an update" : "Helper not installed"
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             HStack(spacing: 16) {
@@ -116,7 +121,7 @@ struct PreferencesView: View {
                     .font(.title2)
                     .foregroundStyle(self.viewModel.needsHelper ? Color.secondary : Color.green)
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(self.viewModel.needsHelper ? "Helper not installed" : "Helper installed")
+                    Text(self.helperHeadline)
                         .font(.headline)
                     Text(self.viewModel.needsHelper
                          ? "Taurine needs a small system helper to keep the Mac awake with the lid closed. Installing it asks for your password once. The helper restores sleep whenever Taurine quits, crashes, or the Mac restarts."

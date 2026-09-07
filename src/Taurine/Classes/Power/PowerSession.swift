@@ -19,10 +19,10 @@ final class PowerSession: ObservableObject {
     private let battery: BatteryReadingProvider?
     private let batteryThreshold: () -> Int
     private let batteryProtectionEnabled: () -> Bool
-    private let helperStatus: () -> HelperInstallStatus
+    private let helperStatus: @MainActor () -> HelperInstallStatus
     private var lastSafetyAttempt: Date?
 
-    init(settings: PowerSettings, assertions: WakePreventing, journal: SessionJournaling, now: @escaping () -> Date = Date.init, battery: BatteryReadingProvider? = nil, batteryThreshold: @escaping () -> Int = { BatteryPolicy.defaultThreshold }, batteryProtectionEnabled: @escaping () -> Bool = { true }, helperStatus: @escaping () -> HelperInstallStatus = { @MainActor in HelperInstaller.status() }) {
+    init(settings: PowerSettings, assertions: WakePreventing, journal: SessionJournaling, now: @escaping () -> Date = Date.init, battery: BatteryReadingProvider? = nil, batteryThreshold: @escaping () -> Int = { BatteryPolicy.defaultThreshold }, batteryProtectionEnabled: @escaping () -> Bool = { true }, helperStatus: @escaping @MainActor () -> HelperInstallStatus = { HelperInstaller.status() }) {
         self.settings = settings
         self.assertions = assertions
         self.journal = journal

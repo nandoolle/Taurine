@@ -83,7 +83,7 @@
 "Connected to power · %d%%" = "Conectado à tomada · %d%%";
 "No internal battery" = "Sem bateria interna";
 "Battery level unavailable" = "Nível de bateria indisponível";
-"Sleep perotection runs while Taurine is open." = "A proteção contra hibernação funciona enquanto o Taurine estiver aberto.";
+"Sleep protection runs while Taurine is open." = "A proteção contra hibernação funciona enquanto o Taurine estiver aberto.";
 "Sleep protection stopped at %d%% battery." = "Bloqueio de repouso desativado com %d%% de bateria.";
 "Sleep protection stopped because the battery level could not be read." = "Bloqueio de repouso desativado porque não foi possível ler o nível de bateria.";
 
