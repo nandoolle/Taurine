@@ -17,15 +17,20 @@ final class XPCHelperProxy: HelperProxy {
         if let connection { return connection }
         let connection = NSXPCConnection(machServiceName: HelperPaths.machService, options: .privileged)
         connection.remoteObjectInterface = NSXPCInterface(with: HelperProtocol.self)
-        connection.invalidationHandler = { [weak self] in
-            Task { @MainActor in self?.connection = nil }
+        // Only clear the connection that actually died: a replacement may already
+        // be live by the time this runs, and the helper watches that one.
+        connection.invalidationHandler = { [weak self, invalidated = connection] in
+            Task { @MainActor in
+                guard self?.connection === invalidated else { return }
+                self?.connection = nil
+            }
         }
         connection.resume()
         self.connection = connection
         return connection
     }
 
-    // A conexão fica viva enquanto o app roda: é ela que o helper observa para reverter.
+    // The connection stays alive while the app runs: the helper watches it to revert sleep.
     private func proxy(_ onError: @escaping (Error) -> Void) -> HelperProtocol? {
         self.remote().remoteObjectProxyWithErrorHandler { _ in onError(PowerError.helperUnavailable) } as? HelperProtocol
     }
@@ -68,7 +73,7 @@ final class HelperPowerSettings: PowerSettings {
     private let proxy: HelperProxy
     private let appPath: () -> String
 
-    // O default é construído no corpo: expressões de default são avaliadas fora do MainActor.
+    // The default is built in the body: default argument expressions are evaluated off the MainActor.
     init(proxy: HelperProxy? = nil, appPath: @escaping () -> String = { Bundle.main.bundlePath }) {
         self.proxy = proxy ?? XPCHelperProxy()
         self.appPath = appPath
