@@ -4,13 +4,19 @@ import Foundation
 /// que uma conexão futura reuse a identidade de uma já encerrada.
 typealias SessionToken = UUID
 
+/// Distingue aquisição nova de reafirmação do dono atual: só quem adquiriu
+/// agora pode reverter o `disablesleep` no rollback.
+enum SessionAcquisition: Equatable { case acquired, alreadyOwner, busy }
+
 actor SessionTracker {
     private var owner: SessionToken?
 
-    func begin(_ id: SessionToken) -> Bool {
-        if let owner, owner != id { return false }
+    func begin(_ id: SessionToken) -> SessionAcquisition {
+        if let owner {
+            return owner == id ? .alreadyOwner : .busy
+        }
         self.owner = id
-        return true
+        return .acquired
     }
 
     func end(_ id: SessionToken) -> Bool {

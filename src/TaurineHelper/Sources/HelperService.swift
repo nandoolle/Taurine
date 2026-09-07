@@ -68,8 +68,12 @@ final class ConnectionHandler: NSObject, HelperProtocol, @unchecked Sendable {
 
     func setSleepDisabled(_ disabled: Bool, appPath: String, reply: @escaping (NSError?) -> Void) {
         Task {
+            var acquiredNow = false
             if disabled {
-                guard await self.tracker.begin(self.token) else {
+                switch await self.tracker.begin(self.token) {
+                case .acquired: acquiredNow = true
+                case .alreadyOwner: break
+                case .busy:
                     reply(HelperFailure(code: .busy).nsError)
                     return
                 }
@@ -80,9 +84,9 @@ final class ConnectionHandler: NSObject, HelperProtocol, @unchecked Sendable {
                 if !disabled { _ = await self.tracker.end(self.token) }
                 reply(nil)
             } catch {
-                // pmset pode ter gravado antes de a verificação falhar; não deixe
-                // a máquina acordada sem dono.
-                if disabled {
+                // Rollback só do que esta chamada criou: se já éramos donos, o
+                // bloqueio anterior continua válido e não pode ser desfeito.
+                if acquiredNow {
                     await SleepRevert.revertIfDisabled(self.sleep)
                     _ = await self.tracker.end(self.token)
                 }
