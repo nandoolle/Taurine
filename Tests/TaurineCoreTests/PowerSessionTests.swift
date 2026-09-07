@@ -302,6 +302,32 @@ final class PowerSessionTests: XCTestCase {
         XCTAssertTrue(journal.pending, "journal stays pending: pmset may still be 1 and nobody can verify")
     }
 
+    func testHelperOutdatedFlagClearsOnSubsequentGenericFailure() async {
+        let (session, settings, _, _) = self.fixture()
+        settings.readError = PowerError.helperOutdated
+        await session.refresh()
+        XCTAssertEqual(session.state, .needsHelper)
+        XCTAssertTrue(session.helperOutdated)
+        settings.readError = PowerError.commandFailed("x")
+        await session.refresh()
+        XCTAssertEqual(session.state, .recovery)
+        XCTAssertFalse(session.helperOutdated)
+    }
+
+    func testNeedsHelperClearsStaleErrorMessage() async {
+        var status: HelperInstallStatus = .installed
+        let (session, settings, _, _) = self.fixture(helperStatus: { status })
+        settings.readError = PowerError.commandFailed("x")
+        await session.refresh()
+        XCTAssertEqual(session.state, .recovery)
+        XCTAssertNotNil(session.errorMessage)
+        settings.readError = nil
+        status = .missing
+        await session.refresh()
+        XCTAssertEqual(session.state, .needsHelper)
+        XCTAssertNil(session.errorMessage)
+    }
+
     func testJournalPersistsAndClearsRecoveryMarker() throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         defer { try? FileManager.default.removeItem(at: directory) }

@@ -59,6 +59,7 @@ final class PowerSession: ObservableObject {
             let shouldReport = self.state != .recovery
             self.state = .recovery
             self.deadline = nil
+            self.helperOutdated = false
             if shouldReport { self.errorMessage = error.localizedDescription }
         }
     }
@@ -73,6 +74,7 @@ final class PowerSession: ObservableObject {
         try? self.assertions.release()
         self.deadline = nil
         self.helperOutdated = outdated
+        self.errorMessage = nil
         self.state = .needsHelper
     }
 
