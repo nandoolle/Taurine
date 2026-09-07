@@ -102,11 +102,10 @@ class TaurineViewModel: ObservableObject {
         self.timer = timer
     }
 
+    // In needsHelper this is a no-op: the helper is only installed from Preferences.
     func toggleActive() {
-        guard !self.isBusy else { return }
-        if self.needsHelper {
-            self.installHelper(thenActivate: true)
-        } else if self.session.requiresRestoration {
+        guard !self.isBusy, !self.needsHelper else { return }
+        if self.session.requiresRestoration {
             self.deactivate()
         } else {
             self.activate()
@@ -153,7 +152,7 @@ class TaurineViewModel: ObservableObject {
         Task { await self.checkBattery() }
     }
 
-    func installHelper(thenActivate: Bool = false) {
+    func installHelper() {
         guard !self.isBusy else { return }
         self.installingHelper = true
         Task {
@@ -161,8 +160,7 @@ class TaurineViewModel: ObservableObject {
             do {
                 try await self.installer.install(bundlePath: Bundle.main.bundlePath)
                 await self.session.helperInstallationChanged()
-                if thenActivate, self.session.state == .inactive { self.activate() }
-            } catch PowerError.cancelled {
+                } catch PowerError.cancelled {
                 // Cancelar deixa o estado needsHelper visível.
             } catch {
                 self.session.errorMessage = error.localizedDescription

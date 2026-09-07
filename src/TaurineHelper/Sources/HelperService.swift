@@ -1,5 +1,8 @@
 import Foundation
+import OSLog
 import TaurineShared
+
+let helperLog = Logger(subsystem: HelperPaths.label, category: "xpc")
 
 final class HelperService: NSObject, NSXPCListenerDelegate, @unchecked Sendable {
     private let sleep: SleepControl
@@ -13,8 +16,10 @@ final class HelperService: NSObject, NSXPCListenerDelegate, @unchecked Sendable 
         let executable = ConnectionPolicy.executablePath(of: connection.processIdentifier)
         let bundleID = executable.flatMap(ConnectionPolicy.bundleIdentifier(ofExecutableAt:))
         guard ConnectionPolicy.accepts(peerUID: connection.effectiveUserIdentifier, consoleUID: ConnectionPolicy.consoleUser(), bundleIdentifier: bundleID) else {
+            helperLog.error("rejected pid \(connection.processIdentifier) uid \(connection.effectiveUserIdentifier) bundle \(bundleID ?? "nil", privacy: .public) path \(executable ?? "nil", privacy: .public)")
             return false
         }
+        helperLog.info("accepted pid \(connection.processIdentifier)")
         let token = SessionToken()
         connection.exportedInterface = NSXPCInterface(with: HelperProtocol.self)
         connection.exportedObject = ConnectionHandler(token: token, sleep: self.sleep, tracker: self.tracker)

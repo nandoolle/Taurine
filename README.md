@@ -14,7 +14,7 @@ Ao **desligar**, o componente restaura o repouso e o app libera as solicitaçõe
 pmset -a disablesleep 0
 ```
 
-Na primeira ativação, o Taurine instala o componente auxiliar com um único pedido de senha de administrador; depois disso, toggles, temporizadores e cortes por bateria não abrem novo prompt. Veja [Componente auxiliar](#componente-auxiliar).
+O componente auxiliar é instalado apenas pelo botão **Instalar componente auxiliar…** em Preferências, com um único pedido de senha de administrador; depois disso, toggles, temporizadores e cortes por bateria não abrem novo prompt. Veja [Componente auxiliar](#componente-auxiliar).
 
 ## Usar
 
@@ -46,7 +46,7 @@ O bloqueio de repouso não garante operação com a tampa fechada em todos os mo
 
 ## Componente auxiliar
 
-Manter o Mac acordado com a tampa fechada exige `pmset -a disablesleep 1`, uma configuração persistente do sistema que precisa de root. O Taurine instala, na primeira ativação e com um único pedido de senha de administrador, um LaunchDaemon que executa esse comando em seu nome:
+Manter o Mac acordado com a tampa fechada exige `pmset -a disablesleep 1`, uma configuração persistente do sistema que precisa de root. O Taurine instala, apenas quando você clica em **Instalar componente auxiliar…** nas Preferências e com um único pedido de senha de administrador, um LaunchDaemon que executa esse comando em seu nome:
 
 - `/Library/PrivilegedHelperTools/dev.taurine.helper`
 - `/Library/LaunchDaemons/dev.taurine.helper.plist`

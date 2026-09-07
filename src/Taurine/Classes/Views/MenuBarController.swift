@@ -107,7 +107,7 @@ class MenuBarController: NSObject {
         if event.type == .rightMouseUp || (event.type == .leftMouseUp && !event.modifierFlags.intersection([.control, .command]).isEmpty) {
             self.showContextMenu()
         } else {
-            self.viewModel.toggleActive()
+            self.toggleOrShowPreferences()
         }
     }
 
@@ -220,7 +220,16 @@ class MenuBarController: NSObject {
 
     @objc
     private func toggleActive(_: Any?) {
-        self.viewModel.toggleActive()
+        self.toggleOrShowPreferences()
+    }
+
+    // The helper is installed only from Preferences; the menu just leads there.
+    private func toggleOrShowPreferences() {
+        if self.viewModel.needsHelper {
+            self.showPreferencesWindow()
+        } else {
+            self.viewModel.toggleActive()
+        }
     }
 
     private func showError(_ message: String) {
