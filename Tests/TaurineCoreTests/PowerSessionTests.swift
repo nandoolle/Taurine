@@ -53,11 +53,11 @@ final class FakeJournal: SessionJournaling {
 
 @MainActor
 final class PowerSessionTests: XCTestCase {
-    private func fixture() -> (PowerSession, FakeSettings, FakeAssertions, FakeJournal) {
+    private func fixture(helperStatus: @escaping () -> HelperInstallStatus = { .installed }) -> (PowerSession, FakeSettings, FakeAssertions, FakeJournal) {
         let settings = FakeSettings()
         let assertions = FakeAssertions()
         let journal = FakeJournal()
-        return (PowerSession(settings: settings, assertions: assertions, journal: journal), settings, assertions, journal)
+        return (PowerSession(settings: settings, assertions: assertions, journal: journal, helperStatus: helperStatus), settings, assertions, journal)
     }
 
     func testOnAndOffVerifySettingAndReleaseAssertions() async {
@@ -202,7 +202,7 @@ final class PowerSessionTests: XCTestCase {
     func testTimerPromptsOnceAndOnlyAfterDeadline() async {
         let settings = FakeSettings()
         var now = Date(timeIntervalSince1970: 1000)
-        let session = PowerSession(settings: settings, assertions: FakeAssertions(), journal: FakeJournal(), now: { now })
+        let session = PowerSession(settings: settings, assertions: FakeAssertions(), journal: FakeJournal(), now: { now }, helperStatus: { .installed })
         await session.refresh()
         await session.activate(duration: 60)
         now = now.addingTimeInterval(59)
@@ -255,6 +255,51 @@ final class PowerSessionTests: XCTestCase {
         XCTAssertFalse(assertions.held)
         XCTAssertFalse(journal.pending)
         XCTAssertNil(session.deadline)
+    }
+
+    func testMissingHelperBlocksActivationWithoutTouchingSettings() async {
+        let (session, settings, assertions, _) = self.fixture(helperStatus: { .missing })
+        await session.refresh()
+        XCTAssertEqual(session.state, .needsHelper)
+        await session.activate(duration: nil)
+        XCTAssertEqual(session.state, .needsHelper)
+        XCTAssertEqual(settings.writes, [])
+        XCTAssertFalse(assertions.held)
+        XCTAssertNil(session.errorMessage)
+    }
+
+    func testHelperInstalledLaterUnblocksSession() async {
+        var status: HelperInstallStatus = .missing
+        let (session, _, _, _) = self.fixture(helperStatus: { status })
+        await session.refresh()
+        XCTAssertEqual(session.state, .needsHelper)
+        status = .installed
+        await session.helperInstallationChanged()
+        XCTAssertEqual(session.state, .inactive)
+        await session.activate(duration: nil)
+        XCTAssertEqual(session.state, .active)
+    }
+
+    func testOutdatedHelperIsReportedAsNeedsHelper() async {
+        let (session, settings, _, _) = self.fixture()
+        settings.readError = PowerError.helperOutdated
+        await session.refresh()
+        XCTAssertEqual(session.state, .needsHelper)
+        XCTAssertTrue(session.helperOutdated)
+        XCTAssertNil(session.errorMessage)
+    }
+
+    func testActiveSessionLosingHelperReleasesAssertions() async {
+        var status: HelperInstallStatus = .installed
+        let (session, _, assertions, journal) = self.fixture(helperStatus: { status })
+        await session.refresh()
+        await session.activate(duration: nil)
+        XCTAssertTrue(assertions.held)
+        status = .missing
+        await session.refresh()
+        XCTAssertEqual(session.state, .needsHelper)
+        XCTAssertFalse(assertions.held)
+        XCTAssertTrue(journal.pending, "journal stays pending: pmset may still be 1 and nobody can verify")
     }
 
     func testJournalPersistsAndClearsRecoveryMarker() throws {

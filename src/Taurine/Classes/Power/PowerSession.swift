@@ -3,13 +3,14 @@ import Foundation
 
 @MainActor
 final class PowerSession: ObservableObject {
-    enum State { case checking, inactive, active, recovery }
+    enum State { case checking, inactive, active, recovery, needsHelper }
 
     @Published private(set) var state: State = .checking
     @Published private(set) var isBusy = false
     @Published private(set) var deadline: Date?
     @Published var errorMessage: String?
     @Published private(set) var automaticStopMessage: String?
+    @Published private(set) var helperOutdated = false
 
     private let settings: PowerSettings
     private let assertions: WakePreventing
@@ -18,9 +19,10 @@ final class PowerSession: ObservableObject {
     private let battery: BatteryReadingProvider?
     private let batteryThreshold: () -> Int
     private let batteryProtectionEnabled: () -> Bool
+    private let helperStatus: () -> HelperInstallStatus
     private var lastSafetyAttempt: Date?
 
-    init(settings: PowerSettings, assertions: WakePreventing, journal: SessionJournaling, now: @escaping () -> Date = Date.init, battery: BatteryReadingProvider? = nil, batteryThreshold: @escaping () -> Int = { BatteryPolicy.defaultThreshold }, batteryProtectionEnabled: @escaping () -> Bool = { true }) {
+    init(settings: PowerSettings, assertions: WakePreventing, journal: SessionJournaling, now: @escaping () -> Date = Date.init, battery: BatteryReadingProvider? = nil, batteryThreshold: @escaping () -> Int = { BatteryPolicy.defaultThreshold }, batteryProtectionEnabled: @escaping () -> Bool = { true }, helperStatus: @escaping () -> HelperInstallStatus = { @MainActor in HelperInstaller.status() }) {
         self.settings = settings
         self.assertions = assertions
         self.journal = journal
@@ -28,6 +30,7 @@ final class PowerSession: ObservableObject {
         self.battery = battery
         self.batteryThreshold = batteryThreshold
         self.batteryProtectionEnabled = batteryProtectionEnabled
+        self.helperStatus = helperStatus
     }
 
     var requiresRestoration: Bool { self.state == .active || self.state == .recovery }
@@ -36,6 +39,10 @@ final class PowerSession: ObservableObject {
         guard !self.isBusy else { return }
         self.isBusy = true
         defer { self.isBusy = false }
+        guard self.helperStatus() == .installed else {
+            self.enterNeedsHelper(outdated: false)
+            return
+        }
         do {
             if try await self.settings.sleepIsDisabled() {
                 if self.state != .active { self.state = .recovery }
@@ -45,12 +52,28 @@ final class PowerSession: ObservableObject {
                 self.deadline = nil
                 self.state = .inactive
             }
+            self.helperOutdated = false
+        } catch PowerError.helperOutdated {
+            self.enterNeedsHelper(outdated: true)
         } catch {
             let shouldReport = self.state != .recovery
             self.state = .recovery
             self.deadline = nil
             if shouldReport { self.errorMessage = error.localizedDescription }
         }
+    }
+
+    func helperInstallationChanged() async {
+        self.helperOutdated = false
+        await self.refresh()
+    }
+
+    private func enterNeedsHelper(outdated: Bool) {
+        // Sem helper ninguém verifica o pmset: assertions saem, journal fica pendente.
+        try? self.assertions.release()
+        self.deadline = nil
+        self.helperOutdated = outdated
+        self.state = .needsHelper
     }
 
     func activate(duration: TimeInterval?) async {
@@ -99,6 +122,10 @@ final class PowerSession: ObservableObject {
             self.state = .inactive
             return true
         } catch {
+            if case PowerError.helperOutdated = error {
+                self.enterNeedsHelper(outdated: true)
+                return false
+            }
             await self.reconcileFailure(error, reportErrors: reportErrors)
             return self.state == .inactive
         }

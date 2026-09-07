@@ -49,7 +49,7 @@ final class BatteryProtectionTests: XCTestCase {
         let battery = FakeBattery()
         battery.reading = .battery(.init(percentage: 60, isOnBattery: true))
         let assertions = FakeAssertions()
-        let session = PowerSession(settings: settings, assertions: assertions, journal: FakeJournal(), battery: battery)
+        let session = PowerSession(settings: settings, assertions: assertions, journal: FakeJournal(), battery: battery, helperStatus: { .installed })
         await session.refresh()
         await session.activate(duration: nil)
         XCTAssertEqual(session.state, .inactive)
@@ -63,7 +63,7 @@ final class BatteryProtectionTests: XCTestCase {
         let battery = FakeBattery()
         let assertions = FakeAssertions()
         let journal = FakeJournal()
-        let session = PowerSession(settings: settings, assertions: assertions, journal: journal, battery: battery)
+        let session = PowerSession(settings: settings, assertions: assertions, journal: journal, battery: battery, helperStatus: { .installed })
         await session.refresh()
         await session.activate(duration: 300)
         battery.reading = .battery(.init(percentage: 60, isOnBattery: true))
@@ -83,7 +83,7 @@ final class BatteryProtectionTests: XCTestCase {
         let settings = FakeSettings()
         let battery = FakeBattery()
         battery.reading = .battery(.init(percentage: 40, isOnBattery: false))
-        let session = PowerSession(settings: settings, assertions: FakeAssertions(), journal: FakeJournal(), battery: battery)
+        let session = PowerSession(settings: settings, assertions: FakeAssertions(), journal: FakeJournal(), battery: battery, helperStatus: { .installed })
         await session.refresh()
         await session.activate(duration: nil)
         await session.enforceBatteryLimit()
@@ -97,7 +97,7 @@ final class BatteryProtectionTests: XCTestCase {
         let settings = FakeSettings()
         let battery = FakeBattery()
         var threshold = 60
-        let session = PowerSession(settings: settings, assertions: FakeAssertions(), journal: FakeJournal(), battery: battery, batteryThreshold: { threshold })
+        let session = PowerSession(settings: settings, assertions: FakeAssertions(), journal: FakeJournal(), battery: battery, batteryThreshold: { threshold }, helperStatus: { .installed })
         await session.refresh()
         await session.activate(duration: nil)
         threshold = 85
@@ -108,7 +108,7 @@ final class BatteryProtectionTests: XCTestCase {
     func testReadFailureRestoresSleep() async {
         let settings = FakeSettings()
         let battery = FakeBattery()
-        let session = PowerSession(settings: settings, assertions: FakeAssertions(), journal: FakeJournal(), battery: battery)
+        let session = PowerSession(settings: settings, assertions: FakeAssertions(), journal: FakeJournal(), battery: battery, helperStatus: { .installed })
         await session.refresh()
         await session.activate(duration: nil)
         battery.reading = .unavailable
@@ -121,7 +121,7 @@ final class BatteryProtectionTests: XCTestCase {
         let settings = FakeSettings()
         let battery = FakeBattery()
         var now = Date(timeIntervalSince1970: 100)
-        let session = PowerSession(settings: settings, assertions: FakeAssertions(), journal: FakeJournal(), now: { now }, battery: battery)
+        let session = PowerSession(settings: settings, assertions: FakeAssertions(), journal: FakeJournal(), now: { now }, battery: battery, helperStatus: { .installed })
         await session.refresh()
         await session.activate(duration: nil)
         settings.writeError = PowerError.commandFailed("password required")
@@ -145,7 +145,7 @@ final class BatteryProtectionTests: XCTestCase {
     func testBusyBatteryEventIsRecheckedAfterOperation() async {
         let settings = FakeSettings()
         let battery = FakeBattery()
-        let session = PowerSession(settings: settings, assertions: FakeAssertions(), journal: FakeJournal(), battery: battery)
+        let session = PowerSession(settings: settings, assertions: FakeAssertions(), journal: FakeJournal(), battery: battery, helperStatus: { .installed })
         await session.refresh()
         settings.onWrite = {
             battery.reading = .battery(.init(percentage: 55, isOnBattery: true))
@@ -163,7 +163,7 @@ final class BatteryProtectionTests: XCTestCase {
         settings.disabled = true
         let battery = FakeBattery()
         battery.reading = .battery(.init(percentage: 20, isOnBattery: true))
-        let session = PowerSession(settings: settings, assertions: FakeAssertions(), journal: FakeJournal(), battery: battery)
+        let session = PowerSession(settings: settings, assertions: FakeAssertions(), journal: FakeJournal(), battery: battery, helperStatus: { .installed })
         await session.refresh()
         XCTAssertEqual(session.state, .recovery)
         await session.enforceBatteryLimit()
@@ -185,7 +185,7 @@ final class BatteryProtectionTests: XCTestCase {
         let battery = FakeBattery()
         battery.reading = .battery(.init(percentage: 20, isOnBattery: true))
         var enabled = false
-        let session = PowerSession(settings: settings, assertions: FakeAssertions(), journal: FakeJournal(), battery: battery, batteryProtectionEnabled: { enabled })
+        let session = PowerSession(settings: settings, assertions: FakeAssertions(), journal: FakeJournal(), battery: battery, batteryProtectionEnabled: { enabled }, helperStatus: { .installed })
         await session.refresh()
         await session.activate(duration: 300)
         await session.enforceBatteryLimit()
