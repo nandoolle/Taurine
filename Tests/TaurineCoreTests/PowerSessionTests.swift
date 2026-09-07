@@ -257,14 +257,6 @@ final class PowerSessionTests: XCTestCase {
         XCTAssertNil(session.deadline)
     }
 
-    func testPMSetParserRejectsMissingAndInvalidValues() throws {
-        XCTAssertFalse(try PMSetController.parseSleepDisabled("System-wide power settings:\n SleepDisabled\t\t0\nAC Power:\n sleep 0"))
-        XCTAssertTrue(try PMSetController.parseSleepDisabled(" SleepDisabled 1\n"))
-        XCTAssertThrowsError(try PMSetController.parseSleepDisabled("sleep 0\n"))
-        XCTAssertThrowsError(try PMSetController.parseSleepDisabled("SleepDisabled 2\n"))
-        XCTAssertThrowsError(try PMSetController.parseSleepDisabled("NotSleepDisabled 1\n"))
-    }
-
     func testJournalPersistsAndClearsRecoveryMarker() throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         defer { try? FileManager.default.removeItem(at: directory) }

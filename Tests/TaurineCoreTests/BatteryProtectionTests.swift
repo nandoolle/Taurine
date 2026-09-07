@@ -1,7 +1,6 @@
 import Foundation
 import IOKit.ps
 import XCTest
-import TaurineShared
 @testable import TaurineCore
 
 @MainActor
@@ -125,7 +124,7 @@ final class BatteryProtectionTests: XCTestCase {
         let session = PowerSession(settings: settings, assertions: FakeAssertions(), journal: FakeJournal(), now: { now }, battery: battery)
         await session.refresh()
         await session.activate(duration: nil)
-        settings.writeError = PowerError.authorizationRequired
+        settings.writeError = PowerError.commandFailed("password required")
         battery.reading = .battery(.init(percentage: 50, isOnBattery: true))
         await session.enforceBatteryLimit()
         XCTAssertEqual(session.state, .recovery)
@@ -172,23 +171,6 @@ final class BatteryProtectionTests: XCTestCase {
         XCTAssertEqual(session.state, .inactive)
     }
 
-    func testPermissionRuleAndInstallerSyntax() async throws {
-        let rule = PermanentAuthorization.rule(for: 501)
-        XCTAssertEqual(rule, "#501 ALL=(root) NOPASSWD: /usr/bin/pmset -a disablesleep 1, /usr/bin/pmset -a disablesleep 0\n")
-        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
-        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-        defer { try? FileManager.default.removeItem(at: directory) }
-        let policy = directory.appendingPathComponent("policy")
-        try rule.write(to: policy, atomically: true, encoding: .utf8)
-        let parsed = try await CommandRunner.run("/usr/sbin/visudo", arguments: ["-cf", policy.path])
-        XCTAssertEqual(parsed.status, 0, parsed.text)
-        for removing in [false, true] {
-            let path = directory.appendingPathComponent("installer.sh")
-            try PermanentAuthorization.installationScript(uid: 501, removing: removing).write(to: path, atomically: true, encoding: .utf8)
-            let syntax = try await CommandRunner.run("/bin/sh", arguments: ["-n", path.path])
-            XCTAssertEqual(syntax.status, 0, syntax.text)
-        }
-    }
     func testThresholdInputAcceptsOnlyASCIIDigitsAndBounds() {
         XCTAssertEqual(BatteryPolicy.sanitizedThresholdText("abc"), "")
         XCTAssertEqual(BatteryPolicy.sanitizedThresholdText("6a0%"), "60")
@@ -213,57 +195,6 @@ final class BatteryProtectionTests: XCTestCase {
         await session.enforceBatteryLimit()
         XCTAssertEqual(session.state, .inactive)
         XCTAssertEqual(settings.writes, [true, false])
-    }
-
-    func testOptionalAuthorizationPromptsForBothChanges() async throws {
-        var scripts: [String] = []
-        let controller = PMSetController(run: { executable, arguments in
-            if executable == "/usr/bin/sudo" { return CommandOutput(status: 1, text: "password required") }
-            XCTAssertEqual(executable, "/usr/bin/osascript")
-            scripts.append(arguments[1])
-            return CommandOutput(status: 0, text: "")
-        }, authorizationConfigured: { false })
-        try await controller.setSleepDisabled(true)
-        try await controller.setSleepDisabled(false)
-        XCTAssertEqual(scripts, [
-            "do shell script \"/usr/bin/pmset -a disablesleep 1\" with administrator privileges",
-            "do shell script \"/usr/bin/pmset -a disablesleep 0\" with administrator privileges"
-        ])
-    }
-
-    func testBackgroundRetryDoesNotRequestPassword() async {
-        var calls = 0
-        let controller = PMSetController(run: { executable, _ in
-            calls += 1
-            XCTAssertEqual(executable, "/usr/bin/sudo")
-            return CommandOutput(status: 1, text: "password required")
-        }, authorizationConfigured: { false })
-        do {
-            try await controller.setSleepDisabled(false, allowPrompt: false)
-            XCTFail("Expected authorizationRequired")
-        } catch PowerError.authorizationRequired {
-        } catch { XCTFail("Unexpected error: \(error)") }
-        XCTAssertEqual(calls, 1)
-    }
-
-    func testPermanentAuthorizationDoesNotPrompt() async throws {
-        let controller = PMSetController(run: { executable, _ in
-            XCTAssertEqual(executable, "/usr/bin/sudo")
-            return CommandOutput(status: 0, text: "")
-        }, authorizationConfigured: { true })
-        try await controller.setSleepDisabled(true)
-        try await controller.setSleepDisabled(false)
-    }
-
-    func testPasswordCancellationIsReported() async {
-        let controller = PMSetController(run: { executable, _ in
-            CommandOutput(status: 1, text: executable == "/usr/bin/osascript" ? "User canceled. (-128)" : "password required")
-        }, authorizationConfigured: { false })
-        do {
-            try await controller.setSleepDisabled(true)
-            XCTFail("Expected cancellation")
-        } catch PowerError.cancelled {
-        } catch { XCTFail("Unexpected error: \(error)") }
     }
 
 }

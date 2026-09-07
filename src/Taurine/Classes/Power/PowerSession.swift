@@ -84,7 +84,7 @@ final class PowerSession: ObservableObject {
     }
 
     @discardableResult
-    func deactivate(reportErrors: Bool = true, allowPrompt: Bool = true) async -> Bool {
+    func deactivate(reportErrors: Bool = true) async -> Bool {
         guard !self.isBusy else { return false }
         guard self.state != .inactive else { return true }
         self.isBusy = true
@@ -92,7 +92,7 @@ final class PowerSession: ObservableObject {
         if reportErrors { self.errorMessage = nil }
         defer { self.isBusy = false }
         do {
-            try await self.settings.setSleepDisabled(false, allowPrompt: allowPrompt)
+            try await self.settings.setSleepDisabled(false)
             guard try await !self.settings.sleepIsDisabled() else { throw PowerError.verificationFailed }
             try self.assertions.release()
             try self.journal.setPending(false)
@@ -120,7 +120,7 @@ final class PowerSession: ObservableObject {
         if let previous = self.lastSafetyAttempt, self.now().timeIntervalSince(previous) < 30 { return }
         let isFirstAttempt = self.lastSafetyAttempt == nil
         self.lastSafetyAttempt = self.now()
-        if await self.deactivate(reportErrors: isFirstAttempt, allowPrompt: isFirstAttempt) {
+        if await self.deactivate(reportErrors: isFirstAttempt) {
             self.automaticStopMessage = reason
             self.lastSafetyAttempt = nil
         }
