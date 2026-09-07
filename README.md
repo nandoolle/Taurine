@@ -79,7 +79,7 @@ Também é possível abrir `src/Taurine.xcodeproj` no Xcode ou usar `./scripts/b
 swift test
 ```
 
-Os testes usam um proxy simulado do componente auxiliar e implementações simuladas de bateria e energia: cobrem ativação, desligamento, cancelamento, resposta incompleta, falha de leitura, recuperação, temporizadores, operações simultâneas persistência, limite exato de bateria, carregador e falhas de restauração. A sintaxe dos scripts de instalação é validada com `sh -n`, e o wrapper AppleScript, com `osacompile`. Não executam alterações privilegiadas no Mac. A validação manual de ligar/desligar requer confirmar `SleepDisabled` com `pmset -g`.
+Os testes usam um proxy simulado do componente auxiliar e implementações simuladas de bateria e energia: cobrem ativação, desligamento, cancelamento, resposta incompleta, falha de leitura, recuperação, temporizadores, operações simultâneas, persistência, limite exato de bateria, carregador e falhas de restauração. A sintaxe dos scripts de instalação é validada com `sh -n`, e o wrapper AppleScript, com `osacompile`. Não executam alterações privilegiadas no Mac. A validação manual de ligar/desligar requer confirmar `SleepDisabled` com `pmset -g`.
 
 ## Origem
 
