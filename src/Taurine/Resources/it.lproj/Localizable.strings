@@ -1,0 +1,44 @@
+/* Activation durations */
+"1 minute" = "1 minuto";
+"5 minutes" = "5 minuti";
+"10 minutes" = "10 minuti";
+"15 minutes" = "15 minuti";
+"30 minutes" = "30 minuti";
+"1 hour" = "1 ora";
+"2 hours" = "2 ore";
+"5 hours" = "5 ore";
+"Indefinitely" = "A tempo indeterminato";
+
+/* Status messages */
+"Taurine is active" = "Taurine è attivo";
+"%d minutes" = "%d minuti";
+"%d seconds" = "%d secondi";
+
+/* Menu items */
+"Check for Updates..." = "Cerca aggiornamenti...";
+"Preferences..." = "Preferenze...";
+"About Taurine" = "Informazioni su Taurine";
+"Quit" = "Esci";
+
+/* Preferences instructions */
+"Taurine is now running. You can find its icon in the right side of your menu bar. Click it to disable automatic sleep, click it again to enable automatic sleep." = "Taurine è ora in esecuzione. Puoi trovare la sua icona sul lato destro della barra dei menu. Fai clic per disattivare il riposo automatico, fai di nuovo clic per riattivarlo.";
+"Right-click (or ⌃-click) the menu bar icon to show the Taurine menu." = "Fai clic con il tasto destro (o con ⌃ premuto) sull'icona della barra dei menu per mostrare il menu di Taurine.";
+
+/* Preferences labels */
+"Default duration:" = "Durata predefinita:";
+"Activate when starting Taurine" = "Attiva all'avvio di Taurine";
+"Deactivate when device goes to sleep manually" = "Disattiva quando il dispositivo va in stop manualmente";
+"Show this message when starting Taurine" = "Mostra questo messaggio all'avvio di Taurine";
+"Keep apps active" = "Mantieni le app attive";
+"Prevents apps from becoming inactive and the screen saver from starting." = "Impedisce alle app di diventare inattive e l'avvio del salvaschermo.";
+"Close" = "Chiudi";
+
+/* Menu additions */
+"Activate for" = "Attiva per";
+"Welcome to Taurine" = "Benvenuto in Taurine";
+
+/* About credits */
+"© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nSource code:\nhttps://github.caffeine-app.net" = "© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nCodice sorgente:\nhttps://github.caffeine-app.net";
+
+/* System messages */
+"Taurine prevents sleep" = "Taurine impedisce lo stop";

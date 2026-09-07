@@ -1,0 +1,44 @@
+/* Activation durations */
+"1 minute" = "1 minuut";
+"5 minutes" = "5 minuten";
+"10 minutes" = "10 minuten";
+"15 minutes" = "15 minuten";
+"30 minutes" = "30 minuten";
+"1 hour" = "1 uur";
+"2 hours" = "2 uur";
+"5 hours" = "5 uur";
+"Indefinitely" = "Onbepaalde tijd";
+
+/* Status messages */
+"Taurine is active" = "Taurine is actief";
+"%d minutes" = "%d minuten";
+"%d seconds" = "%d seconden";
+
+/* Menu items */
+"Check for Updates..." = "Op updates controleren...";
+"Preferences..." = "Voorkeuren...";
+"About Taurine" = "Over Taurine";
+"Quit" = "Stop";
+
+/* Preferences instructions */
+"Taurine is now running. You can find its icon in the right side of your menu bar. Click it to disable automatic sleep, click it again to enable automatic sleep." = "Taurine draait nu. Je vindt het pictogram aan de rechterkant van je menubalk. Klik om automatisch sluimeren uit te schakelen, klik nogmaals om het weer in te schakelen.";
+"Right-click (or ⌃-click) the menu bar icon to show the Taurine menu." = "Klik met de rechtermuisknop (of met ⌃-klik) op het menubalkpictogram om het Taurine-menu te openen.";
+
+/* Preferences labels */
+"Default duration:" = "Standaardduur:";
+"Activate when starting Taurine" = "Taurine bij starten inschakelen";
+"Deactivate when device goes to sleep manually" = "Uitschakelen wanneer het apparaat handmatig in sluimerstand gaat";
+"Show this message when starting Taurine" = "Dit bericht tonen bij het starten van Taurine";
+"Keep apps active" = "Apps actief houden";
+"Prevents apps from becoming inactive and the screen saver from starting." = "Voorkomt dat apps inactief worden en dat de schermbeveiliging start.";
+"Close" = "Sluiten";
+
+/* Menu additions */
+"Activate for" = "Activeren voor";
+"Welcome to Taurine" = "Welkom bij Taurine";
+
+/* About credits */
+"© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nSource code:\nhttps://github.caffeine-app.net" = "© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nBroncode:\nhttps://github.caffeine-app.net";
+
+/* System messages */
+"Taurine prevents sleep" = "Taurine voorkomt sluimerstand";

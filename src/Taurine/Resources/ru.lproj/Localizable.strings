@@ -1,0 +1,44 @@
+/* Activation durations */
+"1 minute" = "1 минута";
+"5 minutes" = "5 минут";
+"10 minutes" = "10 минут";
+"15 minutes" = "15 минут";
+"30 minutes" = "30 минут";
+"1 hour" = "1 час";
+"2 hours" = "2 часа";
+"5 hours" = "5 часов";
+"Indefinitely" = "Бессрочно";
+
+/* Status messages */
+"Taurine is active" = "Taurine активен";
+"%d minutes" = "%d минут";
+"%d seconds" = "%d секунд";
+
+/* Menu items */
+"Check for Updates..." = "Проверить обновления...";
+"Preferences..." = "Настройки...";
+"About Taurine" = "О Taurine";
+"Quit" = "Выйти";
+
+/* Preferences instructions */
+"Taurine is now running. You can find its icon in the right side of your menu bar. Click it to disable automatic sleep, click it again to enable automatic sleep." = "Taurine запущен. Его значок находится справа на панели меню. Нажмите, чтобы отключить автоматический сон, нажмите ещё раз, чтобы включить его снова.";
+"Right-click (or ⌃-click) the menu bar icon to show the Taurine menu." = "Щёлкните значок на панели меню правой кнопкой мыши (или с зажатой клавишей ⌃), чтобы открыть меню Taurine.";
+
+/* Preferences labels */
+"Default duration:" = "Длительность по умолчанию:";
+"Activate when starting Taurine" = "Активировать при запуске Taurine";
+"Deactivate when device goes to sleep manually" = "Деактивировать при ручном переводе устройства в сон";
+"Show this message when starting Taurine" = "Показывать это сообщение при запуске Taurine";
+"Keep apps active" = "Поддерживать активность приложений";
+"Prevents apps from becoming inactive and the screen saver from starting." = "Предотвращает переход приложений в неактивный режим и запуск заставки.";
+"Close" = "Закрыть";
+
+/* Menu additions */
+"Activate for" = "Активировать на";
+"Welcome to Taurine" = "Добро пожаловать в Taurine";
+
+/* About credits */
+"© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nSource code:\nhttps://github.caffeine-app.net" = "© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nИсходный код:\nhttps://github.caffeine-app.net";
+
+/* System messages */
+"Taurine prevents sleep" = "Taurine предотвращает переход в сон";

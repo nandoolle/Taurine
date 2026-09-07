@@ -1,0 +1,45 @@
+/* Activation durations */
+"1 minute" = "1 minuto";
+"5 minutes" = "5 minutos";
+"10 minutes" = "10 minutos";
+"15 minutes" = "15 minutos";
+"30 minutes" = "30 minutos";
+"1 hour" = "1 hora";
+"2 hours" = "2 horas";
+"5 hours" = "5 horas";
+"Indefinitely" = "Indefinidamente";
+
+/* Status messages */
+"Taurine is active" = "Taurine está activo";
+"%d minutes" = "%d minutos";
+"%d seconds" = "%d segundos";
+
+/* Menu items */
+"Check for Updates..." = "Buscar actualizaciones...";
+"Preferences..." = "Preferencias...";
+"About Taurine" = "Acerca de Taurine";
+"Quit" = "Salir";
+
+/* Preferences instructions */
+"Taurine is now running. You can find its icon in the right side of your menu bar. Click it to disable automatic sleep, click it again to enable automatic sleep." = "Taurine ya se está ejecutando. Puedes encontrar su icono en el lado derecho de la barra de menús. Haz clic para desactivar el reposo automático; haz clic de nuevo para volver a activarlo.";
+"Right-click (or ⌃-click) the menu bar icon to show the Taurine menu." = "Haz clic con el botón derecho (o con ⌃ pulsada) en el icono de la barra de menús para mostrar el menú de Taurine.";
+
+/* Preferences labels */
+"Default duration:" = "Duración predeterminada:";
+"Activate when starting Taurine" = "Activar al iniciar Taurine";
+"Deactivate when device goes to sleep manually" = "Desactivar cuando el dispositivo entra en reposo manualmente";
+"Show this message when starting Taurine" = "Mostrar este mensaje al iniciar Taurine";
+"Keep apps active" = "Mantener apps activas";
+"Prevents apps from becoming inactive and the screen saver from starting." = "Evita que las apps se vuelvan inactivas y que se inicie el salvapantallas.";
+"Close" = "Cerrar";
+
+/* Menu additions */
+"Activate for" = "Activar durante";
+"Welcome to Taurine" = "Bienvenido a Taurine";
+
+/* About credits */
+"© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nSource code:\nhttps://github.caffeine-app.net" = "© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nCódigo fuente:\nhttps://github.caffeine-app.net";
+
+/* System messages */
+"Taurine prevents sleep" = "Taurine impide el reposo";
+

@@ -1,0 +1,45 @@
+/* Activation durations */
+"1 minute" = "1 хвилина";
+"5 minutes" = "5 хвилин";
+"10 minutes" = "10 хвилин";
+"15 minutes" = "15 хвилин";
+"30 minutes" = "30 хвилин";
+"1 hour" = "1 година";
+"2 hours" = "2 години";
+"5 hours" = "5 годин";
+"Indefinitely" = "Назавжди";
+
+/* Status messages */
+"Taurine is active" = "Taurine увімкнено";
+"%d minutes" = "%d хвилин";
+"%d seconds" = "%d секунд";
+
+/* Menu items */
+"Check for Updates..." = "Перевірити оновлення...";
+"Preferences..." = "Налаштування...";
+"About Taurine" = "Про Taurine";
+"Quit" = "Завершити";
+
+/* Preferences instructions */
+"Taurine is now running. You can find its icon in the right side of your menu bar. Click it to disable automatic sleep, click it again to enable automatic sleep." = "Taurine працює. Іконка знаходиться праворуч у смузі меню. Натисніть, щоб вимкнути автоматичний сон; натисніть знову, щоб увімкнути.";
+"Right-click (or ⌃-click) the menu bar icon to show the Taurine menu." = "Клацніть правою кнопкою миші (або ⌃+клік) по іконці у смузі меню, щоб відкрити меню Taurine.";
+
+/* Preferences labels */
+"Default duration:" = "Тривалість за замовчуванням:";
+"Activate when starting Taurine" = "Увімкнути при запуску Taurine";
+"Deactivate when device goes to sleep manually" = "Вимикати, коли пристрій переходить у сон вручну";
+"Show this message when starting Taurine" = "Показувати це повідомлення при запуску Taurine";
+"Keep apps active" = "Тримати застосунки активними";
+"Prevents apps from becoming inactive and the screen saver from starting." = "Не дає застосункам переходити в неактивний режим і запускатися заставці.";
+"Close" = "Закрити";
+
+/* Menu additions */
+"Activate for" = "Увімкнути на";
+"Welcome to Taurine" = "Вітаємо в Taurine";
+
+/* About credits */
+"© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nSource code:\nhttps://github.caffeine-app.net" = "© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nВихідний код:\nhttps://github.caffeine-app.net";
+
+/* System messages */
+"Taurine prevents sleep" = "Taurine запобігає переходу в режим сну";
+

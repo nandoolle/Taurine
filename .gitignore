@@ -1,0 +1,53 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+
+# Xcode
+xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+*.xccheckout
+*.moved-aside
+DerivedData/
+*.hmap
+*.ipa
+*.dSYM
+*.dSYM.zip
+!default.xcworkspace
+*.xcworkspace/xcuserdata/
+.xcode-cache/
+timeline.xctimeline
+playground.xcworkspace
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Package.resolved
+.index-build/
+
+# Build output deste repo
+build/
+*.dmg
+
+# Ferramentas
+.swiftlint-cache/
+.sourcekit-lsp/
+.vscode/
+.idea/
+
+# Assinatura e segredos
+*.p12
+*.cer
+*.mobileprovision
+*.provisionprofile
+.env
+.env.*
+
+# Docs locais (nunca vão para o remote)
+docs.local/
+.superpowers/

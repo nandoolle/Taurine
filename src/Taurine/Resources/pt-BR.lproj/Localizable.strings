@@ -1,0 +1,88 @@
+/* Activation durations */
+"1 minute" = "1 minuto";
+"5 minutes" = "5 minutos";
+"10 minutes" = "10 minutos";
+"15 minutes" = "15 minutos";
+"30 minutes" = "30 minutos";
+"1 hour" = "1 hora";
+"2 hours" = "2 horas";
+"5 hours" = "5 horas";
+"Indefinitely" = "Indefinidamente";
+
+/* Status messages */
+"Taurine is active" = "Taurine está ativo";
+"%d minutes" = "%d minutos";
+"%d seconds" = "%d segundos";
+
+/* Menu items */
+"Check for Updates..." = "Procurar atualizações...";
+"Preferences..." = "Preferências...";
+"About Taurine" = "Sobre o Taurine";
+"Quit" = "Encerrar";
+
+/* Preferences instructions */
+"Taurine is now running. You can find its icon in the right side of your menu bar. Click it to disable automatic sleep, click it again to enable automatic sleep." = "O Taurine já está em execução. Você pode encontrar o ícone no lado direito da barra de menus. Clique para desativar o repouso automático e clique novamente para ativá-lo.";
+"Right-click (or ⌃-click) the menu bar icon to show the Taurine menu." = "Clique com o botão direito (ou pressione ⌃ e clique) no ícone da barra de menus para abrir o menu do Taurine.";
+
+/* Preferences labels */
+"Default duration:" = "Duração padrão:";
+"Activate when starting Taurine" = "Ativar ao iniciar o Taurine";
+"Deactivate when device goes to sleep manually" = "Desativar quando o dispositivo entrar em repouso manualmente";
+"Show this message when starting Taurine" = "Mostrar esta mensagem ao iniciar o Taurine";
+"Keep apps active" = "Manter apps ativos";
+"Prevents apps from becoming inactive and the screen saver from starting." = "Impede que os apps fiquem inativos e que a proteção de tela seja iniciada.";
+"Close" = "Fechar";
+
+/* Menu additions */
+"Activate for" = "Ativar por";
+"Welcome to Taurine" = "Bem-vindo ao Taurine";
+
+/* About credits */
+"© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nSource code:\nhttps://github.caffeine-app.net" = "© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nCódigo-fonte:\nhttps://github.caffeine-app.net";
+
+/* System messages */
+"Taurine prevents sleep" = "O Taurine impede o repouso";
+
+/* Taurine power controls */
+"Administrator authorization was cancelled." = "A autorização de administrador foi cancelada.";
+"Could not read the Mac's sleep setting." = "Não foi possível consultar a configuração de repouso do Mac.";
+"The Mac did not confirm the requested sleep setting." = "O Mac não confirmou a configuração de repouso solicitada.";
+"Could not update sleep prevention." = "Não foi possível atualizar o bloqueio de repouso.";
+"Updating sleep settings…" = "Atualizando o repouso…";
+"Sleep needs to be restored" = "O repouso precisa ser restaurado";
+"Taurine is inactive" = "Taurine está desativado";
+"Taurine is already running or could not acquire its session lock." = "O Taurine já está aberto ou não foi possível reservar sua sessão.";
+"Restore sleep…" = "Restaurar repouso…";
+"Deactivate Taurine…" = "Desativar Taurine…";
+"Activate Taurine…" = "Ativar Taurine…";
+"Could not complete the sleep change" = "Não foi possível concluir a alteração de repouso";
+"Sleep may still be disabled. Use Restore sleep in the Taurine menu and authorize the change." = "O repouso pode continuar bloqueado. Use Restaurar repouso no menu do Taurine e autorize a alteração.";
+"Administrator authorization is required to turn Taurine on and off, including when a timer ends. If authorization is cancelled, sleep may remain disabled. After a forced quit, reopen Taurine to restore sleep." = "É necessária autorização de administrador para ligar e desligar o Taurine, inclusive ao terminar um temporizador. Se a autorização for cancelada, o repouso pode continuar bloqueado. Após um encerramento forçado, reabra o Taurine para restaurar o repouso.";
+"Based on Caffeine (MIT).\n\n© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nSource code:\nhttps://github.com/domzilla/Caffeine" = "Baseado no Caffeine (MIT).\n\n© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nCódigo-fonte original:\nhttps://github.com/domzilla/Caffeine";
+
+/* Battery protection and permanent authorization */
+"Preferences" = "Preferências";
+"Keep your Mac awake, with a little peace of mind." = "Mantenha o Mac acordado, com mais tranquilidade.";
+"Battery protection" = "Proteção da bateria";
+"Battery cutoff" = "Limite de bateria";
+"While on battery, turn off sleep protection at or below this level. Taurine stays off until you turn it on again." = "Ao usar bateria, desativa o bloqueio de repouso neste nível ou abaixo dele. O Taurine permanece desligado até você ativá-lo novamente.";
+"Battery: %d%%" = "Bateria: %d%%";
+"Connected to power · %d%%" = "Conectado à tomada · %d%%";
+"No internal battery" = "Sem bateria interna";
+"Battery level unavailable" = "Nível de bateria indisponível";
+"Automatic protection is ready" = "Proteção automática pronta";
+"One-time authorization" = "Autorização única";
+"Toggles, timers and battery protection work without password prompts." = "O botão, os temporizadores e a proteção da bateria funcionam sem pedir senha.";
+"Authorize the two sleep-control commands for your account so protection can work automatically." = "Autorize os dois comandos de repouso para sua conta para que a proteção funcione automaticamente.";
+"Remove…" = "Remover…";
+"Authorize once…" = "Autorizar uma vez…";
+"Sleep perotection runs while Taurine is open." = "A proteção contra hibernação funciona enquanto o Taurine estiver aberto.";
+"Sleep protection stopped at %d%% battery." = "Bloqueio de repouso desativado com %d%% de bateria.";
+"Sleep protection stopped because the battery level could not be read." = "Bloqueio de repouso desativado porque não foi possível ler o nível de bateria.";
+"Authorize Taurine in Preferences to enable automatic sleep protection without password prompts." = "Autorize o Taurine nas Preferências para permitir a proteção automática sem pedir senha.";
+
+/* Compact battery controls */
+"Current battery: %d%%" = "Bateria atual: %d%%";
+"Battery cutoff percentage" = "Porcentagem limite de bateria";
+"Enter a number from 1 to 100. Press Return to apply." = "Digite um número de 1 a 100. Pressione Enter para aplicar.";
+

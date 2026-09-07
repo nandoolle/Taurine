@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleIconFile</key><string>Taurine.icns</string>
+    <key>LSUIElement</key><true/>
+    <key>CFBundleDisplayName</key><string>Taurine</string>
+    <key>NSHumanReadableCopyright</key><string>Based on Caffeine. © 2006–2018 Tomas Franzén; © 2018 Michael Jones; © 2022 Dominic Rodemer. MIT License.</string>
+</dict>
+</plist>

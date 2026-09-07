@@ -1,0 +1,89 @@
+/* Activation durations */
+"1 minute" = "1 minute";
+"5 minutes" = "5 minutes";
+"10 minutes" = "10 minutes";
+"15 minutes" = "15 minutes";
+"30 minutes" = "30 minutes";
+"1 hour" = "1 hour";
+"2 hours" = "2 hours";
+"5 hours" = "5 hours";
+"Indefinitely" = "Indefinitely";
+
+/* Status messages */
+"Taurine is active" = "Taurine is active";
+"%d minutes" = "%d minutes";
+"%d seconds" = "%d seconds";
+
+/* Menu items */
+"Check for Updates..." = "Check for Updates...";
+"Preferences..." = "Preferences...";
+"About Taurine" = "About Taurine";
+"Quit" = "Quit";
+
+/* Preferences instructions */
+"Taurine is now running. You can find its icon in the right side of your menu bar. Click it to disable automatic sleep, click it again to enable automatic sleep." = "Taurine is now running. You can find its icon in the right side of your menu bar. Click it to disable automatic sleep, click it again to enable automatic sleep.";
+"Right-click (or ⌃-click) the menu bar icon to show the Taurine menu." = "Right-click (or ⌃-click) the menu bar icon to show the Taurine menu.";
+
+/* Preferences labels */
+"Default duration:" = "Default duration:";
+"Activate when starting Taurine" = "Activate when starting Taurine";
+"Deactivate when device goes to sleep manually" = "Deactivate when device goes to sleep manually";
+"Show this message when starting Taurine" = "Show this message when starting Taurine";
+"Keep apps active" = "Keep apps active";
+"Prevents apps from becoming inactive and the screen saver from starting." = "Prevents apps from becoming inactive and the screen saver from starting.";
+"Close" = "Close";
+
+/* Menu additions */
+"Activate for" = "Activate for";
+"Welcome to Taurine" = "Welcome to Taurine";
+
+/* About credits */
+"© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nSource code:\nhttps://github.caffeine-app.net" = "© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nSource code:\nhttps://github.caffeine-app.net";
+
+/* System messages */
+"Taurine prevents sleep" = "Taurine prevents sleep";
+
+
+/* Taurine power controls */
+"Administrator authorization was cancelled." = "Administrator authorization was cancelled.";
+"Could not read the Mac's sleep setting." = "Could not read the Mac's sleep setting.";
+"The Mac did not confirm the requested sleep setting." = "The Mac did not confirm the requested sleep setting.";
+"Could not update sleep prevention." = "Could not update sleep prevention.";
+"Updating sleep settings…" = "Updating sleep settings…";
+"Sleep needs to be restored" = "Sleep needs to be restored";
+"Taurine is inactive" = "Taurine is inactive";
+"Taurine is already running or could not acquire its session lock." = "Taurine is already running or could not acquire its session lock.";
+"Restore sleep…" = "Restore sleep…";
+"Deactivate Taurine…" = "Deactivate Taurine…";
+"Activate Taurine…" = "Activate Taurine…";
+"Could not complete the sleep change" = "Could not complete the sleep change";
+"Sleep may still be disabled. Use Restore sleep in the Taurine menu and authorize the change." = "Sleep may still be disabled. Use Restore sleep in the Taurine menu and authorize the change.";
+"Administrator authorization is required to turn Taurine on and off, including when a timer ends. If authorization is cancelled, sleep may remain disabled. After a forced quit, reopen Taurine to restore sleep." = "Administrator authorization is required to turn Taurine on and off, including when a timer ends. If authorization is cancelled, sleep may remain disabled. After a forced quit, reopen Taurine to restore sleep.";
+"Based on Caffeine (MIT).\n\n© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nSource code:\nhttps://github.com/domzilla/Caffeine" = "Based on Caffeine (MIT).\n\n© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nSource code:\nhttps://github.com/domzilla/Caffeine";
+
+/* Battery protection and permanent authorization */
+"Preferences" = "Preferences";
+"Keep your Mac awake, with a little peace of mind." = "Keep your Mac awake, with a little peace of mind.";
+"Battery protection" = "Battery protection";
+"Battery cutoff" = "Battery cutoff";
+"While on battery, turn off sleep protection at or below this level. Taurine stays off until you turn it on again." = "While on battery, turn off sleep protection at or below this level. Taurine stays off until you turn it on again.";
+"Battery: %d%%" = "Battery: %d%%";
+"Connected to power · %d%%" = "Connected to power · %d%%";
+"No internal battery" = "No internal battery";
+"Battery level unavailable" = "Battery level unavailable";
+"Automatic protection is ready" = "Automatic protection is ready";
+"One-time authorization" = "One-time authorization";
+"Toggles, timers and battery protection work without password prompts." = "Toggles, timers and battery protection work without password prompts.";
+"Authorize the two sleep-control commands for your account so protection can work automatically." = "Authorize the two sleep-control commands for your account so protection can work automatically.";
+"Remove…" = "Remove…";
+"Authorize once…" = "Authorize once…";
+"Sleep protection runs while Taurine is open." = "Sleep protection runs while Taurine is open.";
+"Sleep protection stopped at %d%% battery." = "Sleep protection stopped at %d%% battery.";
+"Sleep protection stopped because the battery level could not be read." = "Sleep protection stopped because the battery level could not be read.";
+"Authorize Taurine in Preferences to enable automatic sleep protection without password prompts." = "Authorize Taurine in Preferences to enable automatic sleep protection without password prompts.";
+
+/* Compact battery controls */
+"Current battery: %d%%" = "Current battery: %d%%";
+"Battery cutoff percentage" = "Battery cutoff percentage";
+"Enter a number from 1 to 100. Press Return to apply." = "Enter a number from 1 to 100. Press Return to apply.";
+

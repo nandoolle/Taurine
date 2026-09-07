@@ -1,0 +1,45 @@
+/* Activation durations */
+"1 minute" = "1分";
+"5 minutes" = "5分";
+"10 minutes" = "10分";
+"15 minutes" = "15分";
+"30 minutes" = "30分";
+"1 hour" = "1時間";
+"2 hours" = "2時間";
+"5 hours" = "5時間";
+"Indefinitely" = "無期限";
+
+/* Status messages */
+"Taurine is active" = "Taurineはアクティブです";
+"%d minutes" = "%d分";
+"%d seconds" = "%d秒";
+
+/* Menu items */
+"Check for Updates..." = "アップデートを確認...";
+"Preferences..." = "環境設定...";
+"About Taurine" = "Taurineについて";
+"Quit" = "終了";
+
+/* Preferences instructions */
+"Taurine is now running. You can find its icon in the right side of your menu bar. Click it to disable automatic sleep, click it again to enable automatic sleep." = "Taurine が起動しました。メニューバー右側のアイコンをクリックすると自動スリープが無効になり、もう一度クリックすると再び有効になります。";
+"Right-click (or ⌃-click) the menu bar icon to show the Taurine menu." = "メニューバーのアイコンを右クリック（または ⌃ キーを押しながらクリック）すると Taurine メニューが表示されます。";
+
+/* Preferences labels */
+"Default duration:" = "デフォルトの時間:";
+"Activate when starting Taurine" = "Taurine 起動時に有効化";
+"Deactivate when device goes to sleep manually" = "手動でスリープしたときに無効化";
+"Show this message when starting Taurine" = "Taurine 起動時にこのメッセージを表示";
+"Keep apps active" = "アプリをアクティブに保つ";
+"Prevents apps from becoming inactive and the screen saver from starting." = "アプリが非アクティブになるのを防ぎ、スクリーンセーバーの起動を防止します。";
+"Close" = "閉じる";
+
+/* Menu additions */
+"Activate for" = "有効にする時間";
+"Welcome to Taurine" = "Taurine へようこそ";
+
+/* About credits */
+"© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nSource code:\nhttps://github.caffeine-app.net" = "© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nソースコード:\nhttps://github.caffeine-app.net";
+
+/* System messages */
+"Taurine prevents sleep" = "Taurine がスリープを防ぎます";
+
