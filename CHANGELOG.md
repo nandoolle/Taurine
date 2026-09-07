@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0 — 2026-09-07
+
+- Substitui o uso direto de `pmset` (senha a cada ativação ou regra em `sudoers.d`) por um componente auxiliar privilegiado instalado uma única vez.
+- O componente restaura o repouso quando o Taurine fecha, falha, é encerrado à força ou o Mac reinicia, inclusive após desligamento por bateria.
+- O componente remove-se sozinho no boot seguinte se o app tiver sido apagado.
+- Remove a opção de autorização permanente via `sudoers.d`; a regra antiga é apagada ao instalar o componente.
+- Adiciona `scripts/make-dmg.sh` para gerar a imagem de distribuição.
+
 ## 0.2.3 — 2026-09-07
 
 - Adiciona borda e sanitização de dígitos ao campo de porcentagem.

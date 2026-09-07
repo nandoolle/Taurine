@@ -2,21 +2,19 @@
 
 App para a barra de menus do macOS, baseado no [Caffeine](https://github.com/domzilla/Caffeine), com bloqueio adicional de repouso pelo `pmset`.
 
-Ao **ligar**, mantém o sistema e a tela acordados com IOKit e executa, com autorização de administrador:
+Ao **ligar**, mantém o sistema e a tela acordados com IOKit e pede ao componente auxiliar privilegiado para aplicar:
 
 ```sh
-sudo pmset -a disablesleep 1
+pmset -a disablesleep 1
 ```
 
-Ao **desligar**, restaura o repouso e libera as solicitações de energia:
+Ao **desligar**, o componente restaura o repouso e o app libera as solicitações de energia:
 
 ```sh
-sudo pmset -a disablesleep 0
+pmset -a disablesleep 0
 ```
 
-Nas Preferências, **Autorizar uma vez…** abre a janela de administrador do macOS para instalar uma regra restrita em `/private/etc/sudoers.d/taurine-<UID>`. Ela libera somente esses dois comandos exatos, como root, para a conta atual. Não há curingas nem autorização para outros comandos ou argumentos. Qualquer programa dessa conta também poderá executar esses dois comandos. Nenhuma senha é armazenada.
-
-Após essa configuração, o app usa `sudo -n -k`: nunca abre um prompt nos toggles, temporizadores ou cortes por bateria e não depende do cache de senhas. **Remover…** primeiro restaura o repouso e depois remove apenas essa regra, com autorização de administrador.
+Na primeira ativação, o Taurine instala o componente auxiliar com um único pedido de senha de administrador; depois disso, toggles, temporizadores e cortes por bateria não abrem novo prompt. Veja [Componente auxiliar](#componente-auxiliar).
 
 ## Usar
 
@@ -28,11 +26,11 @@ Abra `build/Taurine.app`. Requer macOS 14.6 ou posterior.
 - A opção herdada **Manter apps ativos** simula atividade e pode exigir permissão de Acessibilidade; fica desativada por padrão.
 - Um triângulo indica que o repouso precisa ser restaurado ou que não foi possível confirmar seu estado. Use **Restaurar repouso…**.
 
-## Autorização e recuperação
+## Recuperação
 
 `disablesleep` é uma configuração **global e persistente**, inclusive para bateria e tomada. O desligamento aplica **0**, conforme a proposta do Taurine; não restaura um valor anterior diferente de 0.
 
-A autorização permanente é **opcional**. Sem ela, cada alteração de repouso solicita a senha de administrador, inclusive o desligamento por temporizador ou bateria: o bloqueio permanece até a aprovação. Cancelar um corte por bateria não abre novos prompts nas tentativas automáticas; use **Restore sleep** para tentar novamente manualmente. Com autorização permanente, o término do temporizador e o corte por bateria restauram o repouso sem interação. Caso a permissão seja revogada ou o comando falhe, o app apresenta o estado de recuperação; não presume que o repouso foi restaurado.
+Toggles, temporizadores e cortes por bateria são aplicados pelo componente auxiliar sem prompt de senha, uma vez instalado. Caso o comando falhe ou o componente esteja indisponível, o app apresenta o estado de recuperação; não presume que o repouso foi restaurado.
 
 ### Proteção da bateria
 
@@ -40,11 +38,29 @@ O toggle **Battery protection**, ligado por padrão, permite desativar apenas o 
 
 A leitura usa IOKit, com notificações de mudanças e conferência adicional a cada cinco segundos. Mudar o slider aplica a nova política à sessão atual. Se a leitura falhar, uma sessão ativa é encerrada por precaução; Macs sem bateria interna usam apenas o temporizador. Se a restauração por bateria falhar, há novas tentativas a cada 30 segundos sem repetir alertas. A proteção depende de o Taurine estar aberto e responsivo; não há serviço independente vigiando outros programas.
 
-Ao sair normalmente, o Taurine verifica e restaura o repouso antes de encerrar. Se a restauração falhar ou for cancelada, permanece aberto. Após encerramento forçado, falha do processo ou desligamento abrupto, o valor pode continuar em 1: reabra o Taurine e escolha **Restaurar repouso…**, ou execute o comando com valor 0 acima. Não há serviço privilegiado para recuperação enquanto o app estiver fechado.
+Ao sair normalmente, o Taurine verifica e restaura o repouso antes de encerrar. Se a restauração falhar ou for cancelada, permanece aberto. Após encerramento forçado, falha do processo ou desligamento abrupto, o componente auxiliar detecta a queda da conexão XPC e restaura o repouso sozinho, mesmo com o app fechado; em todo boot ele também restaura o repouso incondicionalmente.
 
 O estado é consultado ao abrir, depois de cada alteração e periodicamente durante a execução. Um marcador em `~/Library/Application Support/Taurine/pending-session` registra sessões pendentes. A leitura atual do `pmset` é a fonte de verdade, inclusive quando outro programa alterou a configuração. Evite usar outros utilitários para mudar `disablesleep` durante uma sessão. Múltiplas cópias do Taurine na mesma conta são impedidas de operar simultaneamente.
 
 O bloqueio de repouso não garante operação com a tampa fechada em todos os modelos e condições. A antiga opção de desativar ao repousar manualmente foi retirada porque conflita com o bloqueio global solicitado.
+
+## Componente auxiliar
+
+Manter o Mac acordado com a tampa fechada exige `pmset -a disablesleep 1`, uma configuração persistente do sistema que precisa de root. O Taurine instala, na primeira ativação e com um único pedido de senha de administrador, um LaunchDaemon que executa esse comando em seu nome:
+
+- `/Library/PrivilegedHelperTools/dev.taurine.helper`
+- `/Library/LaunchDaemons/dev.taurine.helper.plist`
+- `/var/db/taurine/` (caminho do app e versão do componente)
+
+O componente conversa com o app por XPC. Quando a conexão do app cai (fechamento, falha, encerramento forçado, logout), ele restaura o repouso. Em todo boot ele restaura o repouso incondicionalmente, e se o app tiver sido apagado, remove-se sozinho. Não há mais uso de `sudoers` nem pedido de senha a cada ativação.
+
+Para remover manualmente: Preferências → **Remover componente auxiliar…**, ou como administrador:
+
+```sh
+sudo launchctl bootout system/dev.taurine.helper
+sudo rm -f /Library/PrivilegedHelperTools/dev.taurine.helper /Library/LaunchDaemons/dev.taurine.helper.plist
+sudo rm -rf /var/db/taurine
+```
 
 ## Compilar
 
@@ -63,7 +79,7 @@ Também é possível abrir `src/Taurine.xcodeproj` no Xcode ou usar `./scripts/b
 swift test
 ```
 
-Os testes usam implementações simuladas de autorização, bateria e energia: cobrem ativação, desligamento, cancelamento, resposta incompleta, falha de leitura, recuperação, temporizadores, operações simultâneas persistência, limite exato de bateria, carregador e falhas de restauração. A sintaxe da regra é validada com `visudo`. Não executam alterações privilegiadas no Mac. A validação manual de ligar/desligar requer autorizar as duas operações e confirmar `SleepDisabled` com `pmset -g`.
+Os testes usam um proxy simulado do componente auxiliar e implementações simuladas de bateria e energia: cobrem ativação, desligamento, cancelamento, resposta incompleta, falha de leitura, recuperação, temporizadores, operações simultâneas persistência, limite exato de bateria, carregador e falhas de restauração. A sintaxe dos scripts de instalação é validada com `sh -n`, e o wrapper AppleScript, com `osacompile`. Não executam alterações privilegiadas no Mac. A validação manual de ligar/desligar requer confirmar `SleepDisabled` com `pmset -g`.
 
 ## Origem
 
