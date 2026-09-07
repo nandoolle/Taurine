@@ -7,6 +7,46 @@
 	objects = {
 
 
+/* Begin PBXBuildFile section */
+		3ECE584BC62844F18CF865F5 /* CommandRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87FF03856834AD0B4B939FA /* CommandRunner.swift */; };
+		3C788547E9314FB391182FBB /* HelperError.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE714243C42C4532951BC019 /* HelperError.swift */; };
+		6565D92955E64E929A6CF0D9 /* HelperProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B277D58D74940A9AB2BE789 /* HelperProtocol.swift */; };
+		D34B2DF3A8D44109BC366368 /* Bootstrap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E4017C7C2984C11AC2CDE9A /* Bootstrap.swift */; };
+		D90563DB13924FF2BC97F495 /* ConnectionPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EA08F81BB4C46C1ABF599CA /* ConnectionPolicy.swift */; };
+		5DF7B23379464D0CA73434F2 /* HelperMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD39DE0B99D6435DBE255975 /* HelperMain.swift */; };
+		49EED5D5E2344CE6BDDFB964 /* HelperService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B58255E5524B3E898E2351 /* HelperService.swift */; };
+		94E56B3557B946F6B87C2631 /* SessionTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 697BAC07DAB2416F9DDD103E /* SessionTracker.swift */; };
+		903FF60D2C054241A20EFB48 /* SleepControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCCB153ADF7E4ED8AD92DF79 /* SleepControl.swift */; };
+		57AB08821D5742E5BBDD83BB /* libTaurineShared.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 287565BA259A46EB9B6EDF65 /* libTaurineShared.a */; };
+		F933B698183A49298B163923 /* libTaurineShared.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 287565BA259A46EB9B6EDF65 /* libTaurineShared.a */; };
+		32D5CAC3A59A47D7A5FCD88A /* dev.taurine.helper in Copy Helper */ = {isa = PBXBuildFile; fileRef = 1FFCEAE7EF1B4C369DEE04CD /* dev.taurine.helper */; };
+		D56215A2C53F4BA1A3155378 /* dev.taurine.helper.plist in Copy Helper */ = {isa = PBXBuildFile; fileRef = CA55F4F39D8748839423B226 /* dev.taurine.helper.plist */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5BBC7B61C8AF4DA9A69CD14A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F2F53B9C2EC354AE008A08B6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 532CCF077CBE44919232A931;
+			remoteInfo = TaurineShared;
+		};
+		10A9EF087F4241EE83B22C84 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F2F53B9C2EC354AE008A08B6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 532CCF077CBE44919232A931;
+			remoteInfo = TaurineShared;
+		};
+		E792B456C5F54670B698323A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F2F53B9C2EC354AE008A08B6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FF7BD74C8CF24019860B2101;
+			remoteInfo = TaurineHelper;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		F276E3DA2EC4872000C2E16D /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -18,10 +58,34 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		67B8EC874E99402ABAD17866 /* Copy Helper */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/Library/LaunchDaemons;
+			dstSubfolderSpec = 1;
+			files = (
+				32D5CAC3A59A47D7A5FCD88A /* dev.taurine.helper in Copy Helper */,
+				D56215A2C53F4BA1A3155378 /* dev.taurine.helper.plist in Copy Helper */,
+			);
+			name = "Copy Helper";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		F2F53BA42EC354AE008A08B6 /* Taurine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Taurine.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C87FF03856834AD0B4B939FA /* CommandRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaurineShared/CommandRunner.swift; sourceTree = SOURCE_ROOT; };
+		DE714243C42C4532951BC019 /* HelperError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaurineShared/HelperError.swift; sourceTree = SOURCE_ROOT; };
+		5B277D58D74940A9AB2BE789 /* HelperProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaurineShared/HelperProtocol.swift; sourceTree = SOURCE_ROOT; };
+		7E4017C7C2984C11AC2CDE9A /* Bootstrap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaurineHelper/Sources/Bootstrap.swift; sourceTree = SOURCE_ROOT; };
+		2EA08F81BB4C46C1ABF599CA /* ConnectionPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaurineHelper/Sources/ConnectionPolicy.swift; sourceTree = SOURCE_ROOT; };
+		CD39DE0B99D6435DBE255975 /* HelperMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaurineHelper/Sources/HelperMain.swift; sourceTree = SOURCE_ROOT; };
+		78B58255E5524B3E898E2351 /* HelperService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaurineHelper/Sources/HelperService.swift; sourceTree = SOURCE_ROOT; };
+		697BAC07DAB2416F9DDD103E /* SessionTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaurineHelper/Sources/SessionTracker.swift; sourceTree = SOURCE_ROOT; };
+		DCCB153ADF7E4ED8AD92DF79 /* SleepControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaurineHelper/Sources/SleepControl.swift; sourceTree = SOURCE_ROOT; };
+		CA55F4F39D8748839423B226 /* dev.taurine.helper.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = TaurineHelper/Resources/dev.taurine.helper.plist; sourceTree = SOURCE_ROOT; };
+		287565BA259A46EB9B6EDF65 /* libTaurineShared.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTaurineShared.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		1FFCEAE7EF1B4C369DEE04CD /* dev.taurine.helper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = dev.taurine.helper; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -50,6 +114,22 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F933B698183A49298B163923 /* libTaurineShared.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BC484B9573104FAEAFF1A871 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		63A2C4F767C544ADA51C61AA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				57AB08821D5742E5BBDD83BB /* libTaurineShared.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -60,6 +140,8 @@
 			isa = PBXGroup;
 			children = (
 				F2F53BA62EC354AE008A08B6 /* Taurine */,
+				DBA0D285F23C46D196F76AD7 /* TaurineShared */,
+				D9480809CA8F457C89EFC483 /* TaurineHelper */,
 				F2F53BA52EC354AE008A08B6 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -68,8 +150,34 @@
 			isa = PBXGroup;
 			children = (
 				F2F53BA42EC354AE008A08B6 /* Taurine.app */,
+				287565BA259A46EB9B6EDF65 /* libTaurineShared.a */,
+				1FFCEAE7EF1B4C369DEE04CD /* dev.taurine.helper */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		DBA0D285F23C46D196F76AD7 /* TaurineShared */ = {
+			isa = PBXGroup;
+			children = (
+				C87FF03856834AD0B4B939FA /* CommandRunner.swift */,
+				DE714243C42C4532951BC019 /* HelperError.swift */,
+				5B277D58D74940A9AB2BE789 /* HelperProtocol.swift */,
+			);
+			name = TaurineShared;
+			sourceTree = "<group>";
+		};
+		D9480809CA8F457C89EFC483 /* TaurineHelper */ = {
+			isa = PBXGroup;
+			children = (
+				7E4017C7C2984C11AC2CDE9A /* Bootstrap.swift */,
+				2EA08F81BB4C46C1ABF599CA /* ConnectionPolicy.swift */,
+				CD39DE0B99D6435DBE255975 /* HelperMain.swift */,
+				78B58255E5524B3E898E2351 /* HelperService.swift */,
+				697BAC07DAB2416F9DDD103E /* SessionTracker.swift */,
+				DCCB153ADF7E4ED8AD92DF79 /* SleepControl.swift */,
+				CA55F4F39D8748839423B226 /* dev.taurine.helper.plist */,
+			);
+			name = TaurineHelper;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -83,10 +191,13 @@
 				F2F53BA12EC354AE008A08B6 /* Frameworks */,
 				F2F53BA22EC354AE008A08B6 /* Resources */,
 				F276E3DA2EC4872000C2E16D /* Embed Frameworks */,
+				67B8EC874E99402ABAD17866 /* Copy Helper */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				FACDEA6A3EF0459D9A14B172 /* PBXTargetDependency */,
+				F6E5F91257754984A426E670 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				F2F53BA62EC354AE008A08B6 /* Taurine */,
@@ -97,6 +208,43 @@
 			productName = Taurine;
 			productReference = F2F53BA42EC354AE008A08B6 /* Taurine.app */;
 			productType = "com.apple.product-type.application";
+		};
+		532CCF077CBE44919232A931 /* TaurineShared */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FFB3DA29BD564F10B2218E19 /* Build configuration list for PBXNativeTarget "TaurineShared" */;
+			buildPhases = (
+				D853CF20662A4A44AF74390B /* Sources */,
+				BC484B9573104FAEAFF1A871 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TaurineShared;
+			packageProductDependencies = (
+			);
+			productName = TaurineShared;
+			productReference = 287565BA259A46EB9B6EDF65 /* libTaurineShared.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		FF7BD74C8CF24019860B2101 /* TaurineHelper */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AE14BF95EAB24FFEA8402FD9 /* Build configuration list for PBXNativeTarget "TaurineHelper" */;
+			buildPhases = (
+				92F378D2D6364D1B9D4D04AD /* Sources */,
+				63A2C4F767C544ADA51C61AA /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				68B736166E6C47BC9C7E51BB /* PBXTargetDependency */,
+			);
+			name = TaurineHelper;
+			packageProductDependencies = (
+			);
+			productName = TaurineHelper;
+			productReference = 1FFCEAE7EF1B4C369DEE04CD /* dev.taurine.helper */;
+			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
 
@@ -110,6 +258,12 @@
 				TargetAttributes = {
 					F2F53BA32EC354AE008A08B6 = {
 						CreatedOnToolsVersion = 26.1;
+					};
+					532CCF077CBE44919232A931 = {
+						CreatedOnToolsVersion = 26.2;
+					};
+					FF7BD74C8CF24019860B2101 = {
+						CreatedOnToolsVersion = 26.2;
 					};
 				};
 			};
@@ -142,6 +296,8 @@
 			projectRoot = "";
 			targets = (
 				F2F53BA32EC354AE008A08B6 /* Taurine */,
+				532CCF077CBE44919232A931 /* TaurineShared */,
+				FF7BD74C8CF24019860B2101 /* TaurineHelper */,
 			);
 		};
 /* End PBXProject section */
@@ -164,7 +320,48 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D853CF20662A4A44AF74390B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3ECE584BC62844F18CF865F5 /* CommandRunner.swift in Sources */,
+				3C788547E9314FB391182FBB /* HelperError.swift in Sources */,
+				6565D92955E64E929A6CF0D9 /* HelperProtocol.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		92F378D2D6364D1B9D4D04AD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D34B2DF3A8D44109BC366368 /* Bootstrap.swift in Sources */,
+				D90563DB13924FF2BC97F495 /* ConnectionPolicy.swift in Sources */,
+				5DF7B23379464D0CA73434F2 /* HelperMain.swift in Sources */,
+				49EED5D5E2344CE6BDDFB964 /* HelperService.swift in Sources */,
+				94E56B3557B946F6B87C2631 /* SessionTracker.swift in Sources */,
+				903FF60D2C054241A20EFB48 /* SleepControl.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		68B736166E6C47BC9C7E51BB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 532CCF077CBE44919232A931 /* TaurineShared */;
+			targetProxy = 5BBC7B61C8AF4DA9A69CD14A /* PBXContainerItemProxy */;
+		};
+		FACDEA6A3EF0459D9A14B172 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 532CCF077CBE44919232A931 /* TaurineShared */;
+			targetProxy = 10A9EF087F4241EE83B22C84 /* PBXContainerItemProxy */;
+		};
+		F6E5F91257754984A426E670 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FF7BD74C8CF24019860B2101 /* TaurineHelper */;
+			targetProxy = E792B456C5F54670B698323A /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		F2F53BC32EC354AF008A08B6 /* Debug */ = {
@@ -293,7 +490,7 @@
 				CODE_SIGN_ENTITLEMENTS = Taurine/Resources/Taurine.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -308,7 +505,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.6;
-				MARKETING_VERSION = 0.2.3;
+				MARKETING_VERSION = 0.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.taurine.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -327,7 +524,7 @@
 				CODE_SIGN_ENTITLEMENTS = Taurine/Resources/Taurine.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -342,7 +539,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.6;
-				MARKETING_VERSION = 0.2.3;
+				MARKETING_VERSION = 0.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.taurine.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -351,6 +548,60 @@
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		079B1D939B994455BCD9AB0C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEFINES_MODULE = YES;
+				EXECUTABLE_PREFIX = lib;
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
+				PRODUCT_NAME = TaurineShared;
+				SKIP_INSTALL = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D71E3572C45349FD8C17A2AF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEFINES_MODULE = YES;
+				EXECUTABLE_PREFIX = lib;
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
+				PRODUCT_NAME = TaurineShared;
+				SKIP_INSTALL = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		3813960990034FDE9896951B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 6;
+				DEVELOPMENT_TEAM = "";
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
+				MARKETING_VERSION = 0.3.0;
+				PRODUCT_NAME = dev.taurine.helper;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		57714D86AF39408EA136F4E1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 6;
+				DEVELOPMENT_TEAM = "";
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
+				MARKETING_VERSION = 0.3.0;
+				PRODUCT_NAME = dev.taurine.helper;
+				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
@@ -372,6 +623,24 @@
 			buildConfigurations = (
 				F2F53BC62EC354AF008A08B6 /* Debug */,
 				F2F53BC72EC354AF008A08B6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FFB3DA29BD564F10B2218E19 /* Build configuration list for PBXNativeTarget "TaurineShared" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				079B1D939B994455BCD9AB0C /* Debug */,
+				D71E3572C45349FD8C17A2AF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AE14BF95EAB24FFEA8402FD9 /* Build configuration list for PBXNativeTarget "TaurineHelper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3813960990034FDE9896951B /* Debug */,
+				57714D86AF39408EA136F4E1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

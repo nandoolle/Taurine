@@ -9,6 +9,7 @@ xcodebuild -project src/Taurine.xcodeproj -scheme Taurine \
 mkdir -p build
 /usr/bin/ditto .build/xcode/Build/Products/Release/Taurine.app build/Taurine.app
 cp LICENSE build/Taurine.app/Contents/Resources/
+/usr/bin/codesign --force --sign - build/Taurine.app/Contents/Library/LaunchDaemons/dev.taurine.helper
 /usr/bin/codesign --force --sign - build/Taurine.app
 /usr/bin/codesign --verify --strict build/Taurine.app
 printf '\nBuilt: %s/build/Taurine.app\n' "$PWD"
