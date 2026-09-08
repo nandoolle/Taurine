@@ -1,38 +1,45 @@
-<p align="center"><img src="src/Taurine/Resources/Taurine.png" width="128" alt="Taurine"></p>
+<img src="assets/readme/icon.png" alt="Ícone" width="200"/>
 
 # Taurine
+### Não deixe seu Mac dormir. Nem de tampa fechada.
 
-App de barra de menus para macOS que mantém o Mac acordado, inclusive com a tampa fechada. Derivado do [Caffeine](https://github.com/domzilla/Caffeine), com bloqueio de repouso via `pmset -a disablesleep` aplicado por um componente auxiliar privilegiado que restaura o repouso sozinho se o app fechar, travar ou o Mac reiniciar.
+Taurine é um pequeno app de barra de menus que mantém o Mac acordado, útil para tarefas longas que não podem ser interrompidas pelo repouso. Diferente do [Caffeine](https://github.com/domzilla/Caffeine), do qual deriva, também impede o repouso quando a tampa do MacBook é fechada, e um componente auxiliar garante que o repouso volte ao normal se o app fechar, travar ou o Mac reiniciar.
 
 Requer macOS 14.6 ou posterior.
 
-## Instalar
+### Instalação
 
-1. Baixe o `.dmg` mais recente em [Releases](https://github.com/nandoolle/taurine/releases) e arraste o Taurine para `Aplicativos`.
-2. Na primeira abertura, o macOS pode bloquear o app por não ser notarizado: clique com o botão direito → **Abrir**, ou libere em *Ajustes do Sistema → Privacidade e Segurança → Abrir Mesmo Assim*.
-3. Abra **Preferências** e clique em **Instalar componente auxiliar…**. É o único momento em que a senha de administrador é pedida.
+Baixe o `.dmg` mais recente em [Releases](https://github.com/nandoolle/taurine/releases), arraste o Taurine para a pasta Aplicativos e abra.
 
-Sem o componente auxiliar o Taurine não ativa: o menu apenas leva às Preferências.
+O app não é notarizado. Na primeira abertura, clique com o botão direito → **Abrir**, ou libere em *Ajustes do Sistema → Privacidade e Segurança → Abrir Mesmo Assim*.
 
-## Usar
+Depois, em **Preferências**, clique em **Instalar componente auxiliar…**. É a única vez em que a senha de administrador é pedida. Sem o componente, o Taurine não ativa.
 
-- Clique na latinha para ligar/desligar; botão direito abre o menu.
-- **Ativar por** escolhe uma duração; as Preferências definem a duração padrão e a ativação ao abrir.
-- **Proteção da bateria** (ligada por padrão) desliga o bloqueio quando, na bateria, a carga fica igual ou abaixo do limite (padrão 60%). Na tomada o corte não se aplica.
-- **Manter apps ativos** simula atividade e pode pedir permissão de Acessibilidade.
-- Um triângulo no ícone indica que o repouso precisa ser restaurado. Use **Restaurar repouso…**.
+### Uso
 
-`disablesleep` é uma configuração global e persistente. O Taurine sempre restaura para `0`; não guarda um valor anterior diferente.
+O Taurine coloca uma latinha na barra de menus. Clique nela para ligar ou desligar: latinha aberta significa que o Mac não vai dormir, escurecer a tela nem iniciar o descanso de tela, mesmo com a tampa fechada.
 
-## Componente auxiliar
+<img src="assets/readme/menubar.png" alt="Barra de menus" width="460"/>
 
-Um LaunchDaemon (`dev.taurine.helper`) roda como root e é o único que executa o `pmset`. Arquivos instalados:
+Para mais controle, clique com o botão direito (ou ⌘-clique) no ícone. Dali você abre as Preferências ou define por quanto tempo o Taurine deve ficar ativo.
+
+<img src="assets/readme/menu.png" alt="Menu" width="460"/>
+
+Nas Preferências você define a duração padrão, se o Taurine ativa ao abrir, um som discreto ao ativar, e a **proteção da bateria**: na bateria, o Taurine desliga sozinho quando a carga chega ao limite escolhido (60% por padrão). Na tomada o corte não se aplica.
+
+<img src="assets/readme/preferences.png" alt="Preferências" width="645"/>
+
+Um triângulo no ícone indica que o repouso precisa ser restaurado. Use **Restaurar repouso…**.
+
+### Como funciona
+
+Manter o Mac acordado de tampa fechada exige `pmset -a disablesleep 1`, uma configuração global e persistente que precisa de root. O Taurine instala um LaunchDaemon (`dev.taurine.helper`) que é o único a executar esse comando, e conversa com ele por XPC.
+
+Quando a conexão com o app cai (fechamento, falha, encerramento forçado, logout), o componente restaura o repouso. Em todo boot restaura o repouso incondicionalmente e, se o app tiver sido apagado, remove-se sozinho. Arquivos instalados:
 
 - `/Library/PrivilegedHelperTools/dev.taurine.helper`
 - `/Library/LaunchDaemons/dev.taurine.helper.plist`
 - `/var/db/taurine/`
-
-O app fala com ele por XPC. Quando a conexão cai (fechamento, falha, encerramento forçado, logout), o componente restaura o repouso. Em todo boot restaura o repouso incondicionalmente e, se o app tiver sido apagado, remove-se sozinho.
 
 Para remover: Preferências → **Remover componente auxiliar…**. Manualmente, restaurando o repouso antes de tudo:
 
@@ -43,7 +50,21 @@ sudo rm -f /Library/PrivilegedHelperTools/dev.taurine.helper /Library/LaunchDaem
 sudo rm -rf /var/db/taurine
 ```
 
-## Compilar
+### FAQ
+
+##### Por que pedir senha de administrador?
+
+Porque `disablesleep` só pode ser alterado por root. O Caffeine e similares usam apenas asserções do IOKit, que não exigem senha, mas também não mantêm o Mac acordado de tampa fechada.
+
+##### E se o Mac desligar por falta de bateria com o Taurine ativo?
+
+O componente auxiliar roda em todo boot e restaura o repouso antes de qualquer coisa. Fechar a tampa volta a colocar o Mac para dormir.
+
+##### Posso fechar o app e manter o Mac acordado?
+
+Não. Taurine fechado significa Mac dormindo normalmente. Essa é a regra que o componente auxiliar existe para garantir.
+
+### Compilar
 
 Sem dependências externas. Com Swift 6.2 e o SDK do macOS:
 
@@ -53,8 +74,8 @@ Sem dependências externas. Com Swift 6.2 e o SDK do macOS:
 swift test
 ```
 
-Também é possível abrir `src/Taurine.xcodeproj` ou usar `./scripts/build-xcode.sh`. Os testes usam simulações do componente auxiliar, da bateria e da energia; não executam nada privilegiado.
+Também é possível abrir `src/Taurine.xcodeproj` ou usar `./scripts/build-xcode.sh`.
 
-## Créditos e licença
+### Créditos e licença
 
 Baseado no Caffeine de Tomas Franzén, Michael Jones e Dominic Rodemer. Licença MIT, com os créditos originais preservados em [LICENSE](LICENSE). Histórico de versões em [CHANGELOG.md](CHANGELOG.md).
