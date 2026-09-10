@@ -11,7 +11,9 @@ final class HelperInstaller {
 
     init(
         fileExists: @escaping (String) -> Bool = { FileManager.default.fileExists(atPath: $0) },
-        run: @escaping (String, [String]) async throws -> CommandOutput = { try await CommandRunner.run($0, arguments: $1) }
+        run: @escaping (String, [String]) async throws -> CommandOutput = { _, arguments in
+            await AppleScriptRunner.run(arguments.count > 1 ? arguments[1] : "")
+        }
     ) {
         self.fileExists = fileExists
         self.run = run

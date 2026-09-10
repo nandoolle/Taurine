@@ -15,6 +15,14 @@ public enum HelperPaths {
     public static let label = "dev.taurine.helper"
     public static let machService = label
     public static let appBundleIdentifier = "dev.taurine.app"
+    public static let teamIdentifier = "6Y9HYL9GKV"
+    /// Requisito de assinatura exigido do app pelo helper. Fixo de propósito:
+    /// é uma afirmação sobre o binário publicado, não deve ser configurável
+    /// por quem compila.
+    public static let clientCodeSigningRequirement = """
+    identifier "\(appBundleIdentifier)" and anchor apple generic \
+    and certificate leaf[subject.OU] = "\(teamIdentifier)"
+    """
     public static let installedBinary = "/Library/PrivilegedHelperTools/dev.taurine.helper"
     public static let installedPlist = "/Library/LaunchDaemons/dev.taurine.helper.plist"
     public static let stateDirectory = "/var/db/taurine"

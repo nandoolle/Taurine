@@ -6,9 +6,10 @@ import SwiftUI
 @MainActor
 class TaurineViewModel: ObservableObject {
     @Published var showPreferences = false
-    @Published private(set) var timeRemaining: TimeInterval?
+    // Não é @Published de propósito: recalculado a cada segundo e não lido por
+    // nenhuma view. Publicar reconstruía as Preferências 1x/s.
+    private(set) var timeRemaining: TimeInterval?
 
-    @Published private(set) var batteryReading: BatteryReading = .unavailable
     @Published private(set) var installingHelper = false
     private let installer = HelperInstaller()
     let session: PowerSession
@@ -73,8 +74,10 @@ class TaurineViewModel: ObservableObject {
 
     // Called after menu observers are installed, so launch errors and welcome
     // UI cannot be lost during controller initialization.
-    func start() {
-        self.showPreferences = !UserDefaults.standard.bool(forKey: PreferenceKeys.suppressLaunchMessage)
+    func start(launchSource: LaunchSource = .user) {
+        // Abrir o app é um pedido explícito de atenção; subir como item de login
+        // não é, e a janela roubaria a tela no meio do login.
+        self.showPreferences = launchSource == .user
         self.batterySource = IOPSNotificationCreateRunLoopSource({ _ in
             Task { @MainActor in
                 NotificationCenter.default.post(name: Notification.Name("TaurineBatteryChanged"), object: nil)
@@ -143,7 +146,6 @@ class TaurineViewModel: ObservableObject {
     }
 
     func checkBattery() async {
-        self.batteryReading = self.battery.read()
         guard !self.installingHelper else { return }
         await self.session.enforceBatteryLimit()
     }
@@ -187,18 +189,6 @@ class TaurineViewModel: ObservableObject {
         }
     }
 
-    var batteryStatusText: String {
-        switch self.batteryReading {
-        case let .battery(status):
-            let format = String(localized: "Current battery: %d%%")
-            return String.localizedStringWithFormat(format, status.percentage)
-        case .noBattery:
-            return String(localized: "No internal battery")
-        case .unavailable:
-            return String(localized: "Battery level unavailable")
-        }
-    }
-
     func updateActivitySimulation(enabled: Bool) {
         if enabled { ActivitySimulator.shared.requestPermission() }
         if enabled, self.isActive {
@@ -237,6 +227,6 @@ enum PreferenceKeys {
     static let batteryThreshold = "TaurineBatteryThreshold"
     static let activateAtLaunch = "TaurineActivateAtLaunch"
     static let defaultDuration = "TaurineDefaultDuration"
-    static let suppressLaunchMessage = "TaurineSuppressLaunchMessage"
     static let keepAppsActive = "TaurineKeepAppsActive"
+    static let showInDock = "TaurineShowInDock"
 }

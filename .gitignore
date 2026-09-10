@@ -42,6 +42,9 @@ build/
 
 # Assinatura e segredos
 *.p12
+*.key
+*.pem
+*.csr
 *.cer
 *.mobileprovision
 *.provisionprofile

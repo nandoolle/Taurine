@@ -11,7 +11,7 @@ Requer macOS 14.6 ou posterior.
 
 Baixe o `.dmg` mais recente em [Releases](https://github.com/nandoolle/taurine/releases), arraste o Taurine para a pasta Aplicativos e abra.
 
-O app não é notarizado. Na primeira abertura, clique com o botão direito → **Abrir**, ou libere em *Ajustes do Sistema → Privacidade e Segurança → Abrir Mesmo Assim*.
+O app é assinado com Developer ID e notarizado pela Apple, então abre normalmente — sem contornar o Gatekeeper.
 
 Depois, em **Preferências**, clique em **Instalar componente auxiliar…**. É a única vez em que a senha de administrador é pedida. Sem o componente, o Taurine não ativa.
 

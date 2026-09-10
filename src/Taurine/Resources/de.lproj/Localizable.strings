@@ -28,7 +28,7 @@
 "Default duration:" = "Standarddauer:";
 "Activate when starting Taurine" = "Taurine beim Start aktivieren";
 "Deactivate when device goes to sleep manually" = "Beim manuellen Ruhezustand deaktivieren";
-"Show this message when starting Taurine" = "Diese Nachricht beim Start von Taurine anzeigen";
+"Launch at startup" = "Beim Anmelden öffnen";
 "Keep apps active" = "Apps aktiv halten";
 "Prevents apps from becoming inactive and the screen saver from starting." = "Verhindert, dass Apps inaktiv werden und der Bildschirmschoner startet.";
 "Close" = "Schließen";
@@ -43,3 +43,21 @@
 /* System messages */
 "Taurine prevents sleep" = "Taurine verhindert den Ruhezustand";
 
+
+/* Install disk eject offer */
+"Eject the Taurine install disk?" = "Taurine-Installationsmedium auswerfen?";
+"Taurine is installed. The disk image it came from is still mounted." = "Taurine ist installiert. Das Disk-Image, aus dem es stammt, ist noch eingebunden.";
+"Eject" = "Auswerfen";
+"Keep Mounted" = "Eingebunden lassen";
+
+/* Dock presence */
+"Show Taurine in Dock" = "Taurine im Dock anzeigen";
+"The install disk could not be ejected." = "Das Installationsmedium konnte nicht ausgeworfen werden.";
+"It may still be in use. Close any window showing it and eject it from the Finder." = "Es wird möglicherweise noch verwendet. Schließen Sie alle Fenster, die es anzeigen, und werfen Sie es im Finder aus.";
+
+/* Helper explanation */
+"Taurine needs a small system helper to ensure correct lid closing behavior." = "Taurine benötigt eine kleine Systemkomponente, um das korrekte Verhalten beim Schließen des Deckels sicherzustellen.";
+
+/* Battery caption and tagline */
+"Give your Mac a break at this battery level. No more Taurine until you open another can." = "Geben Sie Ihrem Mac bei diesem Batteriestand eine Pause. Kein Taurine mehr, bis Sie eine neue Dose öffnen.";
+"The extra energy your Mac needs to never fall asleep." = "Die zusätzliche Energie, die Ihr Mac braucht, um nie einzuschlafen.";

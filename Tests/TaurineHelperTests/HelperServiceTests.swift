@@ -87,6 +87,24 @@ final class HelperServiceTests: XCTestCase {
         XCTAssertTrue(calls.contains(["/usr/bin/pmset", "-a", "disablesleep", "0"]))
     }
 
+    // Sinal que distingue mismatch de assinatura de encerramento normal: uma
+    // conexão reprovada morre antes de qualquer mensagem chegar ao handler.
+    func testServedAnyMessageOnlyAfterAMessageArrives() async {
+        let recorder = CommandRecorder(outputs: [])
+        let handler = ConnectionHandler(
+            token: SessionToken(),
+            sleep: SleepControl(run: { try await recorder.run($0, $1) }),
+            tracker: SessionTracker()
+        )
+        XCTAssertFalse(handler.servedAnyMessage)
+
+        let box = ReplyBox()
+        handler.version { _ in Task { await box.record(nil) } }
+        _ = await box.first()
+
+        XCTAssertTrue(handler.servedAnyMessage)
+    }
+
     func testNonOwnerCannotReleaseAnotherSession() async {
         let recorder = CommandRecorder(outputs: [])
         let tracker = SessionTracker()

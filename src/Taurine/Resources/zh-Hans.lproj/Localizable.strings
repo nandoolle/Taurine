@@ -28,7 +28,7 @@
 "Default duration:" = "默认时长：";
 "Activate when starting Taurine" = "启动 Taurine 时自动激活";
 "Deactivate when device goes to sleep manually" = "设备手动睡眠时停用";
-"Show this message when starting Taurine" = "启动 Taurine 时显示此消息";
+"Launch at startup" = "登录时启动";
 "Keep apps active" = "保持应用活跃";
 "Prevents apps from becoming inactive and the screen saver from starting." = "防止应用变为非活跃状态并阻止屏幕保护程序启动。";
 "Close" = "关闭";
@@ -43,3 +43,21 @@
 /* System messages */
 "Taurine prevents sleep" = "Taurine 会阻止睡眠";
 
+
+/* Install disk eject offer */
+"Eject the Taurine install disk?" = "推出 Taurine 安装磁盘？";
+"Taurine is installed. The disk image it came from is still mounted." = "Taurine 已安装。它所来自的磁盘映像仍处于挂载状态。";
+"Eject" = "推出";
+"Keep Mounted" = "保持挂载";
+
+/* Dock presence */
+"Show Taurine in Dock" = "在 Dock 中显示 Taurine";
+"The install disk could not be ejected." = "无法推出安装磁盘。";
+"It may still be in use. Close any window showing it and eject it from the Finder." = "它可能仍在使用中。请关闭显示它的窗口，然后在 Finder 中推出。";
+
+/* Helper explanation */
+"Taurine needs a small system helper to ensure correct lid closing behavior." = "为确保合盖时的行为正确，Taurine 需要一个小型系统辅助工具。";
+
+/* Battery caption and tagline */
+"Give your Mac a break at this battery level. No more Taurine until you open another can." = "在此电量下让你的 Mac 歇一歇。再开一罐之前，Taurine 就先歇着。";
+"The extra energy your Mac needs to never fall asleep." = "让你的 Mac 永不入睡所需的那点额外能量。";

@@ -28,7 +28,7 @@
 "Default duration:" = "Standaardduur:";
 "Activate when starting Taurine" = "Taurine bij starten inschakelen";
 "Deactivate when device goes to sleep manually" = "Uitschakelen wanneer het apparaat handmatig in sluimerstand gaat";
-"Show this message when starting Taurine" = "Dit bericht tonen bij het starten van Taurine";
+"Launch at startup" = "Openen bij inloggen";
 "Keep apps active" = "Apps actief houden";
 "Prevents apps from becoming inactive and the screen saver from starting." = "Voorkomt dat apps inactief worden en dat de schermbeveiliging start.";
 "Close" = "Sluiten";
@@ -42,3 +42,21 @@
 
 /* System messages */
 "Taurine prevents sleep" = "Taurine voorkomt sluimerstand";
+
+/* Install disk eject offer */
+"Eject the Taurine install disk?" = "Taurine-installatieschijf verwijderen?";
+"Taurine is installed. The disk image it came from is still mounted." = "Taurine is geïnstalleerd. De schijfkopie waaruit het kwam is nog gekoppeld.";
+"Eject" = "Verwijderen";
+"Keep Mounted" = "Gekoppeld houden";
+
+/* Dock presence */
+"Show Taurine in Dock" = "Taurine in Dock weergeven";
+"The install disk could not be ejected." = "De installatieschijf kon niet worden verwijderd.";
+"It may still be in use. Close any window showing it and eject it from the Finder." = "Deze is mogelijk nog in gebruik. Sluit vensters die de schijf tonen en verwijder deze via de Finder.";
+
+/* Helper explanation */
+"Taurine needs a small system helper to ensure correct lid closing behavior." = "Taurine heeft een kleine systeemcomponent nodig om het juiste gedrag bij het sluiten van het deksel te garanderen.";
+
+/* Battery caption and tagline */
+"Give your Mac a break at this battery level. No more Taurine until you open another can." = "Geef je Mac bij dit batterijniveau even rust. Geen Taurine meer totdat je een nieuw blikje opent.";
+"The extra energy your Mac needs to never fall asleep." = "De extra energie die je Mac nodig heeft om nooit in slaap te vallen.";

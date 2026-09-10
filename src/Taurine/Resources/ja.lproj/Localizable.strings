@@ -28,7 +28,7 @@
 "Default duration:" = "デフォルトの時間:";
 "Activate when starting Taurine" = "Taurine 起動時に有効化";
 "Deactivate when device goes to sleep manually" = "手動でスリープしたときに無効化";
-"Show this message when starting Taurine" = "Taurine 起動時にこのメッセージを表示";
+"Launch at startup" = "ログイン時に起動";
 "Keep apps active" = "アプリをアクティブに保つ";
 "Prevents apps from becoming inactive and the screen saver from starting." = "アプリが非アクティブになるのを防ぎ、スクリーンセーバーの起動を防止します。";
 "Close" = "閉じる";
@@ -43,3 +43,21 @@
 /* System messages */
 "Taurine prevents sleep" = "Taurine がスリープを防ぎます";
 
+
+/* Install disk eject offer */
+"Eject the Taurine install disk?" = "Taurine のインストールディスクを取り出しますか？";
+"Taurine is installed. The disk image it came from is still mounted." = "Taurine はインストールされました。元のディスクイメージがまだマウントされています。";
+"Eject" = "取り出す";
+"Keep Mounted" = "マウントしたままにする";
+
+/* Dock presence */
+"Show Taurine in Dock" = "Taurine を Dock に表示";
+"The install disk could not be ejected." = "インストールディスクを取り出せませんでした。";
+"It may still be in use. Close any window showing it and eject it from the Finder." = "まだ使用中の可能性があります。表示しているウインドウを閉じて、Finder から取り出してください。";
+
+/* Helper explanation */
+"Taurine needs a small system helper to ensure correct lid closing behavior." = "ふたを閉じたときの動作を正しく保つため、Taurine には小さなシステムヘルパーが必要です。";
+
+/* Battery caption and tagline */
+"Give your Mac a break at this battery level. No more Taurine until you open another can." = "このバッテリー残量で Mac を休ませます。次の一缶を開けるまで Taurine はお休みです。";
+"The extra energy your Mac needs to never fall asleep." = "Mac が決して眠らないための、ひとさじのエネルギー。";

@@ -8,8 +8,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var menuBarController: MenuBarController?
     private var lockDescriptor: Int32 = -1
 
-    func applicationDidFinishLaunching(_: Notification) {
-        NSApp.setActivationPolicy(.accessory)
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        DockPresence.apply(showInDock: UserDefaults.standard.bool(forKey: PreferenceKeys.showInDock))
         self.setupMainMenu()
         do {
             // A process-owned lock also covers copies of Taurine at other paths.
@@ -24,11 +24,35 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 NSApp.terminate(nil)
                 return
             }
-            self.menuBarController = MenuBarController()
+            self.menuBarController = MenuBarController(launchSource: LaunchSource.from(launchUserInfo: notification.userInfo))
+            self.offerToEjectInstallDisk()
         } catch {
             let alert = NSAlert(error: error)
             alert.runModal()
             NSApp.terminate(nil)
+        }
+    }
+
+    private func offerToEjectInstallDisk() {
+        guard let volume = InstallDiskOffer.volumeToEject(
+            bundlePath: Bundle.main.bundlePath,
+            mountedVolumes: InstallDiskOffer.liveMountedVolumes()
+        ) else { return }
+        let alert = NSAlert()
+        alert.messageText = String(localized: "Eject the Taurine install disk?")
+        alert.informativeText = String(localized: "Taurine is installed. The disk image it came from is still mounted.")
+        alert.addButton(withTitle: String(localized: "Eject"))
+        alert.addButton(withTitle: String(localized: "Keep Mounted"))
+        guard alert.runModal() == .alertFirstButtonReturn else { return }
+        do {
+            try NSWorkspace.shared.unmountAndEjectDevice(at: URL(fileURLWithPath: volume))
+        } catch {
+            // Sem isto o clique em Ejetar não produz efeito visível quando o
+            // volume está em uso — tipicamente aberto no Finder.
+            let failure = NSAlert()
+            failure.messageText = String(localized: "The install disk could not be ejected.")
+            failure.informativeText = String(localized: "It may still be in use. Close any window showing it and eject it from the Finder.")
+            failure.runModal()
         }
     }
 

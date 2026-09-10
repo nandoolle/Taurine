@@ -28,7 +28,7 @@
 "Default duration:" = "Длительность по умолчанию:";
 "Activate when starting Taurine" = "Активировать при запуске Taurine";
 "Deactivate when device goes to sleep manually" = "Деактивировать при ручном переводе устройства в сон";
-"Show this message when starting Taurine" = "Показывать это сообщение при запуске Taurine";
+"Launch at startup" = "Запускать при входе в систему";
 "Keep apps active" = "Поддерживать активность приложений";
 "Prevents apps from becoming inactive and the screen saver from starting." = "Предотвращает переход приложений в неактивный режим и запуск заставки.";
 "Close" = "Закрыть";
@@ -42,3 +42,21 @@
 
 /* System messages */
 "Taurine prevents sleep" = "Taurine предотвращает переход в сон";
+
+/* Install disk eject offer */
+"Eject the Taurine install disk?" = "Извлечь установочный диск Taurine?";
+"Taurine is installed. The disk image it came from is still mounted." = "Taurine установлен. Образ диска, с которого он был установлен, всё ещё подключён.";
+"Eject" = "Извлечь";
+"Keep Mounted" = "Оставить подключённым";
+
+/* Dock presence */
+"Show Taurine in Dock" = "Показывать Taurine в Dock";
+"The install disk could not be ejected." = "Не удалось извлечь установочный диск.";
+"It may still be in use. Close any window showing it and eject it from the Finder." = "Возможно, он ещё используется. Закройте окна, в которых он открыт, и извлеките его через Finder.";
+
+/* Helper explanation */
+"Taurine needs a small system helper to ensure correct lid closing behavior." = "Taurine нужен небольшой системный компонент, чтобы обеспечить правильное поведение при закрытии крышки.";
+
+/* Battery caption and tagline */
+"Give your Mac a break at this battery level. No more Taurine until you open another can." = "Дайте Mac передохнуть на этом уровне заряда. Больше никакого Taurine, пока не откроете новую банку.";
+"The extra energy your Mac needs to never fall asleep." = "Дополнительная энергия, которая нужна вашему Mac, чтобы никогда не засыпать.";

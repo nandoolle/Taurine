@@ -1,3 +1,4 @@
+import Security
 import XCTest
 @testable import TaurineHelper
 @testable import TaurineShared
@@ -31,5 +32,23 @@ final class ConnectionPolicyTests: XCTestCase {
         XCTAssertNil(ConnectionPolicy.bundleIdentifier(ofExecutableAt: ""))
         XCTAssertNil(ConnectionPolicy.bundleIdentifier(ofExecutableAt: "Fake/Contents/MacOS/Fake"))
         XCTAssertNil(ConnectionPolicy.bundleIdentifier(ofExecutableAt: "relative"))
+    }
+
+    // O identificador sozinho é falsificável por qualquer bundle não assinado:
+    // é a âncora Apple somada ao time que torna o requisito inforjável.
+    func testCodeSigningRequirementPinsIdentifierAnchorAndTeam() {
+        let requirement = HelperPaths.clientCodeSigningRequirement
+        XCTAssertTrue(requirement.contains(#"identifier "dev.taurine.app""#))
+        XCTAssertTrue(requirement.contains("anchor apple generic"))
+        XCTAssertTrue(requirement.contains(#"certificate leaf[subject.OU] = "6Y9HYL9GKV""#))
+    }
+
+    func testCodeSigningRequirementIsAcceptedByTheSecurityFramework() throws {
+        var requirement: SecRequirement?
+        XCTAssertEqual(
+            SecRequirementCreateWithString(HelperPaths.clientCodeSigningRequirement as CFString, [], &requirement),
+            errSecSuccess
+        )
+        XCTAssertNotNil(requirement)
     }
 }

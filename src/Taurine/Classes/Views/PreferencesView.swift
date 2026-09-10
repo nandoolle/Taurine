@@ -5,7 +5,6 @@ struct PreferencesView: View {
     @ObservedObject var viewModel: TaurineViewModel
     @AppStorage(PreferenceKeys.defaultDuration) private var defaultDuration = 0
     @AppStorage(PreferenceKeys.activateAtLaunch) private var activateAtLaunch = false
-    @AppStorage(PreferenceKeys.suppressLaunchMessage) private var suppressLaunchMessage = false
     @AppStorage(PreferenceKeys.keepAppsActive) private var keepAppsActive = false
     @AppStorage(PreferenceKeys.batteryThreshold) private var batteryThreshold = BatteryPolicy.defaultThreshold
 
@@ -14,13 +13,41 @@ struct PreferencesView: View {
     @AppStorage(PreferenceKeys.playActivationSound) private var playActivationSound = true
 
     @State private var thresholdText = ""
+    // O estado real do item de login vive no sistema — o usuário pode revogá-lo
+    // em Ajustes do Sistema — então é lido de lá, não de UserDefaults.
+    @State private var launchAtStartup = LaunchAtStartup.isEnabled
+    @State private var launchAtStartupError: String?
     @FocusState private var thresholdIsFocused: Bool
+
+    private func setLaunchAtStartup(_ enabled: Bool) {
+        do {
+            try LaunchAtStartup.setEnabled(enabled)
+            self.launchAtStartupError = nil
+        } catch {
+            self.launchAtStartupError = error.localizedDescription
+        }
+        // Relê do sistema: um registro recusado deixaria o toggle mentindo.
+        self.launchAtStartup = LaunchAtStartup.isEnabled
+    }
 
     private func commitThreshold() {
         if let value = Int(self.thresholdText.trimmingCharacters(in: .whitespacesAndNewlines)) {
             self.batteryThreshold = BatteryPolicy.threshold(value)
         }
         self.thresholdText = String(BatteryPolicy.threshold(self.batteryThreshold))
+    }
+
+    /// A troca acontece no ciclo seguinte: no mesmo ciclo o AppKit ainda não
+    /// terminou de eleger o novo primeiro responder e a limpeza é desfeita.
+    private func clearFirstResponder() {
+        DispatchQueue.main.async {
+            NSApp.keyWindow?.makeFirstResponder(nil)
+        }
+    }
+
+    private var strokeColor: Color {
+        guard self.batteryProtectionEnabled else { return .secondary.opacity(0.25) }
+        return self.thresholdIsFocused ? .accentColor : .secondary.opacity(0.5)
     }
 
     private var helperHeadline: LocalizedStringKey {
@@ -36,7 +63,7 @@ struct PreferencesView: View {
                     .frame(width: 72, height: 72)
                 VStack(alignment: .leading, spacing: 5) {
                     Text("Taurine").font(.title2.bold())
-                    Text("Keep your Mac awake, with a little peace of mind.")
+                    Text("The extra energy your Mac needs to never fall asleep.")
                         .foregroundStyle(.secondary)
                     Text("Right-click (or ⌃-click) the menu bar icon to show the Taurine menu.")
                         .font(.caption)
@@ -45,73 +72,90 @@ struct PreferencesView: View {
             }
 
             VStack(alignment: .leading, spacing: 14) {
-                HStack(spacing: 12) {
+                HStack(spacing: 10) {
+                    // O toggle abre a linha: antes havia um segundo controle
+                    // "Battery protection" abaixo, repetindo o mesmo rótulo.
+                    Toggle("", isOn: Binding(
+                        get: { self.batteryProtectionEnabled },
+                        set: { value in
+                            self.batteryProtectionEnabled = value
+                            // Religar a seção faz o AppKit eleger o slider como
+                            // primeiro responder: devolvemos o foco à janela.
+                            if value { self.clearFirstResponder() }
+                        }
+                    ))
+                        .toggleStyle(.switch)
+                        .controlSize(.small)
+                        .labelsHidden()
+                        .accessibilityLabel(Text("Battery protection"))
                     Text("Battery protection")
                         .font(.system(size: 12, weight: .medium))
                         .fixedSize()
-                    Slider(value: Binding(
-                        get: { Double(BatteryPolicy.threshold(self.batteryThreshold)) },
-                        set: { value in
-                            self.batteryThreshold = BatteryPolicy.threshold(Int(value.rounded()))
-                            self.thresholdText = String(self.batteryThreshold)
+                        .foregroundStyle(self.batteryProtectionEnabled ? AnyShapeStyle(.primary) : AnyShapeStyle(.secondary))
+                    Group {
+                        Slider(value: Binding(
+                            get: { Double(BatteryPolicy.threshold(self.batteryThreshold)) },
+                            set: { value in
+                                self.batteryThreshold = BatteryPolicy.threshold(Int(value.rounded()))
+                                self.thresholdText = String(self.batteryThreshold)
+                            }
+                        ), in: 1...100, onEditingChanged: { editing in
+                            if editing {
+                                self.commitThreshold()
+                                self.thresholdIsFocused = false
+                            }
+                        })
+                        .tint(.primary)
+                        .accessibilityLabel(Text("Battery cutoff"))
+                        .accessibilityValue(Text("\(BatteryPolicy.threshold(self.batteryThreshold))%"))
+                        HStack(spacing: 5) {
+                            BatteryLevelIcon(percentage: BatteryPolicy.threshold(self.batteryThreshold))
+                            HStack(spacing: 3) {
+                                TextField("", text: Binding(
+                                    get: { self.thresholdText },
+                                    set: { self.thresholdText = BatteryPolicy.sanitizedThresholdText($0) }
+                                ))
+                                    .textFieldStyle(.plain)
+                                    .font(.system(size: 13, weight: .semibold).monospacedDigit())
+                                    .multilineTextAlignment(.trailing)
+                                    .frame(width: 29)
+                                    .focused(self.$thresholdIsFocused)
+                                    .accessibilityLabel(Text("Battery cutoff percentage"))
+                                    .help(Text("Enter a number from 1 to 100. Press Return to apply."))
+                                    .onSubmit {
+                                        self.commitThreshold()
+                                        self.thresholdIsFocused = false
+                                    }
+                                    .onExitCommand {
+                                        self.thresholdText = String(BatteryPolicy.threshold(self.batteryThreshold))
+                                        self.thresholdIsFocused = false
+                                    }
+                                Text("%").font(.system(size: 13, weight: .semibold))
+                            }
+                            // `disabled` esmaece o label e o slider, mas não a cor de
+                            // texto de um TextField: sem isto o número e o "%"
+                            // continuariam em contraste cheio com o box desativado.
+                            .foregroundStyle(self.batteryProtectionEnabled ? AnyShapeStyle(.primary) : AnyShapeStyle(.tertiary))
+                            .padding(.horizontal, 7)
+                            .padding(.vertical, 5)
+                            .background(.background.opacity(0.35), in: RoundedRectangle(cornerRadius: 6))
+                            .overlay(RoundedRectangle(cornerRadius: 6)
+                                .stroke(self.strokeColor, lineWidth: 1))
                         }
-                    ), in: 1...100, onEditingChanged: { editing in
-                        if editing {
-                            self.commitThreshold()
-                            self.thresholdIsFocused = false
-                        }
-                    })
-                    .tint(.primary)
-                    .accessibilityLabel(Text("Battery cutoff"))
-                    .accessibilityValue(Text("\(BatteryPolicy.threshold(self.batteryThreshold))%"))
-                    HStack(spacing: 5) {
-                        BatteryLevelIcon(percentage: BatteryPolicy.threshold(self.batteryThreshold))
-                        HStack(spacing: 3) {
-                            TextField("", text: Binding(
-                                get: { self.thresholdText },
-                                set: { self.thresholdText = BatteryPolicy.sanitizedThresholdText($0) }
-                            ))
-                                .textFieldStyle(.plain)
-                                .font(.system(size: 13, weight: .semibold).monospacedDigit())
-                                .multilineTextAlignment(.trailing)
-                                .frame(width: 29)
-                                .focused(self.$thresholdIsFocused)
-                                .accessibilityLabel(Text("Battery cutoff percentage"))
-                                .help(Text("Enter a number from 1 to 100. Press Return to apply."))
-                                .onSubmit {
-                                    self.commitThreshold()
-                                    self.thresholdIsFocused = false
-                                }
-                                .onExitCommand {
-                                    self.thresholdText = String(BatteryPolicy.threshold(self.batteryThreshold))
-                                    self.thresholdIsFocused = false
-                                }
-                            Text("%").font(.system(size: 13, weight: .semibold))
-                        }
-                        .padding(.horizontal, 7)
-                        .padding(.vertical, 5)
-                        .background(.background.opacity(0.35), in: RoundedRectangle(cornerRadius: 6))
-                        .overlay(RoundedRectangle(cornerRadius: 6)
-                            .stroke(self.thresholdIsFocused ? Color.accentColor : Color.secondary.opacity(0.5), lineWidth: 1))
                     }
+                    // Só o slider e o campo desabilitam: o toggle que os controla
+                    // tem de seguir clicável.
+                    .disabled(!self.batteryProtectionEnabled)
+                    // O slider é o único controle focável da linha, então o AppKit
+                    // o elege primeiro responder e desenha um anel permanente. O
+                    // efeito é de ambiente: aplicado no controle não surte efeito,
+                    // tem de envolver a hierarquia.
+                    .focusEffectDisabled()
                 }
-                .disabled(!self.batteryProtectionEnabled)
-                Text("While on battery, turn off sleep protection at or below this level. Taurine stays off until you turn it on again.")
+                Text("Give your Mac a break at this battery level. No more Taurine until you open another can.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
-                HStack(spacing: 6) {
-                    Toggle("Battery protection", isOn: self.$batteryProtectionEnabled)
-                        .toggleStyle(.switch)
-                        .controlSize(.small)
-                        .font(.caption)
-                    Spacer()
-                    if case let .battery(status) = self.viewModel.batteryReading {
-                        BatteryLevelIcon(percentage: status.percentage)
-                    }
-                    Text(self.viewModel.batteryStatusText)
-                        .font(.caption.weight(.medium))
-                }
             }
             .padding(20)
             .background(.quaternary.opacity(0.55), in: RoundedRectangle(cornerRadius: 22))
@@ -124,7 +168,7 @@ struct PreferencesView: View {
                     Text(self.helperHeadline)
                         .font(.headline)
                     Text(self.viewModel.needsHelper
-                         ? "Taurine needs a small system helper to keep the Mac awake with the lid closed. Installing it asks for your password once. The helper restores sleep whenever Taurine quits, crashes, or the Mac restarts."
+                         ? "Taurine needs a small system helper to ensure correct lid closing behavior."
                          : "Toggles, timers and battery protection work without password prompts. Sleep is restored automatically if Taurine quits unexpectedly or the Mac restarts.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
@@ -134,7 +178,11 @@ struct PreferencesView: View {
                 if self.viewModel.installingHelper {
                     ProgressView().controlSize(.small)
                 } else if self.viewModel.needsHelper {
+                    // Instalar o componente é a ação pendente da janela: como botão
+                    // padrão ele recebe o foco e responde a Return, em vez de o
+                    // AppKit eleger o slider da bateria.
                     Button(self.viewModel.helperOutdated ? "Update helper…" : "Install helper…") { self.viewModel.installHelper() }
+                        .keyboardShortcut(.defaultAction)
                         .disabled(self.viewModel.isBusy)
                 } else {
                     Button("Remove helper…") { self.viewModel.removeHelper() }
@@ -160,22 +208,32 @@ struct PreferencesView: View {
                 Spacer()
             }
             VStack(alignment: .leading, spacing: 10) {
+                Toggle("Launch at startup", isOn: Binding(
+                    get: { self.launchAtStartup },
+                    set: { self.setLaunchAtStartup($0) }
+                ))
+                if let launchAtStartupError = self.launchAtStartupError {
+                    Text(launchAtStartupError)
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
                 Toggle("Activate when starting Taurine", isOn: self.$activateAtLaunch)
-                Toggle("Show this message when starting Taurine", isOn: Binding(
-                    get: { !self.suppressLaunchMessage },
-                    set: { self.suppressLaunchMessage = !$0 }
-                ))
                 Toggle("Play a quiet sound when activating Taurine", isOn: self.$playActivationSound)
-                Toggle("Keep apps active", isOn: Binding(
-                    get: { self.keepAppsActive },
-                    set: { value in
-                        self.keepAppsActive = value
-                        self.viewModel.updateActivitySimulation(enabled: value)
-                    }
-                ))
-                Text("Prevents apps from becoming inactive and the screen saver from starting.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    Toggle("Keep apps active", isOn: Binding(
+                        get: { self.keepAppsActive },
+                        set: { value in
+                            self.keepAppsActive = value
+                            self.viewModel.updateActivitySimulation(enabled: value)
+                        }
+                    ))
+                    .fixedSize()
+                    Text("Prevents apps from becoming inactive and the screen saver from starting.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
             }
             HStack {
                 Button("Quit") { NSApp.terminate(nil) }

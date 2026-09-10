@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.0 — 2026-09-10
+
+- O app e o componente auxiliar passam a ser assinados com Developer ID, com hardened runtime, e a distribuição é notarizada pela Apple: não é mais preciso contornar o Gatekeeper na primeira abertura.
+- O componente auxiliar agora verifica a assinatura de quem se conecta a ele, em vez de confiar no identificador declarado no bundle do chamador.
+- Adiciona `scripts/release.sh`, que assina, notariza e faz staple do app e do DMG.
+- Ao abrir depois de instalado, o Taurine oferece ejetar a imagem de disco de instalação, se ela ainda estiver montada.
+- Nova opção **Mostrar o Taurine no Dock**, desativada por padrão. Com ela ligada, clicar no ícone do Dock abre as Preferências.
+- Novo ícone do app e novos ícones da barra de menus.
+
 ## 0.3.0 — 2026-09-07
 
 - Substitui o uso direto de `pmset` (senha a cada ativação ou regra em `sudoers.d`) por um componente auxiliar privilegiado instalado uma única vez.

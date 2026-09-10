@@ -28,7 +28,7 @@
 "Default duration:" = "Duração predefinida:";
 "Activate when starting Taurine" = "Ativar ao iniciar o Taurine";
 "Deactivate when device goes to sleep manually" = "Desativar quando o dispositivo entra em repouso manualmente";
-"Show this message when starting Taurine" = "Mostrar esta mensagem ao iniciar o Taurine";
+"Launch at startup" = "Abrir ao iniciar o sistema";
 "Keep apps active" = "Manter apps ativas";
 "Prevents apps from becoming inactive and the screen saver from starting." = "Impede que as apps fiquem inativas e que a proteção de ecrã seja iniciada.";
 "Close" = "Fechar";
@@ -70,25 +70,33 @@
 "Update helper…" = "Atualizar componente auxiliar…";
 "Remove helper…" = "Remover componente auxiliar…";
 "Sleep may still be disabled. Use Restore sleep in the Taurine menu." = "O repouso ainda pode estar desativado. Use Restaurar repouso no menu do Taurine.";
-"Taurine needs a small system helper to keep the Mac awake with the lid closed. Installing it asks for your password once. The helper restores sleep whenever Taurine quits, crashes, or the Mac restarts." = "O Taurine precisa de um pequeno componente auxiliar do sistema para manter o Mac acordado com a tampa fechada. A instalação pede a sua senha uma única vez. O componente restaura o repouso sempre que o Taurine fecha, falha ou o Mac reinicia.";
+"Taurine needs a small system helper to ensure correct lid closing behavior." = "O Taurine precisa de um pequeno componente do sistema para garantir o comportamento correto ao fechar a tampa.";
 "Toggles, timers and battery protection work without password prompts. Sleep is restored automatically if Taurine quits unexpectedly or the Mac restarts." = "Ligar, desligar, temporizadores e proteção de bateria funcionam sem pedir senha. O repouso é restaurado automaticamente se o Taurine fechar inesperadamente ou o Mac reiniciar.";
 
 /* Battery protection and permanent authorization */
 "Preferences" = "Preferências";
-"Keep your Mac awake, with a little peace of mind." = "Mantenha o Mac acordado, com mais tranquilidade.";
+"The extra energy your Mac needs to never fall asleep." = "A energia extra de que o seu Mac precisa para nunca dormir.";
 "Battery protection" = "Proteção da bateria";
 "Battery cutoff" = "Limite de bateria";
-"While on battery, turn off sleep protection at or below this level. Taurine stays off until you turn it on again." = "Ao usar bateria, desativa o bloqueio de repouso neste nível ou abaixo dele. O Taurine permanece desligado até você ativá-lo novamente.";
+"Give your Mac a break at this battery level. No more Taurine until you open another can." = "Dê um descanso ao seu Mac neste nível de bateria. Sem Taurine até abrir outra lata.";
 "Battery: %d%%" = "Bateria: %d%%";
 "Connected to power · %d%%" = "Conectado à tomada · %d%%";
-"No internal battery" = "Sem bateria interna";
-"Battery level unavailable" = "Nível de bateria indisponível";
 "Sleep protection runs while Taurine is open." = "A proteção contra hibernação funciona enquanto o Taurine estiver aberto."; 
 "Sleep protection stopped at %d%% battery." = "Bloqueio de repouso desativado com %d%% de bateria.";
 "Sleep protection stopped because the battery level could not be read." = "Bloqueio de repouso desativado porque não foi possível ler o nível de bateria.";
 
 /* Compact battery controls */
-"Current battery: %d%%" = "Bateria atual: %d%%";
 "Battery cutoff percentage" = "Porcentagem limite de bateria";
 "Enter a number from 1 to 100. Press Return to apply." = "Digite um número de 1 a 100. Pressione Enter para aplicar.";
 
+
+/* Install disk eject offer */
+"Eject the Taurine install disk?" = "Ejetar o disco de instalação do Taurine?";
+"Taurine is installed. The disk image it came from is still mounted." = "O Taurine está instalado. A imagem de disco de onde ele veio continua montada.";
+"Eject" = "Ejetar";
+"Keep Mounted" = "Manter Montado";
+
+/* Dock presence */
+"Show Taurine in Dock" = "Mostrar o Taurine na Dock";
+"The install disk could not be ejected." = "Não foi possível ejetar o disco de instalação.";
+"It may still be in use. Close any window showing it and eject it from the Finder." = "Pode ainda estar em uso. Feche as janelas que o mostram e ejete-o pelo Finder.";

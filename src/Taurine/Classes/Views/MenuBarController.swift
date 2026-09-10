@@ -18,14 +18,14 @@ class MenuBarController: NSObject {
     private lazy var activeIcon = self.statusIcon(named: "active")
     private lazy var inactiveIcon = self.statusIcon(named: "inactive")
 
-    override init() {
+    init(launchSource: LaunchSource = .user) {
         self.viewModel = TaurineViewModel()
         super.init()
         self.setupMenuBar()
         self.setupObservers()
 
         self.updateIcon()
-        self.viewModel.start()
+        self.viewModel.start(launchSource: launchSource)
     }
 
     func cleanup() {
@@ -173,6 +173,16 @@ class MenuBarController: NSObject {
 
         menu.addItem(NSMenuItem.separator())
 
+        // Show in Dock
+        let dockItem = NSMenuItem(
+            title: String(localized: "Show Taurine in Dock"),
+            action: #selector(toggleShowInDock(_:)),
+            keyEquivalent: ""
+        )
+        dockItem.target = self
+        dockItem.state = UserDefaults.standard.bool(forKey: PreferenceKeys.showInDock) ? .on : .off
+        menu.addItem(dockItem)
+
         // Preferences
         let prefsItem = NSMenuItem(
             title: String(localized: "Preferences..."),
@@ -216,6 +226,13 @@ class MenuBarController: NSObject {
     @objc
     private func showPreferences(_: Any?) {
         self.showPreferencesWindow()
+    }
+
+    @objc
+    private func toggleShowInDock(_: Any?) {
+        let showInDock = !UserDefaults.standard.bool(forKey: PreferenceKeys.showInDock)
+        UserDefaults.standard.set(showInDock, forKey: PreferenceKeys.showInDock)
+        DockPresence.apply(showInDock: showInDock)
     }
 
     @objc
@@ -263,6 +280,10 @@ class MenuBarController: NSObject {
         }
 
         self.preferencesWindow?.makeKeyAndOrderFront(nil)
+        // Sem primeiro responder definido o AppKit elege o primeiro controle
+        // focável — o slider da bateria — que passa a exibir um anel permanente.
+        // A janela não tem campo que deva receber foco ao abrir.
+        self.preferencesWindow?.makeFirstResponder(nil)
     }
 
     @objc

@@ -1,4 +1,5 @@
 import Foundation
+import os
 import OSLog
 import TaurineShared
 
@@ -19,11 +20,27 @@ final class HelperService: NSObject, NSXPCListenerDelegate, @unchecked Sendable 
             helperLog.error("rejected pid \(connection.processIdentifier) uid \(connection.effectiveUserIdentifier) bundle \(bundleID ?? "nil", privacy: .public) path \(executable ?? "nil", privacy: .public)")
             return false
         }
-        helperLog.info("accepted pid \(connection.processIdentifier)")
+        #if !TAURINE_ADHOC
+        // Gate real do privilégio: a identidade do peer passa a ser verificada
+        // pelo kernel contra a assinatura, não pelo Info.plist lido de um
+        // caminho que o chamador controla. Precisa vir antes de `resume`.
+        connection.setCodeSigningRequirement(HelperPaths.clientCodeSigningRequirement)
+        let signatureChecked = true
+        #else
+        let signatureChecked = false
+        #endif
+        // O requisito de assinatura não reprova aqui: uma conexão que não o
+        // satisfaz é invalidada na primeira mensagem. Por isso "pending".
+        helperLog.info("accepted pid \(connection.processIdentifier) signature-check \(signatureChecked ? "pending" : "disabled", privacy: .public)")
         let token = SessionToken()
+        let handler = ConnectionHandler(token: token, sleep: self.sleep, tracker: self.tracker)
         connection.exportedInterface = NSXPCInterface(with: HelperProtocol.self)
-        connection.exportedObject = ConnectionHandler(token: token, sleep: self.sleep, tracker: self.tracker)
+        connection.exportedObject = handler
+        let pid = connection.processIdentifier
         let ended: @Sendable () -> Void = { [sleep, tracker] in
+            if signatureChecked, !handler.servedAnyMessage {
+                helperLog.error("pid \(pid) closed without serving a message: likely code signing requirement mismatch (app and helper from different builds?)")
+            }
             Task { await Self.connectionEnded(token, sleep: sleep, tracker: tracker) }
         }
         connection.invalidationHandler = ended
@@ -56,6 +73,13 @@ final class ConnectionHandler: NSObject, HelperProtocol, @unchecked Sendable {
     private let sleep: SleepControl
     private let tracker: SessionTracker
     private let stateDirectory: String
+    private let served = OSAllocatedUnfairLock(initialState: false)
+
+    /// Distingue "app fechou normalmente" de "conexão morreu antes da primeira
+    /// mensagem" — o sintoma de um requisito de assinatura não satisfeito.
+    var servedAnyMessage: Bool { self.served.withLock { $0 } }
+
+    private func markServed() { self.served.withLock { $0 = true } }
 
     init(token: SessionToken, sleep: SleepControl, tracker: SessionTracker, stateDirectory: String = HelperPaths.stateDirectory) {
         self.token = token
@@ -65,10 +89,12 @@ final class ConnectionHandler: NSObject, HelperProtocol, @unchecked Sendable {
     }
 
     func version(reply: @escaping (Int) -> Void) {
+        self.markServed()
         reply(HelperVersion.current)
     }
 
     func sleepIsDisabled(reply: @escaping (NSNumber?, NSError?) -> Void) {
+        self.markServed()
         Task {
             do { reply(NSNumber(value: try await self.sleep.isDisabled()), nil) }
             catch { reply(nil, Self.bridge(error)) }
@@ -76,6 +102,7 @@ final class ConnectionHandler: NSObject, HelperProtocol, @unchecked Sendable {
     }
 
     func setSleepDisabled(_ disabled: Bool, appPath: String, reply: @escaping (NSError?) -> Void) {
+        self.markServed()
         Task {
             var acquiredNow = false
             if disabled {
