@@ -233,7 +233,11 @@ struct PreferencesView: View {
                     .keyboardShortcut(.defaultAction)
             }
         }
-        .padding(24)
+        .padding(.horizontal, 24)
+        .padding(.bottom, 16)
+        // A faixa da barra de título já ocupa ~28pt acima do conteúdo; sem
+        // descontá-los, a margem superior ficaria o dobro da inferior.
+        .padding(.top, -14)
         .frame(width: 600)
         .fixedSize(horizontal: false, vertical: true)
         .onAppear { self.thresholdText = String(BatteryPolicy.threshold(self.batteryThreshold)) }

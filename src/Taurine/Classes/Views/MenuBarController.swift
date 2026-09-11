@@ -282,9 +282,18 @@ class MenuBarController: NSObject {
             let hostingController = NSHostingController(rootView: contentView)
 
             let window = NSWindow(contentViewController: hostingController)
-            window.title = String(localized: "Preferences")
+            window.title = String(localized: "Taurine - Preferences")
             window.isReleasedWhenClosed = false
-            window.styleMask = [.titled, .closable]
+            window.styleMask = [.titled, .closable, .fullSizeContentView]
+            // Barra transparente e sem título visível: ela assume a cor da
+            // janela e o cabeçalho do app ocupa o topo sem faixa cinza. O
+            // `title` acima continua valendo para Exposé e acessibilidade.
+            window.titlebarAppearsTransparent = true
+            window.titleVisibility = .hidden
+            // A janela não redimensiona nem minimiza: os botões existem apenas
+            // como espaço morto ao lado do fechar.
+            window.standardWindowButton(.miniaturizeButton)?.isHidden = true
+            window.standardWindowButton(.zoomButton)?.isHidden = true
             window.setContentSize(hostingController.view.fittingSize)
             window.center()
 
