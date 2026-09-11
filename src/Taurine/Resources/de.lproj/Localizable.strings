@@ -55,9 +55,19 @@
 "The install disk could not be ejected." = "Das Installationsmedium konnte nicht ausgeworfen werden.";
 "It may still be in use. Close any window showing it and eject it from the Finder." = "Es wird möglicherweise noch verwendet. Schließen Sie alle Fenster, die es anzeigen, und werfen Sie es im Finder aus.";
 
-/* Helper explanation */
-"Taurine needs a small system helper to ensure correct lid closing behavior." = "Taurine benötigt eine kleine Systemkomponente, um das korrekte Verhalten beim Schließen des Deckels sicherzustellen.";
 
 /* Battery caption and tagline */
 "Give your Mac a break at this battery level. No more Taurine until you open another can." = "Geben Sie Ihrem Mac bei diesem Batteriestand eine Pause. Kein Taurine mehr, bis Sie eine neue Dose öffnen.";
 "The extra energy your Mac needs to never fall asleep." = "Die zusätzliche Energie, die Ihr Mac braucht, um nie einzuschlafen.";
+"Open System Settings…" = "Systemeinstellungen öffnen…";
+"Taurine needs your approval" = "Taurine benötigt deine Zustimmung";
+"Enable Taurine in System Settings → General → Login Items & Extensions so it can keep your Mac awake." = "Aktiviere Taurine in Systemeinstellungen → Allgemein → Anmeldeobjekte & Erweiterungen, damit es deinen Mac wach halten kann.";
+"Finish setup…" = "Einrichtung abschließen…";
+"Taurine could not set up sleep control." = "Taurine konnte die Ruhezustandssteuerung nicht einrichten.";
+"Taurine needs to be restarted to finish updating." = "Taurine muss neu gestartet werden, um das Update abzuschließen.";
+"Taurine could not control this Mac's sleep setting." = "Taurine konnte die Ruhezustandseinstellung dieses Mac nicht steuern.";
+"Taurine is not allowed to change this Mac's sleep setting." = "Taurine ist nicht berechtigt, die Ruhezustandseinstellung dieses Mac zu ändern.";
+"This copy of Taurine is not correctly signed, so it cannot control sleep." = "Diese Taurine-Kopie ist nicht korrekt signiert und kann den Ruhezustand daher nicht steuern.";
+"Waiting for your approval" = "Warten auf deine Zustimmung";
+"Sleep may still be disabled on this Mac." = "Der Ruhezustand ist auf diesem Mac möglicherweise weiterhin deaktiviert.";
+"Later" = "Später";

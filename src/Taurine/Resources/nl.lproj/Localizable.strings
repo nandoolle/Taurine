@@ -54,9 +54,19 @@
 "The install disk could not be ejected." = "De installatieschijf kon niet worden verwijderd.";
 "It may still be in use. Close any window showing it and eject it from the Finder." = "Deze is mogelijk nog in gebruik. Sluit vensters die de schijf tonen en verwijder deze via de Finder.";
 
-/* Helper explanation */
-"Taurine needs a small system helper to ensure correct lid closing behavior." = "Taurine heeft een kleine systeemcomponent nodig om het juiste gedrag bij het sluiten van het deksel te garanderen.";
 
 /* Battery caption and tagline */
 "Give your Mac a break at this battery level. No more Taurine until you open another can." = "Geef je Mac bij dit batterijniveau even rust. Geen Taurine meer totdat je een nieuw blikje opent.";
 "The extra energy your Mac needs to never fall asleep." = "De extra energie die je Mac nodig heeft om nooit in slaap te vallen.";
+"Open System Settings…" = "Systeeminstellingen openen…";
+"Taurine needs your approval" = "Taurine heeft je goedkeuring nodig";
+"Enable Taurine in System Settings → General → Login Items & Extensions so it can keep your Mac awake." = "Schakel Taurine in via Systeeminstellingen → Algemeen → Inlogonderdelen en extensies zodat het je Mac wakker kan houden.";
+"Finish setup…" = "Configuratie voltooien…";
+"Taurine could not set up sleep control." = "Taurine kon de slaapstandregeling niet instellen.";
+"Taurine needs to be restarted to finish updating." = "Taurine moet opnieuw worden gestart om de update te voltooien.";
+"Taurine could not control this Mac's sleep setting." = "Taurine kon de slaapstandinstelling van deze Mac niet regelen.";
+"Taurine is not allowed to change this Mac's sleep setting." = "Taurine mag de slaapstandinstelling van deze Mac niet wijzigen.";
+"This copy of Taurine is not correctly signed, so it cannot control sleep." = "Deze kopie van Taurine is niet correct ondertekend en kan de slaapstand dus niet regelen.";
+"Waiting for your approval" = "Wacht op je goedkeuring";
+"Sleep may still be disabled on this Mac." = "De slaapstand is mogelijk nog uitgeschakeld op deze Mac.";
+"Later" = "Later";

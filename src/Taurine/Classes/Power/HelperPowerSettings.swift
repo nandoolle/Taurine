@@ -5,7 +5,7 @@ import TaurineShared
 protocol HelperProxy: AnyObject {
     func version() async throws -> Int
     func sleepIsDisabled() async throws -> Bool
-    func setSleepDisabled(_ disabled: Bool, appPath: String) async throws
+    func setSleepDisabled(_ disabled: Bool) async throws
 }
 
 @MainActor
@@ -52,10 +52,10 @@ final class XPCHelperProxy: HelperProxy {
         }
     }
 
-    func setSleepDisabled(_ disabled: Bool, appPath: String) async throws {
+    func setSleepDisabled(_ disabled: Bool) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             guard let proxy = self.proxy({ continuation.resume(throwing: $0) }) else { return continuation.resume(throwing: PowerError.helperUnavailable) }
-            proxy.setSleepDisabled(disabled, appPath: appPath) { error in
+            proxy.setSleepDisabled(disabled) { error in
                 if let error { continuation.resume(throwing: error) } else { continuation.resume() }
             }
         }
@@ -65,13 +65,11 @@ final class XPCHelperProxy: HelperProxy {
 @MainActor
 final class HelperPowerSettings: PowerSettings {
     private let proxy: HelperProxy
-    private let appPath: () -> String
     private let timeout: Duration
 
     // The default is built in the body: default argument expressions are evaluated off the MainActor.
-    init(proxy: HelperProxy? = nil, appPath: @escaping () -> String = { Bundle.main.bundlePath }, timeout: Duration = .seconds(10)) {
+    init(proxy: HelperProxy? = nil, timeout: Duration = .seconds(10)) {
         self.proxy = proxy ?? XPCHelperProxy()
-        self.appPath = appPath
         self.timeout = timeout
     }
 
@@ -82,7 +80,7 @@ final class HelperPowerSettings: PowerSettings {
 
     func setSleepDisabled(_ disabled: Bool) async throws {
         try await self.ensureCompatible()
-        try await self.translating { try await self.proxy.setSleepDisabled(disabled, appPath: self.appPath()) }
+        try await self.translating { try await self.proxy.setSleepDisabled(disabled) }
     }
 
     private func ensureCompatible() async throws {
@@ -118,7 +116,7 @@ final class HelperPowerSettings: PowerSettings {
         case .verificationFailed: return .verificationFailed
         case .commandFailed: return .commandFailed(failure.message ?? String(localized: "Could not update sleep prevention."))
         case .busy: return .commandFailed(String(localized: "Another Taurine session is already active."))
-        case .unauthorized: return .commandFailed(String(localized: "The Taurine helper refused the request."))
+        case .unauthorized: return .commandFailed(String(localized: "Taurine is not allowed to change this Mac's sleep setting."))
         }
     }
 }

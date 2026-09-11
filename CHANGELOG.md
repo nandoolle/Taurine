@@ -1,7 +1,12 @@
 # Changelog
 
-## 0.4.0 — 2026-09-10
+## 0.5.0 — 2026-09-10
 
+- O componente auxiliar passa a ser registrado por `SMAppService` e roda de dentro do bundle do app: nada é copiado para `/Library/PrivilegedHelperTools` nem para `/Library/LaunchDaemons`. Atualizar o app atualiza o componente.
+- A primeira instalação pode pedir que você habilite o Taurine em Ajustes do Sistema → Geral → Itens de Início e Extensões; as Preferências mostram o estado e levam até lá.
+- Ao atualizar de uma versão anterior, os arquivos da instalação antiga são removidos automaticamente — a senha é pedida duas vezes: uma para removê-los e outra para registrar o componente novo.
+- Com o bloqueio ativo, o componente verifica a cada minuto se o app ainda existe e restaura o repouso caso ele tenha sido apagado ou movido — antes isso só acontecia no boot seguinte. Se o app for apagado com o Mac desligado, restaure o repouso com `sudo pmset -a disablesleep 0`.
+- Compilar o Taurine agora exige um certificado Developer ID Application em `TAURINE_SIGN_IDENTITY`, inclusive para desenvolvimento local: o `SMAppService` recusa assinatura ad hoc.
 - O app e o componente auxiliar passam a ser assinados com Developer ID, com hardened runtime, e a distribuição é notarizada pela Apple: não é mais preciso contornar o Gatekeeper na primeira abertura.
 - O componente auxiliar agora verifica a assinatura de quem se conecta a ele, em vez de confiar no identificador declarado no bundle do chamador.
 - Adiciona `scripts/release.sh`, que assina, notariza e faz staple do app e do DMG.

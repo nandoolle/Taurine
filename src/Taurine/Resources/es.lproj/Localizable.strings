@@ -55,9 +55,19 @@
 "The install disk could not be ejected." = "No se pudo expulsar el disco de instalación.";
 "It may still be in use. Close any window showing it and eject it from the Finder." = "Puede que siga en uso. Cierra las ventanas que lo muestren y expúlsalo desde el Finder.";
 
-/* Helper explanation */
-"Taurine needs a small system helper to ensure correct lid closing behavior." = "Taurine necesita un pequeño componente del sistema para garantizar el comportamiento correcto al cerrar la tapa.";
 
 /* Battery caption and tagline */
 "Give your Mac a break at this battery level. No more Taurine until you open another can." = "Dale un descanso a tu Mac con este nivel de batería. No habrá más Taurine hasta que abras otra lata.";
 "The extra energy your Mac needs to never fall asleep." = "La energía extra que tu Mac necesita para no dormirse nunca.";
+"Open System Settings…" = "Abrir Ajustes del Sistema…";
+"Taurine needs your approval" = "Taurine necesita tu aprobación";
+"Enable Taurine in System Settings → General → Login Items & Extensions so it can keep your Mac awake." = "Activa Taurine en Ajustes del Sistema → General → Ítems de inicio y extensiones para que pueda mantener el Mac despierto.";
+"Finish setup…" = "Terminar configuración…";
+"Taurine could not set up sleep control." = "Taurine no pudo configurar el control de reposo.";
+"Taurine needs to be restarted to finish updating." = "Taurine debe reiniciarse para terminar la actualización.";
+"Taurine could not control this Mac's sleep setting." = "Taurine no pudo controlar el ajuste de reposo de este Mac.";
+"Taurine is not allowed to change this Mac's sleep setting." = "Taurine no tiene permiso para cambiar el ajuste de reposo de este Mac.";
+"This copy of Taurine is not correctly signed, so it cannot control sleep." = "Esta copia de Taurine no está firmada correctamente, por lo que no puede controlar el reposo.";
+"Waiting for your approval" = "Esperando tu aprobación";
+"Sleep may still be disabled on this Mac." = "El reposo puede seguir desactivado en este Mac.";
+"Later" = "Más tarde";

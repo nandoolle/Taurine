@@ -55,9 +55,19 @@
 "The install disk could not be ejected." = "Le disque d'installation n'a pas pu être éjecté.";
 "It may still be in use. Close any window showing it and eject it from the Finder." = "Il est peut-être encore utilisé. Fermez les fenêtres qui l'affichent et éjectez-le depuis le Finder.";
 
-/* Helper explanation */
-"Taurine needs a small system helper to ensure correct lid closing behavior." = "Taurine a besoin d'un petit composant système pour garantir le comportement correct à la fermeture de l'écran.";
 
 /* Battery caption and tagline */
 "Give your Mac a break at this battery level. No more Taurine until you open another can." = "Accordez une pause à votre Mac à ce niveau de batterie. Plus de Taurine avant d'ouvrir une autre canette.";
 "The extra energy your Mac needs to never fall asleep." = "L'énergie supplémentaire dont votre Mac a besoin pour ne jamais s'endormir.";
+"Open System Settings…" = "Ouvrir Réglages Système…";
+"Taurine needs your approval" = "Taurine a besoin de votre autorisation";
+"Enable Taurine in System Settings → General → Login Items & Extensions so it can keep your Mac awake." = "Activez Taurine dans Réglages Système → Général → Ouverture et extensions pour qu’il puisse garder votre Mac éveillé.";
+"Finish setup…" = "Terminer la configuration…";
+"Taurine could not set up sleep control." = "Taurine n’a pas pu configurer le contrôle de la veille.";
+"Taurine needs to be restarted to finish updating." = "Taurine doit être relancé pour terminer la mise à jour.";
+"Taurine could not control this Mac's sleep setting." = "Taurine n’a pas pu contrôler le réglage de veille de ce Mac.";
+"Taurine is not allowed to change this Mac's sleep setting." = "Taurine n’est pas autorisé à modifier le réglage de veille de ce Mac.";
+"This copy of Taurine is not correctly signed, so it cannot control sleep." = "Cette copie de Taurine n’est pas correctement signée, elle ne peut donc pas contrôler la veille.";
+"Waiting for your approval" = "En attente de votre autorisation";
+"Sleep may still be disabled on this Mac." = "La veille est peut-être encore désactivée sur ce Mac.";
+"Later" = "Plus tard";

@@ -29,17 +29,26 @@ class TaurineViewModel: ObservableObject {
     var needsRecovery: Bool { self.session.state == .recovery }
     var isBusy: Bool { self.installingHelper || self.session.isBusy || self.session.state == .checking }
     var needsHelper: Bool { self.session.state == .needsHelper }
+    /// Instalação legada presente: o upgrade pede senha duas vezes (remoção do
+    /// daemon antigo e registro do novo), então a UI avisa antes.
+    var helperUpgradeNeedsTwoPrompts: Bool { self.installer.hasLegacyInstallation }
     var helperOutdated: Bool { self.session.helperOutdated }
+    /// Registrado mas pendente de aprovação em Ajustes do Sistema. Estado
+    /// próprio: a saída é o usuário habilitar lá, não reinstalar aqui.
+    @Published private(set) var helperRequiresApproval = false
 
     init() {
-        UserDefaults.standard.register(defaults: [PreferenceKeys.batteryThreshold: BatteryPolicy.defaultThreshold, PreferenceKeys.batteryProtectionEnabled: true, PreferenceKeys.playActivationSound: true])
+        UserDefaults.standard.register(defaults: [PreferenceKeys.batteryThreshold: BatteryPolicy.defaultThreshold, PreferenceKeys.batteryProtectionEnabled: true, PreferenceKeys.playActivationSound: true, PreferenceKeys.showInDock: false])
         let battery = SystemBattery()
         self.battery = battery
+        let installer = self.installer
+        self.helperRequiresApproval = installer.status() == .requiresApproval
         self.session = PowerSession(
             settings: HelperPowerSettings(), assertions: WakeAssertions(), journal: SessionJournal(),
             battery: battery,
             batteryThreshold: { UserDefaults.standard.integer(forKey: PreferenceKeys.batteryThreshold) },
-            batteryProtectionEnabled: { UserDefaults.standard.bool(forKey: PreferenceKeys.batteryProtectionEnabled) }
+            batteryProtectionEnabled: { UserDefaults.standard.bool(forKey: PreferenceKeys.batteryProtectionEnabled) },
+            helperStatus: { installer.status() }
         )
         self.session.objectWillChange
             .sink { [weak self] in self?.objectWillChange.send() }
@@ -52,6 +61,14 @@ class TaurineViewModel: ObservableObject {
                 } else {
                     ActivitySimulator.shared.stopMonitoring()
                 }
+            }
+            .store(in: &self.cancellables)
+
+        // O usuário aprova o daemon em Ajustes do Sistema e volta: sem reconsultar
+        // aqui a UI ficaria presa em "precisa de aprovação".
+        NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)
+            .sink { [weak self] _ in
+                Task { @MainActor in await self?.recheckHelperApproval() }
             }
             .store(in: &self.cancellables)
 
@@ -105,9 +122,8 @@ class TaurineViewModel: ObservableObject {
         self.timer = timer
     }
 
-    // In needsHelper this is a no-op: the helper is only installed from Preferences.
     func toggleActive() {
-        guard !self.isBusy, !self.needsHelper else { return }
+        guard !self.isBusy else { return }
         if self.session.requiresRestoration {
             self.deactivate()
         } else {
@@ -118,6 +134,7 @@ class TaurineViewModel: ObservableObject {
     func activate(withTimeout timeout: TimeInterval? = nil) {
         let duration = timeout.map { $0 > 0 ? $0 : 0 } ?? self.defaultDuration
         Task {
+            guard await self.ensureSleepControlAvailable() else { return }
             let wasActive = self.isActive
             await self.session.activate(duration: duration)
             if !wasActive, self.isActive, UserDefaults.standard.bool(forKey: PreferenceKeys.playActivationSound) {
@@ -154,39 +171,33 @@ class TaurineViewModel: ObservableObject {
         Task { await self.checkBattery() }
     }
 
-    func installHelper() {
-        guard !self.isBusy else { return }
+    /// Registra o daemon na primeira ativação. O usuário pede para manter o Mac
+    /// acordado; o componente que faz isso é detalhe de implementação.
+    private func ensureSleepControlAvailable() async -> Bool {
+        if self.installer.status() == .installed { return true }
         self.installingHelper = true
-        Task {
-            defer { self.installingHelper = false }
-            do {
-                try await self.installer.install(bundlePath: Bundle.main.bundlePath)
-                await self.session.helperInstallationChanged()
-                } catch PowerError.cancelled {
-                // Cancelar deixa o estado needsHelper visível.
-            } catch {
-                self.session.errorMessage = error.localizedDescription
-            }
+        defer { self.installingHelper = false }
+        do {
+            try await self.installer.install()
+        } catch PowerError.cancelled {
+            return false
+        } catch {
+            self.session.errorMessage = error.localizedDescription
+            return false
         }
+        self.helperRequiresApproval = self.installer.status() == .requiresApproval
+        await self.session.helperInstallationChanged()
+        return self.installer.status() == .installed
     }
 
-    func removeHelper() {
-        guard !self.isBusy else { return }
-        self.installingHelper = true
-        Task {
-            defer { self.installingHelper = false }
-            await self.session.refresh()
-            // Best effort: the removal script restores sleep itself, so an
-            // unreachable helper must not block its own removal.
-            if self.session.requiresRestoration { _ = await self.session.deactivate() }
-            do {
-                try await self.installer.remove()
-                await self.session.helperInstallationChanged()
-            } catch PowerError.cancelled {
-            } catch {
-                self.session.errorMessage = error.localizedDescription
-            }
-        }
+    func openHelperSystemSettings() { self.installer.openSystemSettings() }
+
+    private func recheckHelperApproval() async {
+        guard !self.installingHelper else { return }
+        let status = self.installer.status()
+        self.helperRequiresApproval = status == .requiresApproval
+        guard status == .installed, self.needsHelper else { return }
+        await self.session.helperInstallationChanged()
     }
 
     func updateActivitySimulation(enabled: Bool) {
@@ -201,7 +212,9 @@ class TaurineViewModel: ObservableObject {
     func formattedTimeRemaining() -> String? {
         if self.isBusy { return String(localized: "Updating sleep settings…") }
         if self.needsRecovery { return String(localized: "Sleep needs to be restored") }
-        if self.needsHelper { return self.helperOutdated ? String(localized: "Helper needs an update") : String(localized: "Helper not installed") }
+        if self.helperRequiresApproval { return String(localized: "Waiting for your approval") }
+        // needsHelper não tem texto próprio: sem daemon o Taurine está apenas
+        // inativo, e ativar cuida do registro.
         guard self.isActive else { return self.session.automaticStopMessage ?? String(localized: "Taurine is inactive") }
         if let remaining = self.session.deadline?.timeIntervalSinceNow, remaining > 0 {
             let seconds = Int(ceil(remaining))

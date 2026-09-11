@@ -55,9 +55,19 @@
 "The install disk could not be ejected." = "Не вдалося витягти встановлювальний диск.";
 "It may still be in use. Close any window showing it and eject it from the Finder." = "Можливо, він ще використовується. Закрийте вікна, у яких він відкритий, і витягніть його через Finder.";
 
-/* Helper explanation */
-"Taurine needs a small system helper to ensure correct lid closing behavior." = "Taurine потрібен невеликий системний компонент, щоб забезпечити правильну поведінку під час закриття кришки.";
 
 /* Battery caption and tagline */
 "Give your Mac a break at this battery level. No more Taurine until you open another can." = "Дайте Mac перепочити на цьому рівні заряду. Жодного Taurine, доки не відкриєте нову банку.";
 "The extra energy your Mac needs to never fall asleep." = "Додаткова енергія, потрібна вашому Mac, щоб ніколи не засинати.";
+"Open System Settings…" = "Відкрити Системні параметри…";
+"Taurine needs your approval" = "Taurine потребує вашого підтвердження";
+"Enable Taurine in System Settings → General → Login Items & Extensions so it can keep your Mac awake." = "Увімкніть Taurine у «Системних параметрах» → «Загальні» → «Об’єкти входу та розширення», щоб він міг не давати Mac засинати.";
+"Finish setup…" = "Завершити налаштування…";
+"Taurine could not set up sleep control." = "Taurine не вдалося налаштувати керування режимом сну.";
+"Taurine needs to be restarted to finish updating." = "Щоб завершити оновлення, перезапустіть Taurine.";
+"Taurine could not control this Mac's sleep setting." = "Taurine не вдалося змінити налаштування сну цього Mac.";
+"Taurine is not allowed to change this Mac's sleep setting." = "Taurine не має дозволу змінювати налаштування сну цього Mac.";
+"This copy of Taurine is not correctly signed, so it cannot control sleep." = "Ця копія Taurine підписана неправильно, тому не може керувати режимом сну.";
+"Waiting for your approval" = "Очікування підтвердження";
+"Sleep may still be disabled on this Mac." = "На цьому Mac режим сну може залишатися вимкненим.";
+"Later" = "Пізніше";

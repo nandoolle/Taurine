@@ -124,7 +124,7 @@ class MenuBarController: NSObject {
         }
 
         let toggleItem = NSMenuItem(
-            title: self.viewModel.needsHelper ? (self.viewModel.helperOutdated ? String(localized: "Update helper…") : String(localized: "Install helper…")) :
+            title: self.viewModel.helperRequiresApproval ? String(localized: "Finish setup…") :
                 self.viewModel.needsRecovery ? String(localized: "Restore sleep…") :
                 (self.viewModel.isActive ? String(localized: "Deactivate Taurine…") : String(localized: "Activate Taurine…")),
             action: #selector(toggleActive(_:)), keyEquivalent: ""
@@ -139,7 +139,7 @@ class MenuBarController: NSObject {
             action: nil,
             keyEquivalent: ""
         )
-        activateForItem.isEnabled = !self.viewModel.isBusy && !self.viewModel.needsRecovery && !self.viewModel.needsHelper
+        activateForItem.isEnabled = !self.viewModel.isBusy && !self.viewModel.needsRecovery && !self.viewModel.helperRequiresApproval
         let submenu = NSMenu()
 
         var durations: [(String, Int)] = [
@@ -190,6 +190,9 @@ class MenuBarController: NSObject {
             keyEquivalent: ","
         )
         prefsItem.target = self
+        // O sistema injeta um glifo em itens que reconhece, e ele disputa a
+        // coluna do checkmark. Sem imagem, todos os itens alinham pelo ✓.
+        prefsItem.image = nil
         menu.addItem(prefsItem)
 
         // About
@@ -199,6 +202,7 @@ class MenuBarController: NSObject {
             keyEquivalent: ""
         )
         aboutItem.target = self
+        aboutItem.image = nil
         menu.addItem(aboutItem)
 
         // Quit
@@ -240,10 +244,11 @@ class MenuBarController: NSObject {
         self.toggleOrShowPreferences()
     }
 
-    // The helper is installed only from Preferences; the menu just leads there.
+    // Aguardando aprovação, a única ação útil é abrir os Ajustes do Sistema —
+    // é lá que o usuário resolve. Nos demais casos ativar registra o daemon.
     private func toggleOrShowPreferences() {
-        if self.viewModel.needsHelper {
-            self.showPreferencesWindow()
+        if self.viewModel.helperRequiresApproval {
+            self.viewModel.openHelperSystemSettings()
         } else {
             self.viewModel.toggleActive()
         }
@@ -254,12 +259,19 @@ class MenuBarController: NSObject {
         let alert = NSAlert()
         alert.messageText = String(localized: "Could not complete the sleep change")
         alert.informativeText = message
-        if self.viewModel.needsRecovery {
-            alert.informativeText += "\n\n" + String(localized: "Sleep may still be disabled. Use Restore sleep in the Taurine menu.")
-        }
         alert.alertStyle = .warning
-        alert.runModal()
+        // O menu do Taurine só abre com clique direito, e o item de restaurar
+        // nem sempre está visível: mandar o usuário procurar lá deixaria o Mac
+        // preso acordado. A ação vem no próprio alerta.
+        let needsRecovery = self.viewModel.session.requiresRestoration
+        if needsRecovery {
+            alert.informativeText += "\n\n" + String(localized: "Sleep may still be disabled on this Mac.")
+            alert.addButton(withTitle: String(localized: "Restore sleep…"))
+            alert.addButton(withTitle: String(localized: "Later"))
+        }
+        let response = alert.runModal()
         self.viewModel.session.errorMessage = nil
+        if needsRecovery, response == .alertFirstButtonReturn { self.viewModel.deactivate() }
     }
 
     func showPreferencesWindow() {

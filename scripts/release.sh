@@ -41,6 +41,9 @@ dmg_staging=$(mktemp -d)
 trap 'rm -rf "$staging" "$dmg_staging"' EXIT
 /usr/bin/ditto "$app" "$dmg_staging/Taurine.app"
 ln -s /Applications "$dmg_staging/Applications"
+# Um .DS_Store herdado faz o Finder considerar o layout já definido e ignorar o
+# AppleScript abaixo. O volume precisa começar sem ele.
+rm -f "$dmg_staging/.DS_Store"
 rm -f "$dmg"
 
 # O layout da janela (tamanho dos ícones, posições) vive no .DS_Store do volume,
@@ -69,18 +72,37 @@ on run argv
             set position of item "Taurine.app" of container window to {170, 190}
             set position of item "Applications" of container window to {470, 190}
             update without registering applications
-            delay 1
+            delay 2
             close
         end tell
     end tell
 end run
 APPLESCRIPT
 
+# O Finder grava o .DS_Store de forma assíncrona: sem esperar pelo arquivo, o
+# layout se perde e o DMG sai com a janela padrão. Limpeza só depois disso.
+for _ in 1 2 3 4 5 6 7 8 9 10; do
+    [ -s "$mountpoint/.DS_Store" ] && break
+    sleep 1
+done
+[ -s "$mountpoint/.DS_Store" ] || { printf 'error: Finder não gravou o layout da janela (.DS_Store)\n' >&2; exit 1; }
+
+# O Finder cria .fseventsd em qualquer volume gravável; no DMG final é só lixo.
+rm -rf "$mountpoint/.fseventsd" "$mountpoint/.Trashes" "$mountpoint/.TemporaryItems"
+
 # sync antes do detach: o .DS_Store é escrito de forma assíncrona pelo Finder.
 sync
 hdiutil detach "$mountpoint" >/dev/null
 trap 'rm -rf "$staging" "$dmg_staging" "$writable"' EXIT
 hdiutil convert "$writable" -format UDZO -imagekey zlib-level=9 -o "$dmg" >/dev/null
+# Ícone do .dmg no Finder. Precisa vir antes do codesign: o ícone vive num fork
+# do arquivo, e gravá-lo depois invalidaria a assinatura.
+if [ -f assets/dmg-icon.icns ]; then
+    icon_tool="$(mktemp -d)/set-file-icon"
+    /usr/bin/xcrun swiftc -O scripts/set-file-icon.swift -o "$icon_tool"
+    "$icon_tool" "$dmg" assets/dmg-icon.icns
+fi
+
 /usr/bin/codesign --force --timestamp --sign "$TAURINE_SIGN_IDENTITY" "$dmg"
 xcrun notarytool submit "$dmg" --keychain-profile "$TAURINE_NOTARY_PROFILE" --wait
 xcrun stapler staple "$dmg"

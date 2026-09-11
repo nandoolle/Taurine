@@ -33,15 +33,17 @@ Um triângulo no ícone indica que o repouso precisa ser restaurado. Use **Resta
 
 ### Como funciona
 
-Manter o Mac acordado de tampa fechada exige `pmset -a disablesleep 1`, uma configuração global e persistente que precisa de root. O Taurine instala um LaunchDaemon (`dev.taurine.helper`) que é o único a executar esse comando, e conversa com ele por XPC.
+Manter o Mac acordado de tampa fechada exige `pmset -a disablesleep 1`, uma configuração global e persistente que precisa de root. O Taurine registra um LaunchDaemon (`dev.taurine.helper`) via `SMAppService`, que é o único a executar esse comando, e conversa com ele por XPC.
 
-Quando a conexão com o app cai (fechamento, falha, encerramento forçado, logout), o componente restaura o repouso. Em todo boot restaura o repouso incondicionalmente e, se o app tiver sido apagado, remove-se sozinho. Arquivos instalados:
+O daemon roda de dentro do próprio bundle do app — nada é copiado para fora dele. Na primeira instalação o macOS pede a senha de administrador e pode exigir que você habilite o Taurine em **Ajustes do Sistema → Geral → Itens de Início e Extensões**.
 
-- `/Library/PrivilegedHelperTools/dev.taurine.helper`
-- `/Library/LaunchDaemons/dev.taurine.helper.plist`
-- `/var/db/taurine/`
+Quando a conexão com o app cai (fechamento, falha, encerramento forçado, logout), o componente restaura o repouso. Em todo boot restaura o repouso incondicionalmente. E enquanto o bloqueio está ativo, ele verifica a cada minuto se o app ainda existe: se você apagar o Taurine (ou movê-lo para outro volume) com o bloqueio ligado, o repouso é restaurado sozinho em cerca de um minuto.
 
-Para remover: Preferências → **Remover componente auxiliar…**. Manualmente, restaurando o repouso antes de tudo:
+Para remover: Preferências → **Remover componente auxiliar…** — é o caminho recomendado, porque restaura o repouso imediatamente, sem esperar o watchdog.
+
+> **Caso extremo:** se o app for apagado com o Mac desligado (por exemplo, com o disco montado em outra máquina), não há quem restaure o repouso. Nesse caso, rode `sudo pmset -a disablesleep 0`.
+
+Versões anteriores à 0.5.0 instalavam arquivos fora do bundle. Ao atualizar, o Taurine os remove (pedindo a senha uma vez para isso e outra para registrar o daemon novo). Para limpar à mão:
 
 ```sh
 sudo pmset -a disablesleep 0
@@ -66,12 +68,24 @@ Não. Taurine fechado significa Mac dormindo normalmente. Essa é a regra que o 
 
 ### Compilar
 
-Sem dependências externas. Com Swift 6.2 e o SDK do macOS:
+Sem dependências externas. Com Swift 6.2 e o SDK do macOS.
+
+O `SMAppService` recusa assinatura ad hoc, então é preciso um certificado **Developer ID Application** — inclusive para desenvolvimento local. Notarização não é necessária para testar localmente:
 
 ```sh
-./scripts/build.sh      # gera build/Taurine.app (assinatura ad hoc)
+export TAURINE_SIGN_IDENTITY="Developer ID Application: Seu Nome (TEAMID)"
+security find-identity -v -p codesigning   # lista as identidades disponíveis
+
+./scripts/build.sh      # gera build/Taurine.app
 ./scripts/make-dmg.sh   # gera build/Taurine-<versão>.dmg
 swift test
+```
+
+Ao testar o daemon, rode o app sempre do mesmo caminho: o launchd indexa o registro por caminho e assinatura, e mudar de lugar entre iterações deixa registros órfãos. Para inspecionar o estado real:
+
+```sh
+launchctl print system/dev.taurine.helper
+log show --predicate 'subsystem == "dev.taurine.helper"' --last 10m
 ```
 
 Também é possível abrir `src/Taurine.xcodeproj` ou usar `./scripts/build-xcode.sh`.

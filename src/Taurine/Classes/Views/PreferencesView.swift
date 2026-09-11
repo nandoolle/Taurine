@@ -50,11 +50,6 @@ struct PreferencesView: View {
         return self.thresholdIsFocused ? .accentColor : .secondary.opacity(0.5)
     }
 
-    private var helperHeadline: LocalizedStringKey {
-        guard self.viewModel.needsHelper else { return "Helper installed" }
-        return self.viewModel.helperOutdated ? "Helper needs an update" : "Helper not installed"
-    }
-
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             HStack(spacing: 16) {
@@ -160,33 +155,24 @@ struct PreferencesView: View {
             .padding(20)
             .background(.quaternary.opacity(0.55), in: RoundedRectangle(cornerRadius: 22))
 
-            HStack(spacing: 14) {
-                Image(systemName: self.viewModel.needsHelper ? "lock.shield" : "checkmark.shield")
-                    .font(.title2)
-                    .foregroundStyle(self.viewModel.needsHelper ? Color.secondary : Color.green)
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(self.helperHeadline)
-                        .font(.headline)
-                    Text(self.viewModel.needsHelper
-                         ? "Taurine needs a small system helper to ensure correct lid closing behavior."
-                         : "Toggles, timers and battery protection work without password prompts. Sleep is restored automatically if Taurine quits unexpectedly or the Mac restarts.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                Spacer(minLength: 0)
-                if self.viewModel.installingHelper {
-                    ProgressView().controlSize(.small)
-                } else if self.viewModel.needsHelper {
-                    // Instalar o componente é a ação pendente da janela: como botão
-                    // padrão ele recebe o foco e responde a Return, em vez de o
-                    // AppKit eleger o slider da bateria.
-                    Button(self.viewModel.helperOutdated ? "Update helper…" : "Install helper…") { self.viewModel.installHelper() }
+            // Só aparece quando há algo a fazer: aprovar o Taurine nos Ajustes do
+            // Sistema. Fora disso o componente privilegiado é invisível ao usuário.
+            if self.viewModel.helperRequiresApproval {
+                HStack(spacing: 14) {
+                    Image(systemName: "exclamationmark.shield")
+                        .font(.title2)
+                        .foregroundStyle(Color.orange)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Taurine needs your approval")
+                            .font(.headline)
+                        Text("Enable Taurine in System Settings → General → Login Items & Extensions so it can keep your Mac awake.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    Spacer(minLength: 0)
+                    Button("Open System Settings…") { self.viewModel.openHelperSystemSettings() }
                         .keyboardShortcut(.defaultAction)
-                        .disabled(self.viewModel.isBusy)
-                } else {
-                    Button("Remove helper…") { self.viewModel.removeHelper() }
-                        .disabled(self.viewModel.isBusy)
                 }
             }
 

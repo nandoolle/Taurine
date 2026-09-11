@@ -27,6 +27,8 @@ actor SessionTracker {
 
     func isActive(_ id: SessionToken) -> Bool { self.owner == id }
 
+    var hasOwner: Bool { self.owner != nil }
+
     /// Releasing needs no owner (recovery from an external write) or the owner itself.
     func canRelease(_ id: SessionToken) -> Bool { self.owner == nil || self.owner == id }
 }

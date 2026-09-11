@@ -27,10 +27,9 @@ final class HelperErrorTests: XCTestCase {
     func testPathsAreAbsoluteAndConsistent() {
         XCTAssertEqual(HelperPaths.label, "dev.taurine.helper")
         XCTAssertEqual(HelperPaths.machService, HelperPaths.label)
-        XCTAssertEqual(HelperPaths.installedBinary, "/Library/PrivilegedHelperTools/dev.taurine.helper")
-        XCTAssertEqual(HelperPaths.installedPlist, "/Library/LaunchDaemons/dev.taurine.helper.plist")
-        XCTAssertEqual(HelperPaths.appPathFile, "/var/db/taurine/app-path")
-        XCTAssertTrue(HelperPaths.bundleBinary.hasPrefix("Contents/Library/LaunchDaemons/"))
-        XCTAssertEqual(HelperVersion.current, 1)
+        XCTAssertEqual(HelperPaths.daemonPlistName, "dev.taurine.helper.plist")
+        XCTAssertEqual(HelperPaths.legacyBinary, "/Library/PrivilegedHelperTools/dev.taurine.helper")
+        XCTAssertEqual(HelperPaths.legacyPlist, "/Library/LaunchDaemons/dev.taurine.helper.plist")
+        XCTAssertEqual(HelperVersion.current, 2)
     }
 }

@@ -114,7 +114,7 @@ final class HelperServiceTests: XCTestCase {
         let handler = ConnectionHandler(token: stranger, sleep: SleepControl(run: { try await recorder.run($0, $1) }), tracker: tracker)
         let box = ReplyBox()
 
-        handler.setSleepDisabled(false, appPath: "/Applications/Taurine.app") { error in
+        handler.setSleepDisabled(false) { error in
             Task { await box.record(error) }
         }
 
@@ -131,18 +131,15 @@ final class HelperServiceTests: XCTestCase {
             CommandOutput(status: 0, text: ""),
             CommandOutput(status: 0, text: " SleepDisabled 0\n"),
         ])
-        let directory = Self.temporaryStateDirectory()
-        defer { try? FileManager.default.removeItem(atPath: directory) }
         let tracker = SessionTracker()
         let handler = ConnectionHandler(
             token: SessionToken(),
             sleep: SleepControl(run: { try await recorder.run($0, $1) }),
-            tracker: tracker,
-            stateDirectory: directory
+            tracker: tracker
         )
         let box = ReplyBox()
 
-        handler.setSleepDisabled(false, appPath: "/Applications/Taurine.app") { error in
+        handler.setSleepDisabled(false) { error in
             Task { await box.record(error) }
         }
 
@@ -157,8 +154,6 @@ final class HelperServiceTests: XCTestCase {
             CommandOutput(status: 0, text: ""),
             CommandOutput(status: 0, text: " SleepDisabled 0\n"),
         ])
-        let directory = Self.temporaryStateDirectory()
-        defer { try? FileManager.default.removeItem(atPath: directory) }
         let tracker = SessionTracker()
         let token = SessionToken()
         let began = await tracker.begin(token)
@@ -166,12 +161,11 @@ final class HelperServiceTests: XCTestCase {
         let handler = ConnectionHandler(
             token: token,
             sleep: SleepControl(run: { try await recorder.run($0, $1) }),
-            tracker: tracker,
-            stateDirectory: directory
+            tracker: tracker
         )
         let box = ReplyBox()
 
-        handler.setSleepDisabled(false, appPath: "/Applications/Taurine.app") { error in
+        handler.setSleepDisabled(false) { error in
             Task { await box.record(error) }
         }
 
@@ -183,60 +177,6 @@ final class HelperServiceTests: XCTestCase {
         XCTAssertFalse(stillOwned)
     }
 
-    func testRejectedAppPathIsNotRecorded() async {
-        let recorder = CommandRecorder(outputs: [
-            CommandOutput(status: 0, text: ""),
-            CommandOutput(status: 0, text: " SleepDisabled 0\n"),
-        ])
-        let directory = Self.temporaryStateDirectory()
-        defer { try? FileManager.default.removeItem(atPath: directory) }
-        let handler = ConnectionHandler(
-            token: SessionToken(),
-            sleep: SleepControl(run: { try await recorder.run($0, $1) }),
-            tracker: SessionTracker(),
-            stateDirectory: directory
-        )
-        let box = ReplyBox()
-
-        handler.setSleepDisabled(false, appPath: "relative/Taurine.zip") { error in
-            Task { await box.record(error) }
-        }
-
-        let error = await box.first()
-        XCTAssertNil(error, "o pmset já teve sucesso: caminho inválido não vira erro")
-        let file = (directory as NSString).appendingPathComponent("app-path")
-        XCTAssertFalse(FileManager.default.fileExists(atPath: file))
-    }
-
-    func testAcceptedAppPathIsRecorded() async throws {
-        let recorder = CommandRecorder(outputs: [
-            CommandOutput(status: 0, text: ""),
-            CommandOutput(status: 0, text: " SleepDisabled 0\n"),
-        ])
-        let directory = Self.temporaryStateDirectory()
-        defer { try? FileManager.default.removeItem(atPath: directory) }
-        let handler = ConnectionHandler(
-            token: SessionToken(),
-            sleep: SleepControl(run: { try await recorder.run($0, $1) }),
-            tracker: SessionTracker(),
-            stateDirectory: directory
-        )
-        let box = ReplyBox()
-
-        handler.setSleepDisabled(false, appPath: "/Applications/Taurine.app") { error in
-            Task { await box.record(error) }
-        }
-
-        let error = await box.first()
-        XCTAssertNil(error)
-        let file = (directory as NSString).appendingPathComponent("app-path")
-        let recorded = try String(contentsOfFile: file, encoding: .utf8)
-        XCTAssertEqual(recorded, "/Applications/Taurine.app\n")
-    }
-
-    private static func temporaryStateDirectory() -> String {
-        (NSTemporaryDirectory() as NSString).appendingPathComponent("taurine-tests-" + UUID().uuidString)
-    }
 
     func testRevertRecoversAfterFailedVerification() async {
         // Cenário do finding: pmset gravou disablesleep 1, a verificação falhou.
@@ -270,7 +210,7 @@ final class HelperServiceTests: XCTestCase {
         let handler = ConnectionHandler(token: token, sleep: SleepControl(run: { try await recorder.run($0, $1) }), tracker: tracker)
         let box = ReplyBox()
 
-        handler.setSleepDisabled(true, appPath: "/Applications/Taurine.app") { error in
+        handler.setSleepDisabled(true) { error in
             Task { await box.record(error) }
         }
 
@@ -296,7 +236,7 @@ final class HelperServiceTests: XCTestCase {
         let handler = ConnectionHandler(token: token, sleep: SleepControl(run: { try await recorder.run($0, $1) }), tracker: tracker)
         let box = ReplyBox()
 
-        handler.setSleepDisabled(true, appPath: "/Applications/Taurine.app") { error in
+        handler.setSleepDisabled(true) { error in
             Task { await box.record(error) }
         }
 
@@ -321,7 +261,7 @@ final class HelperServiceTests: XCTestCase {
         let handler = ConnectionHandler(token: token, sleep: SleepControl(run: { try await recorder.run($0, $1) }), tracker: tracker)
         let box = ReplyBox()
 
-        handler.setSleepDisabled(true, appPath: "/Applications/Taurine.app") { error in
+        handler.setSleepDisabled(true) { error in
             Task { await box.record(error) }
         }
 
@@ -356,7 +296,7 @@ final class HelperServiceTests: XCTestCase {
         let handler = ConnectionHandler(token: token, sleep: sleep, tracker: tracker)
         let box = ReplyBox()
 
-        handler.setSleepDisabled(true, appPath: "/Applications/Taurine.app") { error in
+        handler.setSleepDisabled(true) { error in
             Task { await box.record(error) }
         }
 

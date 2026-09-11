@@ -12,9 +12,9 @@ enum HelperMain {
     static func main() {
         let sleep = SleepControl()
         Task.detached {
-            let outcome = await Bootstrap.run(sleep: sleep, environment: .live)
-            guard outcome == .serving else { exit(0) }
+            await Bootstrap.run(sleep: sleep)
             let service = HelperService(sleep: sleep)
+            Task.detached { await BundleWatchdog.run(sleep: sleep, tracker: service.tracker, bundlePath: BundleWatchdog.bundlePath()) }
             let listener = NSXPCListener(machServiceName: HelperPaths.machService)
             listener.delegate = service
             listener.resume()

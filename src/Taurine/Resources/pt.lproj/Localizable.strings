@@ -57,20 +57,7 @@
 "Activate Taurine…" = "Ativar Taurine…";
 "Could not complete the sleep change" = "Não foi possível concluir a alteração de repouso";
 "Based on Caffeine (MIT).\n\n© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nSource code:\nhttps://github.com/domzilla/Caffeine" = "Baseado no Caffeine (MIT).\n\n© 2006 Tomas Franzén\n© 2018 Michael Jones\n© 2022 Dominic Rodemer\n\nCódigo-fonte original:\nhttps://github.com/domzilla/Caffeine";
-"The Taurine helper is not installed." = "O componente auxiliar do Taurine não está instalado.";
-"The Taurine helper needs to be updated." = "O componente auxiliar do Taurine precisa ser atualizado.";
-"Could not reach the Taurine helper." = "Não foi possível contactar o componente auxiliar do Taurine.";
-"The Taurine helper could not be removed." = "Não foi possível remover o componente auxiliar do Taurine.";
 "Another Taurine session is already active." = "Já existe outra sessão do Taurine ativa.";
-"The Taurine helper refused the request." = "O componente auxiliar do Taurine recusou o pedido.";
-"Helper not installed" = "Componente auxiliar não instalado";
-"Helper needs an update" = "Componente auxiliar precisa de atualização";
-"Helper installed" = "Componente auxiliar instalado";
-"Install helper…" = "Instalar componente auxiliar…";
-"Update helper…" = "Atualizar componente auxiliar…";
-"Remove helper…" = "Remover componente auxiliar…";
-"Sleep may still be disabled. Use Restore sleep in the Taurine menu." = "O repouso ainda pode estar desativado. Use Restaurar repouso no menu do Taurine.";
-"Taurine needs a small system helper to ensure correct lid closing behavior." = "O Taurine precisa de um pequeno componente do sistema para garantir o comportamento correto ao fechar a tampa.";
 "Toggles, timers and battery protection work without password prompts. Sleep is restored automatically if Taurine quits unexpectedly or the Mac restarts." = "Ligar, desligar, temporizadores e proteção de bateria funcionam sem pedir senha. O repouso é restaurado automaticamente se o Taurine fechar inesperadamente ou o Mac reiniciar.";
 
 /* Battery protection and permanent authorization */
@@ -100,3 +87,15 @@
 "Show Taurine in Dock" = "Mostrar o Taurine na Dock";
 "The install disk could not be ejected." = "Não foi possível ejetar o disco de instalação.";
 "It may still be in use. Close any window showing it and eject it from the Finder." = "Pode ainda estar em uso. Feche as janelas que o mostram e ejete-o pelo Finder.";
+"Open System Settings…" = "Abrir Ajustes do Sistema…";
+"Taurine needs your approval" = "O Taurine precisa da sua aprovação";
+"Enable Taurine in System Settings → General → Login Items & Extensions so it can keep your Mac awake." = "Ative o Taurine em Ajustes do Sistema → Geral → Itens de Início e Extensões para que possa manter o Mac acordado.";
+"Finish setup…" = "Concluir configuração…";
+"Taurine could not set up sleep control." = "O Taurine não conseguiu configurar o controlo de repouso.";
+"Taurine needs to be restarted to finish updating." = "O Taurine precisa de ser reiniciado para concluir a atualização.";
+"Taurine could not control this Mac's sleep setting." = "O Taurine não conseguiu controlar o repouso deste Mac.";
+"Taurine is not allowed to change this Mac's sleep setting." = "O Taurine não tem permissão para alterar o repouso deste Mac.";
+"This copy of Taurine is not correctly signed, so it cannot control sleep." = "Esta cópia do Taurine não está assinada corretamente, pelo que não pode controlar o repouso.";
+"Waiting for your approval" = "A aguardar a sua aprovação";
+"Sleep may still be disabled on this Mac." = "O repouso pode continuar desativado neste Mac.";
+"Later" = "Mais tarde";

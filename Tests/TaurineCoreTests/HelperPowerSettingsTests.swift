@@ -11,7 +11,6 @@ final class FakeHelperProxy: HelperProxy {
     var unavailable = false
     var hangs = false
     var calls: [String] = []
-    var appPaths: [String] = []
 
     func version() async throws -> Int {
         self.calls.append("version")
@@ -26,9 +25,8 @@ final class FakeHelperProxy: HelperProxy {
         return self.disabled
     }
 
-    func setSleepDisabled(_ disabled: Bool, appPath: String) async throws {
+    func setSleepDisabled(_ disabled: Bool) async throws {
         self.calls.append("write:\(disabled)")
-        self.appPaths.append(appPath)
         if let failure { throw failure.nsError }
         self.disabled = disabled
     }
@@ -39,7 +37,7 @@ final class HelperPowerSettingsTests: XCTestCase {
     func testUnresponsiveHelperTimesOutAsUnavailable() async {
         let proxy = FakeHelperProxy()
         proxy.hangs = true
-        let settings = HelperPowerSettings(proxy: proxy, appPath: { "/x" }, timeout: .milliseconds(50))
+        let settings = HelperPowerSettings(proxy: proxy, timeout: .milliseconds(50))
         let started = ContinuousClock.now
         do {
             _ = try await settings.sleepIsDisabled()
@@ -49,12 +47,11 @@ final class HelperPowerSettingsTests: XCTestCase {
         XCTAssertLessThan(ContinuousClock.now - started, .seconds(5))
     }
 
-    func testWritesSendBundlePathAndVerifyVersionFirst() async throws {
+    func testWritesVerifyVersionFirst() async throws {
         let proxy = FakeHelperProxy()
-        let settings = HelperPowerSettings(proxy: proxy, appPath: { "/Applications/Taurine.app" })
+        let settings = HelperPowerSettings(proxy: proxy)
         try await settings.setSleepDisabled(true)
         XCTAssertEqual(proxy.calls, ["version", "write:true"])
-        XCTAssertEqual(proxy.appPaths, ["/Applications/Taurine.app"])
         let disabled = try await settings.sleepIsDisabled()
         XCTAssertTrue(disabled)
     }
@@ -62,7 +59,7 @@ final class HelperPowerSettingsTests: XCTestCase {
     func testVersionMismatchIsOutdated() async {
         let proxy = FakeHelperProxy()
         proxy.reportedVersion = HelperVersion.current + 1
-        let settings = HelperPowerSettings(proxy: proxy, appPath: { "/x" })
+        let settings = HelperPowerSettings(proxy: proxy)
         do {
             _ = try await settings.sleepIsDisabled()
             XCTFail("expected helperOutdated")
@@ -82,7 +79,7 @@ final class HelperPowerSettingsTests: XCTestCase {
         for (code, matches) in cases {
             let proxy = FakeHelperProxy()
             proxy.failure = HelperFailure(code: code, message: "boom")
-            let settings = HelperPowerSettings(proxy: proxy, appPath: { "/x" })
+            let settings = HelperPowerSettings(proxy: proxy)
             do {
                 try await settings.setSleepDisabled(true)
                 XCTFail("expected error for \(code)")
@@ -95,7 +92,7 @@ final class HelperPowerSettingsTests: XCTestCase {
     func testUnavailableHelperPropagates() async {
         let proxy = FakeHelperProxy()
         proxy.unavailable = true
-        let settings = HelperPowerSettings(proxy: proxy, appPath: { "/x" })
+        let settings = HelperPowerSettings(proxy: proxy)
         do {
             _ = try await settings.sleepIsDisabled()
             XCTFail("expected helperUnavailable")

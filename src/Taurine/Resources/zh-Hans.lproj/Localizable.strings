@@ -55,9 +55,19 @@
 "The install disk could not be ejected." = "无法推出安装磁盘。";
 "It may still be in use. Close any window showing it and eject it from the Finder." = "它可能仍在使用中。请关闭显示它的窗口，然后在 Finder 中推出。";
 
-/* Helper explanation */
-"Taurine needs a small system helper to ensure correct lid closing behavior." = "为确保合盖时的行为正确，Taurine 需要一个小型系统辅助工具。";
 
 /* Battery caption and tagline */
 "Give your Mac a break at this battery level. No more Taurine until you open another can." = "在此电量下让你的 Mac 歇一歇。再开一罐之前，Taurine 就先歇着。";
 "The extra energy your Mac needs to never fall asleep." = "让你的 Mac 永不入睡所需的那点额外能量。";
+"Open System Settings…" = "打开系统设置…";
+"Taurine needs your approval" = "Taurine 需要你的批准";
+"Enable Taurine in System Settings → General → Login Items & Extensions so it can keep your Mac awake." = "请在“系统设置”→“通用”→“登录项与扩展”中启用 Taurine，让它可以让你的 Mac 保持唤醒。";
+"Finish setup…" = "完成设置…";
+"Taurine could not set up sleep control." = "Taurine 无法设置睡眠控制。";
+"Taurine needs to be restarted to finish updating." = "需要重新启动 Taurine 才能完成更新。";
+"Taurine could not control this Mac's sleep setting." = "Taurine 无法控制这台 Mac 的睡眠设置。";
+"Taurine is not allowed to change this Mac's sleep setting." = "Taurine 无权更改这台 Mac 的睡眠设置。";
+"This copy of Taurine is not correctly signed, so it cannot control sleep." = "此 Taurine 副本未正确签名，因此无法控制睡眠。";
+"Waiting for your approval" = "等待你的批准";
+"Sleep may still be disabled on this Mac." = "这台 Mac 的睡眠可能仍处于停用状态。";
+"Later" = "稍后";

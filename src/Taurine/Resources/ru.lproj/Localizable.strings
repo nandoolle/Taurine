@@ -54,9 +54,19 @@
 "The install disk could not be ejected." = "Не удалось извлечь установочный диск.";
 "It may still be in use. Close any window showing it and eject it from the Finder." = "Возможно, он ещё используется. Закройте окна, в которых он открыт, и извлеките его через Finder.";
 
-/* Helper explanation */
-"Taurine needs a small system helper to ensure correct lid closing behavior." = "Taurine нужен небольшой системный компонент, чтобы обеспечить правильное поведение при закрытии крышки.";
 
 /* Battery caption and tagline */
 "Give your Mac a break at this battery level. No more Taurine until you open another can." = "Дайте Mac передохнуть на этом уровне заряда. Больше никакого Taurine, пока не откроете новую банку.";
 "The extra energy your Mac needs to never fall asleep." = "Дополнительная энергия, которая нужна вашему Mac, чтобы никогда не засыпать.";
+"Open System Settings…" = "Открыть Системные настройки…";
+"Taurine needs your approval" = "Taurine требуется ваше подтверждение";
+"Enable Taurine in System Settings → General → Login Items & Extensions so it can keep your Mac awake." = "Включите Taurine в «Системных настройках» → «Основные» → «Объекты входа и расширения», чтобы он мог не давать Mac засыпать.";
+"Finish setup…" = "Завершить настройку…";
+"Taurine could not set up sleep control." = "Taurine не удалось настроить управление режимом сна.";
+"Taurine needs to be restarted to finish updating." = "Чтобы завершить обновление, перезапустите Taurine.";
+"Taurine could not control this Mac's sleep setting." = "Taurine не удалось изменить настройку сна этого Mac.";
+"Taurine is not allowed to change this Mac's sleep setting." = "Taurine не имеет прав изменять настройку сна этого Mac.";
+"This copy of Taurine is not correctly signed, so it cannot control sleep." = "Эта копия Taurine подписана неверно, поэтому не может управлять режимом сна.";
+"Waiting for your approval" = "Ожидание подтверждения";
+"Sleep may still be disabled on this Mac." = "На этом Mac режим сна может оставаться отключённым.";
+"Later" = "Позже";

@@ -7,7 +7,7 @@ let helperLog = Logger(subsystem: HelperPaths.label, category: "xpc")
 
 final class HelperService: NSObject, NSXPCListenerDelegate, @unchecked Sendable {
     private let sleep: SleepControl
-    private let tracker = SessionTracker()
+    let tracker = SessionTracker()
 
     init(sleep: SleepControl) {
         self.sleep = sleep
@@ -20,25 +20,20 @@ final class HelperService: NSObject, NSXPCListenerDelegate, @unchecked Sendable 
             helperLog.error("rejected pid \(connection.processIdentifier) uid \(connection.effectiveUserIdentifier) bundle \(bundleID ?? "nil", privacy: .public) path \(executable ?? "nil", privacy: .public)")
             return false
         }
-        #if !TAURINE_ADHOC
         // Gate real do privilégio: a identidade do peer passa a ser verificada
         // pelo kernel contra a assinatura, não pelo Info.plist lido de um
         // caminho que o chamador controla. Precisa vir antes de `resume`.
         connection.setCodeSigningRequirement(HelperPaths.clientCodeSigningRequirement)
-        let signatureChecked = true
-        #else
-        let signatureChecked = false
-        #endif
         // O requisito de assinatura não reprova aqui: uma conexão que não o
         // satisfaz é invalidada na primeira mensagem. Por isso "pending".
-        helperLog.info("accepted pid \(connection.processIdentifier) signature-check \(signatureChecked ? "pending" : "disabled", privacy: .public)")
+        helperLog.info("accepted pid \(connection.processIdentifier) signature-check pending")
         let token = SessionToken()
         let handler = ConnectionHandler(token: token, sleep: self.sleep, tracker: self.tracker)
         connection.exportedInterface = NSXPCInterface(with: HelperProtocol.self)
         connection.exportedObject = handler
         let pid = connection.processIdentifier
         let ended: @Sendable () -> Void = { [sleep, tracker] in
-            if signatureChecked, !handler.servedAnyMessage {
+            if !handler.servedAnyMessage {
                 helperLog.error("pid \(pid) closed without serving a message: likely code signing requirement mismatch (app and helper from different builds?)")
             }
             Task { await Self.connectionEnded(token, sleep: sleep, tracker: tracker) }
@@ -72,7 +67,6 @@ final class ConnectionHandler: NSObject, HelperProtocol, @unchecked Sendable {
     private let token: SessionToken
     private let sleep: SleepControl
     private let tracker: SessionTracker
-    private let stateDirectory: String
     private let served = OSAllocatedUnfairLock(initialState: false)
 
     /// Distingue "app fechou normalmente" de "conexão morreu antes da primeira
@@ -81,11 +75,10 @@ final class ConnectionHandler: NSObject, HelperProtocol, @unchecked Sendable {
 
     private func markServed() { self.served.withLock { $0 = true } }
 
-    init(token: SessionToken, sleep: SleepControl, tracker: SessionTracker, stateDirectory: String = HelperPaths.stateDirectory) {
+    init(token: SessionToken, sleep: SleepControl, tracker: SessionTracker) {
         self.token = token
         self.sleep = sleep
         self.tracker = tracker
-        self.stateDirectory = stateDirectory
     }
 
     func version(reply: @escaping (Int) -> Void) {
@@ -101,7 +94,7 @@ final class ConnectionHandler: NSObject, HelperProtocol, @unchecked Sendable {
         }
     }
 
-    func setSleepDisabled(_ disabled: Bool, appPath: String, reply: @escaping (NSError?) -> Void) {
+    func setSleepDisabled(_ disabled: Bool, reply: @escaping (NSError?) -> Void) {
         self.markServed()
         Task {
             var acquiredNow = false
@@ -123,7 +116,6 @@ final class ConnectionHandler: NSObject, HelperProtocol, @unchecked Sendable {
             }
             do {
                 try await self.sleep.setDisabled(disabled)
-                self.recordAppPath(appPath)
                 if !disabled { _ = await self.tracker.end(self.token) }
                 reply(nil)
             } catch {
@@ -140,17 +132,5 @@ final class ConnectionHandler: NSObject, HelperProtocol, @unchecked Sendable {
 
     private static func bridge(_ error: Error) -> NSError {
         (error as? HelperFailure ?? HelperFailure(code: .commandFailed, message: error.localizedDescription)).nsError
-    }
-
-    // The path comes from the client: only record a plausible bundle path. A bad
-    // path is skipped silently, the pmset change it accompanied already succeeded.
-    private func recordAppPath(_ path: String) {
-        guard path.hasPrefix("/"), (path as NSString).pathExtension == "app" else { return }
-        let manager = FileManager.default
-        try? manager.createDirectory(atPath: self.stateDirectory, withIntermediateDirectories: true)
-        // createDirectory(attributes:) não reaplica o modo em diretório existente.
-        try? manager.setAttributes([.posixPermissions: 0o700], ofItemAtPath: self.stateDirectory)
-        let file = (self.stateDirectory as NSString).appendingPathComponent((HelperPaths.appPathFile as NSString).lastPathComponent)
-        try? Data((path + "\n").utf8).write(to: URL(fileURLWithPath: file), options: .atomic)
     }
 }

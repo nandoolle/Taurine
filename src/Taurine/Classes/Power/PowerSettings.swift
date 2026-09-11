@@ -24,11 +24,11 @@ enum PowerError: LocalizedError {
         case let .assertionFailed(code):
             return String(localized: "Could not update sleep prevention.") + " (\(code))"
         case .helperNotInstalled:
-            return String(localized: "The Taurine helper is not installed.")
+            return String(localized: "Taurine could not set up sleep control.")
         case .helperOutdated:
-            return String(localized: "The Taurine helper needs to be updated.")
+            return String(localized: "Taurine needs to be restarted to finish updating.")
         case .helperUnavailable:
-            return String(localized: "Could not reach the Taurine helper.")
+            return String(localized: "Taurine could not control this Mac's sleep setting.")
         }
     }
 }

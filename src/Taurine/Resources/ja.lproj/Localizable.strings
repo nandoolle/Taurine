@@ -55,9 +55,19 @@
 "The install disk could not be ejected." = "インストールディスクを取り出せませんでした。";
 "It may still be in use. Close any window showing it and eject it from the Finder." = "まだ使用中の可能性があります。表示しているウインドウを閉じて、Finder から取り出してください。";
 
-/* Helper explanation */
-"Taurine needs a small system helper to ensure correct lid closing behavior." = "ふたを閉じたときの動作を正しく保つため、Taurine には小さなシステムヘルパーが必要です。";
 
 /* Battery caption and tagline */
 "Give your Mac a break at this battery level. No more Taurine until you open another can." = "このバッテリー残量で Mac を休ませます。次の一缶を開けるまで Taurine はお休みです。";
 "The extra energy your Mac needs to never fall asleep." = "Mac が決して眠らないための、ひとさじのエネルギー。";
+"Open System Settings…" = "システム設定を開く…";
+"Taurine needs your approval" = "Taurine の承認が必要です";
+"Enable Taurine in System Settings → General → Login Items & Extensions so it can keep your Mac awake." = "システム設定 →「一般」→「ログイン項目と機能拡張」で Taurine を有効にすると、Mac をスリープさせずに使えます。";
+"Finish setup…" = "設定を完了…";
+"Taurine could not set up sleep control." = "Taurine はスリープ制御を設定できませんでした。";
+"Taurine needs to be restarted to finish updating." = "アップデートを完了するには Taurine を再起動してください。";
+"Taurine could not control this Mac's sleep setting." = "Taurine はこの Mac のスリープ設定を制御できませんでした。";
+"Taurine is not allowed to change this Mac's sleep setting." = "Taurine にはこの Mac のスリープ設定を変更する権限がありません。";
+"This copy of Taurine is not correctly signed, so it cannot control sleep." = "この Taurine は正しく署名されていないため、スリープを制御できません。";
+"Waiting for your approval" = "承認を待っています";
+"Sleep may still be disabled on this Mac." = "この Mac ではスリープが無効のままの可能性があります。";
+"Later" = "あとで";

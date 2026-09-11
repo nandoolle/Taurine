@@ -54,9 +54,19 @@
 "The install disk could not be ejected." = "Non è stato possibile espellere il disco di installazione.";
 "It may still be in use. Close any window showing it and eject it from the Finder." = "Potrebbe essere ancora in uso. Chiudi le finestre che lo mostrano ed espellilo dal Finder.";
 
-/* Helper explanation */
-"Taurine needs a small system helper to ensure correct lid closing behavior." = "Taurine ha bisogno di un piccolo componente di sistema per garantire il comportamento corretto alla chiusura del coperchio.";
 
 /* Battery caption and tagline */
 "Give your Mac a break at this battery level. No more Taurine until you open another can." = "Concedi una pausa al tuo Mac a questo livello di batteria. Niente più Taurine finché non apri un'altra lattina.";
 "The extra energy your Mac needs to never fall asleep." = "L'energia in più che il tuo Mac serve per non addormentarsi mai.";
+"Open System Settings…" = "Apri Impostazioni di Sistema…";
+"Taurine needs your approval" = "Taurine richiede la tua approvazione";
+"Enable Taurine in System Settings → General → Login Items & Extensions so it can keep your Mac awake." = "Attiva Taurine in Impostazioni di Sistema → Generali → Elementi di login ed estensioni per permettergli di tenere sveglio il Mac.";
+"Finish setup…" = "Completa la configurazione…";
+"Taurine could not set up sleep control." = "Taurine non è riuscito a configurare il controllo dello stop.";
+"Taurine needs to be restarted to finish updating." = "Taurine deve essere riavviato per completare l’aggiornamento.";
+"Taurine could not control this Mac's sleep setting." = "Taurine non è riuscito a controllare l’impostazione di stop di questo Mac.";
+"Taurine is not allowed to change this Mac's sleep setting." = "Taurine non è autorizzato a modificare l’impostazione di stop di questo Mac.";
+"This copy of Taurine is not correctly signed, so it cannot control sleep." = "Questa copia di Taurine non è firmata correttamente, quindi non può controllare lo stop.";
+"Waiting for your approval" = "In attesa della tua approvazione";
+"Sleep may still be disabled on this Mac." = "Lo stop potrebbe essere ancora disattivato su questo Mac.";
+"Later" = "Più tardi";
