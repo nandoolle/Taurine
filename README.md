@@ -1,49 +1,47 @@
-<img src="assets/readme/icon.png" alt="Ícone" width="200"/>
+<img src="assets/readme/icon.png" alt="Icon" width="200"/>
 
 # Taurine
-### Não deixe seu Mac dormir. Nem por 1 segundo!
+### Don't let your Mac fall asleep. Not even for a second.
 
-Taurine é um pequeno app de barra de menus que mantém o Mac acordado, útil para tarefas longas que não podem ser interrompidas pelo repouso. Diferente do [Caffeine](https://github.com/domzilla/Caffeine), do qual deriva, também impede o repouso quando a tampa do MacBook é fechada, e um componente auxiliar garante que o repouso volte ao normal se o app fechar, travar ou o Mac reiniciar.
+Taurine is a tiny menu bar app that keeps your Mac awake, useful for long running tasks that can't be interrupted by sleep. [Caffeine](https://github.com/domzilla/Caffeine) walks you through the day; Taurine is the can you crack open when the night gets long — it also keeps the Mac awake with the lid closed, and a system helper makes sure sleep comes back if the app quits, crashes or the Mac reboots.
 
-Requer macOS 14.6 ou posterior.
+Requires macOS 14.6 or later.
 
-### Instalação
+### Installation
 
-Baixe o `.dmg` mais recente em [Releases](https://github.com/nandoolle/taurine/releases), arraste o Taurine para a pasta Aplicativos e abra.
+Download the latest `.dmg` from [Releases](https://github.com/nandoolle/Taurine/releases), drag Taurine into your Applications folder and open it.
 
-O app é assinado com Developer ID e notarizado pela Apple, então abre normalmente — sem contornar o Gatekeeper.
+The app is signed with a Developer ID and notarized by Apple, so it opens normally — no Gatekeeper detours.
 
-Depois, em **Preferências**, clique em **Instalar componente auxiliar…**. É a única vez em que a senha de administrador é pedida. Sem o componente, o Taurine não ativa.
+The first time you activate it, macOS asks for your administrator password and may ask you to enable Taurine in **System Settings → General → Login Items & Extensions**. That's once, and never again.
 
-### Uso
+### Usage
 
-O Taurine coloca uma latinha na barra de menus. Clique nela para ligar ou desligar: latinha aberta significa que o Mac não vai dormir, escurecer a tela nem iniciar o descanso de tela, mesmo com a tampa fechada.
+Taurine puts a can in your menu bar. Click it to toggle: an open can means your Mac won't sleep, dim the screen or start the screen saver, even with the lid closed. A closed can means your Mac sleeps normally.
 
-<img src="assets/readme/menubar.png" alt="Barra de menus" width="460"/>
+<img src="assets/readme/menubar.png" alt="Menu bar" width="460"/>
 
-Para mais controle, clique com o botão direito (ou ⌘-clique) no ícone. Dali você abre as Preferências ou define por quanto tempo o Taurine deve ficar ativo.
+For more control, right-click (or ⌘-click) the icon. From there you can open Preferences or set how long Taurine should stay active.
 
 <img src="assets/readme/menu.png" alt="Menu" width="460"/>
 
-Nas Preferências você define a duração padrão, se o Taurine ativa ao abrir, um som discreto ao ativar, e a **proteção da bateria**: na bateria, o Taurine desliga sozinho quando a carga chega ao limite escolhido (60% por padrão). Na tomada o corte não se aplica.
+Preferences covers the default duration, whether Taurine activates on launch, a quiet sound when it does, and **battery protection**: on battery, Taurine taps out on its own once the charge hits the level you picked (60% by default). Plugged in, it keeps going.
 
-<img src="assets/readme/preferences.png" alt="Preferências" width="645"/>
+<img src="assets/readme/preferences.png" alt="Preferences" width="645"/>
 
-Um triângulo no ícone indica que o repouso precisa ser restaurado. Use **Restaurar repouso…**.
+A triangle on the icon means sleep still needs to be restored. Use **Restore sleep…**.
 
-### Como funciona
+### How it works
 
-Manter o Mac acordado de tampa fechada exige `pmset -a disablesleep 1`, uma configuração global e persistente que precisa de root. O Taurine registra um LaunchDaemon (`dev.taurine.helper`) via `SMAppService`, que é o único a executar esse comando, e conversa com ele por XPC.
+Keeping a Mac awake with the lid closed takes `pmset -a disablesleep 1`, a global, persistent setting that requires root. Taurine registers a LaunchDaemon (`dev.taurine.helper`) through `SMAppService`, and that daemon is the only thing allowed to run the command. The app talks to it over XPC.
 
-O daemon roda de dentro do próprio bundle do app — nada é copiado para fora dele. Na primeira instalação o macOS pede a senha de administrador e pode exigir que você habilite o Taurine em **Ajustes do Sistema → Geral → Itens de Início e Extensões**.
+The daemon runs from inside the app bundle — nothing is copied anywhere else on your disk.
 
-Quando a conexão com o app cai (fechamento, falha, encerramento forçado, logout), o componente restaura o repouso. Em todo boot restaura o repouso incondicionalmente. E enquanto o bloqueio está ativo, ele verifica a cada minuto se o app ainda existe: se você apagar o Taurine (ou movê-lo para outro volume) com o bloqueio ligado, o repouso é restaurado sozinho em cerca de um minuto.
+Sleep always comes back. When the connection drops (quit, crash, force quit, logout), the daemon restores it. Every boot restores it unconditionally. And while sleep is blocked, the daemon checks every minute that the app still exists: delete Taurine — or move it to another volume — and sleep returns within a minute.
 
-Para remover: Preferências → **Remover componente auxiliar…** — é o caminho recomendado, porque restaura o repouso imediatamente, sem esperar o watchdog.
+> **Edge case:** if the app is deleted while the Mac is off (say, with the disk mounted on another machine), nothing is running to restore sleep. Run `sudo pmset -a disablesleep 0`.
 
-> **Caso extremo:** se o app for apagado com o Mac desligado (por exemplo, com o disco montado em outra máquina), não há quem restaure o repouso. Nesse caso, rode `sudo pmset -a disablesleep 0`.
-
-Versões anteriores à 0.5.0 instalavam arquivos fora do bundle. Ao atualizar, o Taurine os remove (pedindo a senha uma vez para isso e outra para registrar o daemon novo). Para limpar à mão:
+Versions before 0.5.0 installed files outside the bundle. Taurine removes them when you upgrade, asking for your password once to clean up and once to register the new daemon. To do it by hand:
 
 ```sh
 sudo pmset -a disablesleep 0
@@ -54,42 +52,46 @@ sudo rm -rf /var/db/taurine
 
 ### FAQ
 
-##### Por que pedir senha de administrador?
+##### Why does it ask for an administrator password?
 
-Porque `disablesleep` só pode ser alterado por root. O Caffeine e similares usam apenas asserções do IOKit, que não exigem senha, mas também não mantêm o Mac acordado de tampa fechada.
+Because `disablesleep` can only be changed by root. Caffeine and similar apps use IOKit assertions, which need no password — but also can't keep a Mac awake with the lid closed. That's the trade: one password, lid-closed sleep prevention.
 
-##### E se o Mac desligar por falta de bateria com o Taurine ativo?
+##### What if the Mac shuts down on a dead battery while Taurine is active?
 
-O componente auxiliar roda em todo boot e restaura o repouso antes de qualquer coisa. Fechar a tampa volta a colocar o Mac para dormir.
+The daemon runs on every boot and restores sleep before anything else. Close the lid and your Mac sleeps again.
 
-##### Posso fechar o app e manter o Mac acordado?
+##### Can I quit the app and keep the Mac awake?
 
-Não. Taurine fechado significa Mac dormindo normalmente. Essa é a regra que o componente auxiliar existe para garantir.
+No. Taurine closed means your Mac sleeps normally. That's the rule the daemon exists to guarantee.
 
-### Compilar
+##### Is this a fork of Caffeine?
 
-Sem dependências externas. Com Swift 6.2 e o SDK do macOS.
+Yes, and a grateful one. Caffeine is a great app that has kept Macs awake since 2006. Taurine keeps its simplicity and adds what a stronger dose needs: lid-closed sleep prevention, battery protection, and a daemon that cleans up after itself.
 
-O `SMAppService` recusa assinatura ad hoc, então é preciso um certificado **Developer ID Application** — inclusive para desenvolvimento local. Notarização não é necessária para testar localmente:
+### Building
+
+No external dependencies. Swift 6.2 and the macOS SDK.
+
+`SMAppService` refuses ad hoc signatures, so a **Developer ID Application** certificate is required — local development included. Notarization isn't needed to test locally:
 
 ```sh
-export TAURINE_SIGN_IDENTITY="Developer ID Application: Seu Nome (TEAMID)"
-security find-identity -v -p codesigning   # lista as identidades disponíveis
+export TAURINE_SIGN_IDENTITY="Developer ID Application: Your Name (TEAMID)"
+security find-identity -v -p codesigning   # lists available identities
 
-./scripts/build.sh      # gera build/Taurine.app
-./scripts/make-dmg.sh   # gera build/Taurine-<versão>.dmg
+./scripts/build.sh      # builds build/Taurine.app
+./scripts/make-dmg.sh   # builds build/Taurine-<version>.dmg
 swift test
 ```
 
-Ao testar o daemon, rode o app sempre do mesmo caminho: o launchd indexa o registro por caminho e assinatura, e mudar de lugar entre iterações deixa registros órfãos. Para inspecionar o estado real:
+When testing the daemon, always run the app from the same path: launchd indexes the registration by path and signature, so moving it between iterations leaves orphaned registrations behind. To inspect the real state:
 
 ```sh
 launchctl print system/dev.taurine.helper
 log show --predicate 'subsystem == "dev.taurine.helper"' --last 10m
 ```
 
-Também é possível abrir `src/Taurine.xcodeproj` ou usar `./scripts/build-xcode.sh`.
+You can also open `src/Taurine.xcodeproj` or use `./scripts/build-xcode.sh`.
 
-### Créditos e licença
+### Credits and license
 
-Baseado no Caffeine de Tomas Franzén, Michael Jones e Dominic Rodemer. Licença MIT, com os créditos originais preservados em [LICENSE](LICENSE). Histórico de versões em [CHANGELOG.md](CHANGELOG.md).
+Based on Caffeine by Tomas Franzén, Michael Jones and Dominic Rodemer. MIT licensed, with the original credits preserved in [LICENSE](LICENSE). Version history in [CHANGELOG.md](CHANGELOG.md).
