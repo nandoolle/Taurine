@@ -3,7 +3,8 @@
 # Taurine
 ### Don't let your Mac fall asleep. Not even for a second.
 
-Taurine is a tiny menu bar app that keeps your Mac awake, useful for long running tasks that can't be interrupted by sleep. [Caffeine](https://github.com/domzilla/Caffeine) walks you through the day; Taurine is the can you crack open when the night gets long — it also keeps the Mac awake with the lid closed, and a system helper makes sure sleep comes back if the app quits, crashes or the Mac reboots.
+Taurine is a tiny menu bar app that keeps your Mac awake when you need to close the lid, useful for getting into that plane without pausing claude.
+Inspired by [Caffeine](https://github.com/domzilla/Caffeine), adapted for AI workflow.
 
 Requires macOS 14.6 or later.
 
@@ -66,7 +67,7 @@ No. Taurine closed means your Mac sleeps normally. That's the rule the daemon ex
 
 ##### Is this a fork of Caffeine?
 
-Yes, and a grateful one. Caffeine is a great app that has kept Macs awake since 2006. Taurine keeps its simplicity and adds what a stronger dose needs: lid-closed sleep prevention, battery protection, and a daemon that cleans up after itself.
+Basically, Yes. Caffeine is a great app that has kept Macs awake since 2006. Taurine keeps its simplicity and adds what a stronger dose needs: lid-closed sleep prevention, battery protection, and a daemon that cleans up after itself.
 
 ### Building
 
