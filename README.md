@@ -1,7 +1,7 @@
 <img src="assets/readme/icon.png" alt="Ícone" width="200"/>
 
 # Taurine
-### Não deixe seu Mac dormir. Nem de tampa fechada.
+### Não deixe seu Mac dormir. Nem por 1 segundo!
 
 Taurine é um pequeno app de barra de menus que mantém o Mac acordado, útil para tarefas longas que não podem ser interrompidas pelo repouso. Diferente do [Caffeine](https://github.com/domzilla/Caffeine), do qual deriva, também impede o repouso quando a tampa do MacBook é fechada, e um componente auxiliar garante que o repouso volte ao normal se o app fechar, travar ou o Mac reiniciar.
 
