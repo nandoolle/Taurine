@@ -51,21 +51,29 @@ sudo rm -f /Library/PrivilegedHelperTools/dev.taurine.helper /Library/LaunchDaem
 sudo rm -rf /var/db/taurine
 ```
 
-### FAQ
+### Common question you may have
 
-##### Why does it ask for an administrator password?
+#### Why does it ask for an administrator password?
 
 Because `disablesleep` can only be changed by root. Caffeine and similar apps use IOKit assertions, which need no password — but also can't keep a Mac awake with the lid closed. That's the trade: one password, lid-closed sleep prevention.
 
-##### What if the Mac shuts down on a dead battery while Taurine is active?
+#### What if the Mac shuts down on a dead battery while Taurine is active?
 
 The daemon runs on every boot and restores sleep before anything else. Close the lid and your Mac sleeps again.
 
-##### Can I quit the app and keep the Mac awake?
+#### Can I quit the app and keep the Mac awake?
 
 No. Taurine closed means your Mac sleeps normally. That's the rule the daemon exists to guarantee.
 
-##### Is this a fork of Caffeine?
+#### Some EXTREMELY specific situation happened and now Mac never enters sleep mode! What should I do?
+
+Keep calm, and run:
+
+```sh
+sudo pmset -a disablesleep 0
+```
+
+#### Is this a fork of Caffeine?
 
 Basically, Yes. Caffeine is a great app that has kept Macs awake since 2006. Taurine keeps its simplicity and adds what a stronger dose needs: lid-closed sleep prevention, battery protection, and a daemon that cleans up after itself.
 
