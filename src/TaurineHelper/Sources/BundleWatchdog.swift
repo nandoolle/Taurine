@@ -7,6 +7,8 @@ import TaurineShared
 /// impede de subir no boot seguinte — sem isto o Mac ficaria acordado para
 /// sempre. Cobre também `mv` para outro volume e remoção por outra conta.
 enum BundleWatchdog {
+    /// Intervalo do fallback por sondagem, usado quando não há como observar o
+    /// bundle por evento.
     static let interval = Duration.seconds(60)
     /// Espera antes de confirmar a ausência do bundle. Atualizar o app o remove
     /// por instantes; sem a segunda amostra o watchdog desligaria o bloqueio de
@@ -31,19 +33,30 @@ enum BundleWatchdog {
         tracker: SessionTracker,
         bundlePath: String?,
         exists: @escaping @Sendable (String) -> Bool = { FileManager.default.fileExists(atPath: $0) },
-        wait: @escaping @Sendable () async throws -> Void = { try await Task.sleep(for: Self.interval) },
-        confirm: @escaping @Sendable () async throws -> Void = { try await Task.sleep(for: Self.confirmationDelay) }
+        wait: (@Sendable () async throws -> Void)? = nil,
+        confirm: @escaping @Sendable () async throws -> Void = { try await Task.sleep(for: Self.confirmationDelay) },
+        rearm: (@Sendable (String) async -> Void)? = nil
     ) async {
         // Sem caminho reconhecível não há o que vigiar: um falso positivo aqui
         // desligaria o bloqueio de um usuário com a sessão ativa.
         guard let bundlePath else { return }
+        let watcher = wait == nil ? BundleWatcher(path: bundlePath) : nil
+        await watcher?.start()
+        defer { if let watcher { Task { await watcher.cancel() } } }
+        let wait = wait ?? { [watcher] in
+            guard let watcher else { try await Task.sleep(for: Self.interval); return }
+            try await watcher.nextEvent()
+        }
+        let rearm = rearm ?? { [watcher] path in await watcher?.rearm(path: path) }
         while !Task.isCancelled {
             do { try await wait() } catch { return }
             // O daemon vive desde o boot (RunAtLoad), mas só há o que reverter
             // enquanto alguém detém a sessão.
             guard await tracker.hasOwner, !exists(bundlePath) else { continue }
             do { try await confirm() } catch { return }
-            guard !exists(bundlePath) else { continue }
+            // O bundle de volta é um update: o inode é outro, então o observador
+            // preso ao antigo nunca mais dispara e precisa ser refeito.
+            guard !exists(bundlePath) else { await rearm(bundlePath); continue }
             await SleepRevert.revertIfDisabled(sleep)
         }
     }

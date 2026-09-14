@@ -3,14 +3,17 @@ import TaurineShared
 
 @MainActor
 protocol HelperProxy: AnyObject {
+    /// Muda a cada conexão nova. A versão do helper é fixa enquanto o processo
+    /// vive, então quem a consulta pode cacheá-la até esta troca.
+    var generation: Int { get }
     func version() async throws -> Int
-    func sleepIsDisabled() async throws -> Bool
     func setSleepDisabled(_ disabled: Bool) async throws
 }
 
 @MainActor
 final class XPCHelperProxy: HelperProxy {
     private var connection: NSXPCConnection?
+    private(set) var generation = 0
 
     private func remote() -> NSXPCConnection {
         if let connection { return connection }
@@ -18,12 +21,18 @@ final class XPCHelperProxy: HelperProxy {
         connection.remoteObjectInterface = NSXPCInterface(with: HelperProtocol.self)
         // Only clear the connection that actually died: a replacement may already
         // be live by the time this runs, and the helper watches that one.
-        connection.invalidationHandler = { [weak self, invalidated = connection] in
+        // Interrupção não invalida a conexão, mas significa que o helper morreu
+        // e voltou: quem cacheia por `generation` precisa reconsultar.
+        let generation = self.generation + 1
+        let dropIfCurrent: @Sendable () -> Void = { [weak self] in
             Task { @MainActor in
-                guard self?.connection === invalidated else { return }
+                guard self?.generation == generation else { return }
                 self?.connection = nil
             }
         }
+        connection.invalidationHandler = dropIfCurrent
+        connection.interruptionHandler = dropIfCurrent
+        self.generation = generation
         connection.resume()
         self.connection = connection
         return connection
@@ -41,17 +50,6 @@ final class XPCHelperProxy: HelperProxy {
         }
     }
 
-    func sleepIsDisabled() async throws -> Bool {
-        try await withCheckedThrowingContinuation { continuation in
-            guard let proxy = self.proxy({ continuation.resume(throwing: $0) }) else { return continuation.resume(throwing: PowerError.helperUnavailable) }
-            proxy.sleepIsDisabled { value, error in
-                if let error { return continuation.resume(throwing: error) }
-                guard let value else { return continuation.resume(throwing: PowerError.unreadableState) }
-                continuation.resume(returning: value.boolValue)
-            }
-        }
-    }
-
     func setSleepDisabled(_ disabled: Bool) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             guard let proxy = self.proxy({ continuation.resume(throwing: $0) }) else { return continuation.resume(throwing: PowerError.helperUnavailable) }
@@ -66,6 +64,7 @@ final class XPCHelperProxy: HelperProxy {
 final class HelperPowerSettings: PowerSettings {
     private let proxy: HelperProxy
     private let timeout: Duration
+    private var checkedGeneration: Int?
 
     // The default is built in the body: default argument expressions are evaluated off the MainActor.
     init(proxy: HelperProxy? = nil, timeout: Duration = .seconds(10)) {
@@ -73,19 +72,20 @@ final class HelperPowerSettings: PowerSettings {
         self.timeout = timeout
     }
 
-    func sleepIsDisabled() async throws -> Bool {
-        try await self.ensureCompatible()
-        return try await self.translating { try await self.proxy.sleepIsDisabled() }
-    }
-
     func setSleepDisabled(_ disabled: Bool) async throws {
         try await self.ensureCompatible()
         try await self.translating { try await self.proxy.setSleepDisabled(disabled) }
     }
 
+    /// A versão do helper não muda enquanto o processo vive: consultá-la a cada
+    /// chamada dobraria o tráfego XPC por um dado fixo. O cache cai junto com a
+    /// conexão, que é o único evento capaz de trocar o binário do outro lado.
     private func ensureCompatible() async throws {
+        let generation = self.proxy.generation
+        if self.checkedGeneration == generation { return }
         let version = try await self.translating { try await self.proxy.version() }
         guard version == HelperVersion.current else { throw PowerError.helperOutdated }
+        self.checkedGeneration = self.proxy.generation
     }
 
     // launchd queues XPC messages to a daemon that never starts (e.g. crash loop), so a

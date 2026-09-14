@@ -26,8 +26,7 @@ class TaurineViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
 
     var isActive: Bool { self.session.state == .active }
-    var needsRecovery: Bool { self.session.state == .recovery }
-    var isBusy: Bool { self.installingHelper || self.session.isBusy || self.session.state == .checking }
+    var isBusy: Bool { self.installingHelper || self.session.isBusy }
     var needsHelper: Bool { self.session.state == .needsHelper }
     /// Instalação legada presente: o upgrade pede senha duas vezes (remoção do
     /// daemon antigo e registro do novo), então a UI avisa antes.
@@ -44,7 +43,7 @@ class TaurineViewModel: ObservableObject {
         let installer = self.installer
         self.helperRequiresApproval = installer.status() == .requiresApproval
         self.session = PowerSession(
-            settings: HelperPowerSettings(), assertions: WakeAssertions(), journal: SessionJournal(),
+            settings: HelperPowerSettings(), assertions: WakeAssertions(),
             battery: battery,
             batteryThreshold: { UserDefaults.standard.integer(forKey: PreferenceKeys.batteryThreshold) },
             batteryProtectionEnabled: { UserDefaults.standard.bool(forKey: PreferenceKeys.batteryProtectionEnabled) },
@@ -77,7 +76,6 @@ class TaurineViewModel: ObservableObject {
                 Task { @MainActor in
                     await self?.checkBattery()
                     await self?.session.expireIfNeeded()
-                    await self?.session.refresh()
                 }
             }
             .store(in: &self.cancellables)
@@ -102,7 +100,9 @@ class TaurineViewModel: ObservableObject {
         }, nil)?.takeRetainedValue()
         if let source = self.batterySource { CFRunLoopAddSource(CFRunLoopGetMain(), source, .commonModes) }
         Task {
-            await self.session.refresh()
+            // O launch sempre parte de um Mac que dorme: reverter sem ler
+            // conserta em silêncio o resíduo de um encerramento anormal.
+            await self.session.revert()
             await self.checkBattery()
             if self.session.state == .inactive, UserDefaults.standard.bool(forKey: PreferenceKeys.activateAtLaunch) {
                 self.activate()
@@ -115,7 +115,6 @@ class TaurineViewModel: ObservableObject {
                 if self.ticks % 5 == 0 { await self.checkBattery() }
                 await self.session.expireIfNeeded()
                 self.ticks += 1
-                if self.ticks % 15 == 0 { await self.session.refresh() }
             }
         }
         RunLoop.main.add(timer, forMode: .common)
@@ -124,7 +123,7 @@ class TaurineViewModel: ObservableObject {
 
     func toggleActive() {
         guard !self.isBusy else { return }
-        if self.session.requiresRestoration {
+        if self.isActive {
             self.deactivate()
         } else {
             self.activate()
@@ -150,11 +149,9 @@ class TaurineViewModel: ObservableObject {
 
     func prepareToQuit() async -> Bool {
         guard !self.isBusy else { return false }
-        // Refresh even when idle: another process may have changed pmset.
-        await self.session.refresh()
-        if self.session.requiresRestoration {
-            guard await self.session.deactivate() else { return false }
-        }
+        // Sair sempre é permitido: falhar em reverter aqui prenderia o usuário
+        // num app que ele não consegue fechar. O boot seguinte cobre o resíduo.
+        await self.session.revert()
         self.timer?.invalidate()
         if let source = self.batterySource { CFRunLoopSourceInvalidate(source) }
         self.batterySource = nil
@@ -186,7 +183,10 @@ class TaurineViewModel: ObservableObject {
             return false
         }
         self.helperRequiresApproval = self.installer.status() == .requiresApproval
-        await self.session.helperInstallationChanged()
+        self.session.helperInstallationChanged()
+        // Registrar não conclui nada visível: sem abrir os Ajustes o clique do
+        // usuário morre em silêncio, sem dizer que falta aprovar nem onde.
+        if self.helperRequiresApproval { self.openHelperSystemSettings() }
         return self.installer.status() == .installed
     }
 
@@ -197,7 +197,7 @@ class TaurineViewModel: ObservableObject {
         let status = self.installer.status()
         self.helperRequiresApproval = status == .requiresApproval
         guard status == .installed, self.needsHelper else { return }
-        await self.session.helperInstallationChanged()
+        self.session.helperInstallationChanged()
     }
 
     func updateActivitySimulation(enabled: Bool) {
@@ -211,7 +211,6 @@ class TaurineViewModel: ObservableObject {
 
     func formattedTimeRemaining() -> String? {
         if self.isBusy { return String(localized: "Updating sleep settings…") }
-        if self.needsRecovery { return String(localized: "Sleep needs to be restored") }
         if self.helperRequiresApproval { return String(localized: "Waiting for your approval") }
         // needsHelper não tem texto próprio: sem daemon o Taurine está apenas
         // inativo, e ativar cuida do registro.

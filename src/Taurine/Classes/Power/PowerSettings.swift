@@ -35,6 +35,5 @@ enum PowerError: LocalizedError {
 
 @MainActor
 protocol PowerSettings {
-    func sleepIsDisabled() async throws -> Bool
     func setSleepDisabled(_ disabled: Bool) async throws
 }

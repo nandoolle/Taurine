@@ -68,6 +68,5 @@
 "Taurine is not allowed to change this Mac's sleep setting." = "Taurine не имеет прав изменять настройку сна этого Mac.";
 "This copy of Taurine is not correctly signed, so it cannot control sleep." = "Эта копия Taurine подписана неверно, поэтому не может управлять режимом сна.";
 "Waiting for your approval" = "Ожидание подтверждения";
-"Sleep may still be disabled on this Mac." = "На этом Mac режим сна может оставаться отключённым.";
 "Later" = "Позже";
 "Taurine - Preferences" = "Taurine - Настройки";

@@ -69,6 +69,5 @@
 "Taurine is not allowed to change this Mac's sleep setting." = "Taurine にはこの Mac のスリープ設定を変更する権限がありません。";
 "This copy of Taurine is not correctly signed, so it cannot control sleep." = "この Taurine は正しく署名されていないため、スリープを制御できません。";
 "Waiting for your approval" = "承認を待っています";
-"Sleep may still be disabled on this Mac." = "この Mac ではスリープが無効のままの可能性があります。";
 "Later" = "あとで";
 "Taurine - Preferences" = "Taurine - 設定";

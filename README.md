@@ -14,11 +14,11 @@ Download the latest `.dmg` from [Releases](https://github.com/nandoolle/Taurine/
 
 The app is signed with a Developer ID and notarized by Apple, so it opens normally — no Gatekeeper detours.
 
-The first time you activate it, macOS asks for your administrator password and may ask you to enable Taurine in **System Settings → General → Login Items & Extensions**. That's once, and never again.
+The first time you activate it, System Settings opens on **General → Login Items & Extensions**, where you enable Taurine. That's once, and never again. (Upgrading from a version before 0.5.0 also asks for your administrator password, to clean up the old install.)
 
 ### Usage
 
-Taurine puts a can in your menu bar. Click it to toggle: an open can means your Mac won't sleep, dim the screen or start the screen saver, even with the lid closed. A closed can means your Mac sleeps normally.
+Taurine puts a can in your menu bar. Click it to toggle: an open can means your Mac won't sleep, dim the screen or start the screen saver — and it stays awake with the lid closed, too. A closed can means your Mac sleeps normally.
 
 <img src="assets/readme/menubar.png" alt="Menu bar" width="460"/>
 
@@ -30,15 +30,13 @@ Preferences covers the default duration, whether Taurine activates on launch, a 
 
 <img src="assets/readme/preferences.png" alt="Preferences" width="645"/>
 
-A triangle on the icon means sleep still needs to be restored. Use **Restore sleep…**.
-
 ### How it works
 
 Keeping a Mac awake with the lid closed takes `pmset -a disablesleep 1`, a global, persistent setting that requires root. Taurine registers a LaunchDaemon (`dev.taurine.helper`) through `SMAppService`, and that daemon is the only thing allowed to run the command. The app talks to it over XPC.
 
 The daemon runs from inside the app bundle — nothing is copied anywhere else on your disk.
 
-Sleep always comes back. When the connection drops (quit, crash, force quit, logout), the daemon restores it. Every boot restores it unconditionally. And while sleep is blocked, the daemon checks every minute that the app still exists: delete Taurine — or move it to another volume — and sleep returns within a minute.
+Sleep always comes back. When the connection drops (quit, crash, force quit, logout), the daemon restores it. Launch and quit restore it unconditionally, and so does every boot. And while sleep is blocked, the kernel tells the daemon the moment the bundle goes away: delete Taurine — or move it to another volume — and sleep returns right then.
 
 > **Edge case:** if the app is deleted while the Mac is off (say, with the disk mounted on another machine), nothing is running to restore sleep. Run `sudo pmset -a disablesleep 0`.
 
