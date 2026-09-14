@@ -17,8 +17,8 @@
         <button id="can" class="can is-active" aria-pressed="true" aria-label="Toggle Taurine"></button>
         <span class="mb-clock" aria-hidden="true">
           <span class="mb-item">80%</span>
-          <span class="mb-item">Fri 11 Sep</span>
-          <span class="mb-item">00:08</span>
+          <span class="mb-item" id="mb-date">Fri 11 Sep</span>
+          <span class="mb-item" id="mb-time">00:08</span>
         </span>
       </div>
 
@@ -69,10 +69,33 @@
 
 <script>
   const can = document.getElementById('can');
+  const pop = new Audio('audio/can-opening.m4a');
+  pop.preload = 'none';
+
   can.addEventListener('click', () => {
     const active = can.classList.toggle('is-active');
     can.setAttribute('aria-pressed', String(active));
+    if (active) {
+      pop.currentTime = 0;
+      pop.play().catch(() => {});
+    }
   });
+
+  const date = document.getElementById('mb-date');
+  const time = document.getElementById('mb-time');
+
+  // Parts are assembled by hand because toLocaleDateString inserts a comma and
+  // en-US forces AM/PM — the macOS menu bar shows neither. Locale still decides
+  // the weekday and month names. Redrawn on the minute boundary, not every 60s
+  // from load, so the clock never lags the real one.
+  const tick = () => {
+    const now = new Date();
+    const part = (opts) => now.toLocaleDateString([], opts);
+    date.textContent = `${part({ weekday: 'short' })} ${part({ day: 'numeric' })} ${part({ month: 'short' })}`;
+    time.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+    setTimeout(tick, (60 - now.getSeconds()) * 1000);
+  };
+  tick();
 </script>
 </body>
 </html>
