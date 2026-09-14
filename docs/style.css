@@ -161,3 +161,30 @@ h1 {
   color: var(--text-dim);
   font-size: 16px;
 }
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 22px;
+  padding-block: 96px 8px;
+}
+
+.card {
+  padding: 26px 24px;
+  border-radius: var(--radius);
+  background: var(--slate-800);
+  border: 1px solid var(--slate-700);
+}
+
+.card h2 {
+  margin: 0 0 10px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--mint);
+}
+
+.card p {
+  margin: 0;
+  font-size: 16px;
+  color: var(--text-dim);
+}
