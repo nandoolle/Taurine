@@ -77,10 +77,26 @@ footer {
   white-space: nowrap;
 }
 
+.mb-apps,
+.mb-status,
 .mb-clock {
   display: flex;
   align-items: center;
   gap: 18px;
+}
+
+/* U+F8FF is Apple's private-use glyph: the system font draws it on macOS and
+   it collapses to nothing elsewhere, so the bar degrades instead of showing
+   a tofu box. */
+.mb-logo::before {
+  content: "\F8FF";
+  font-size: 15px;
+  color: var(--text);
+}
+
+.mb-app {
+  color: var(--text);
+  font-weight: 600;
 }
 
 .can {
@@ -195,5 +211,9 @@ h1 {
 
 @media (max-width: 420px) {
   .menubar { gap: 10px; padding-inline: 12px; font-size: 12px; }
-  .mb-clock { gap: 10px; }
+  .mb-apps, .mb-status, .mb-clock { gap: 10px; }
+  /* The app menus are the first thing a real menu bar drops when space runs
+     out; the can and the clock are what this page is actually showing. */
+  .mb-app, .mb-apps .mb-item { display: none; }
+  .mb-clock .mb-item:first-child { display: none; }
 }
