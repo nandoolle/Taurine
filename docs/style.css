@@ -113,7 +113,10 @@ footer {
   align-items: center;
   gap: 6px;
   margin-top: 4px;
-  transform: translateX(-30px);
+  /* The arrow's tip sits ~9px in from the SVG's left edge (x=11 of a 70-unit
+     viewBox drawn 58px wide), so shift by that much to land the tip, not the
+     box, on the anchor point. */
+  transform: translateX(-9px);
   color: var(--mint);
   transition: opacity 0.4s, transform 0.4s;
 }
