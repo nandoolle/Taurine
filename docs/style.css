@@ -62,12 +62,13 @@ footer {
 }
 
 .menubar {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 18px;
   width: 100%;
-  margin: 0 auto 56px;
+  margin: 0 auto 108px;
   padding: 7px 16px;
   border-radius: 6px;
   background: #0b0e11;
@@ -97,6 +98,54 @@ footer {
 .mb-app {
   color: var(--text);
   font-weight: 600;
+}
+
+/* Sits in the gap under the bar, pinned right so the arrow lands on the can.
+   The can is the only thing on this page that demonstrates the app, and it
+   starts closed, so the invitation is what makes anyone try it. */
+/* Anchored to the can's own position, which the script measures, so the arrow
+   keeps pointing at it as the bar reflows. */
+.nudge {
+  position: absolute;
+  top: 100%;
+  left: var(--nudge-x, 50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  transform: translateX(-30px);
+  color: var(--mint);
+  transition: opacity 0.4s, transform 0.4s;
+}
+
+.nudge.is-gone {
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
+}
+
+.nudge-arrow {
+  width: 58px;
+  height: 43px;
+  flex: none;
+  animation: nudge-bob 2.4s ease-in-out infinite;
+}
+
+.nudge-label {
+  font-size: 15px;
+  font-weight: 600;
+  padding: 5px 11px;
+  border: 1.5px solid currentColor;
+  border-radius: 8px;
+  animation: nudge-bob 2.4s ease-in-out infinite;
+}
+
+@keyframes nudge-bob {
+  50% { transform: translateY(4px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nudge-arrow, .nudge-label { animation: none; }
 }
 
 .can {

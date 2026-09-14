@@ -22,13 +22,22 @@
           <span class="mb-item">View</span>
         </span>
         <span class="mb-status">
-          <button id="can" class="can is-active" aria-pressed="true" aria-label="Toggle Taurine"></button>
+          <button id="can" class="can" aria-pressed="false" aria-label="Toggle Taurine"></button>
           <span class="mb-clock" aria-hidden="true">
             <span class="mb-item">80%</span>
             <span class="mb-item" id="mb-date">Fri 11 Sep</span>
             <span class="mb-item" id="mb-time">00:08</span>
           </span>
         </span>
+
+      <div class="nudge" id="nudge" aria-hidden="true">
+        <svg class="nudge-arrow" viewBox="0 0 70 52" fill="none" stroke="currentColor"
+             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M66 46C48 44 24 38 12 14" stroke-dasharray="0.1 7"/>
+          <path d="M11 11 L10 25 M11 11 L24 17"/>
+        </svg>
+        <span class="nudge-label">Click me!</span>
+      </div>
       </div>
 
       <h1>Don't let your Mac fall asleep.<br><span class="h1-dim">Not even for a second.</span></h1>
@@ -81,9 +90,22 @@
   const pop = new Audio('audio/can-opening.m4a');
   pop.preload = 'none';
 
+  const nudge = document.getElementById('nudge');
+
+  // The can sits in a flex row whose width depends on the locale's date string,
+  // so its x is measured rather than assumed.
+  const anchorNudge = () => {
+    const bar = can.closest('.menubar').getBoundingClientRect();
+    const c = can.getBoundingClientRect();
+    nudge.style.setProperty('--nudge-x', `${c.left - bar.left + c.width / 2}px`);
+  };
+  anchorNudge();
+  addEventListener('resize', anchorNudge);
+
   can.addEventListener('click', () => {
     const active = can.classList.toggle('is-active');
     can.setAttribute('aria-pressed', String(active));
+    nudge.classList.add('is-gone');
     if (active) {
       pop.currentTime = 0;
       pop.play().catch(() => {});
