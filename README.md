@@ -3,7 +3,7 @@
 # Taurine
 ### Don't let your Mac fall asleep. Not even for a second.
 
-Taurine is a tiny menu bar app that keeps your Mac awake when you need to close the lid, useful for getting into that plane without pausing claude.
+[Taurine](https://nandoolle.github.io/Taurine/) is a tiny menu bar app that keeps your Mac awake when you need to close the lid, useful for getting into that plane without pausing claude.
 Inspired by [Caffeine](https://github.com/domzilla/Caffeine), adapted for AI workflow.
 
 Requires macOS 14.6 or later.
