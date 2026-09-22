@@ -39,7 +39,8 @@ class TaurineViewModel: ObservableObject {
         return sound
     }
 
-    init(notifier: StopNotifying = StopNotifier()) {
+    init(notifier: StopNotifying? = nil) {
+        let notifier = notifier ?? StopNotifier()
         self.notifier = notifier
         UserDefaults.standard.register(defaults: [PreferenceKeys.batteryThreshold: BatteryPolicy.defaultThreshold, PreferenceKeys.batteryProtectionEnabled: true, PreferenceKeys.playActivationSound: true, PreferenceKeys.showInDock: false])
         let battery = SystemBattery()
