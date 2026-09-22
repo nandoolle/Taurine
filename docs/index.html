@@ -1,25 +1,37 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Taurine — Keep your Mac awake</title>
-    <meta name="description" content="A tiny menu bar app that keeps your Mac awake, even with the lid closed.">
-    <link rel="icon" href="img/icon.png">
-    <link rel="stylesheet" href="style.css">
+    <meta
+      name="description"
+      content="A tiny menu bar app that keeps your Mac awake, even with the lid closed."
+    />
+    <link rel="icon" href="img/icon.png" />
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <header class="site-header wrap">
       <a class="brand" href="#top" aria-label="Taurine home">
-        <img src="img/icon.png" alt="" width="32" height="32">
+        <img src="img/icon.png" alt="" width="32" height="32" />
         <span>Taurine</span>
       </a>
       <nav aria-label="Main navigation">
         <a href="#why">Why Taurine</a>
         <a href="#inside">Inside the app</a>
       </nav>
-      <a class="github-star" href="https://github.com/nandoolle/Taurine" aria-label="Star Taurine on GitHub">
-        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m8 1.1 2.13 4.32 4.77.7-3.45 3.36.82 4.75L8 12l-4.27 2.23.82-4.75L1.1 6.12l4.77-.7L8 1.1Z" fill="currentColor"/></svg>
+      <a
+        class="github-star"
+        href="https://github.com/nandoolle/Taurine"
+        aria-label="Star Taurine on GitHub"
+      >
+        <svg viewBox="0 0 16 16" aria-hidden="true">
+          <path
+            d="m8 1.1 2.13 4.32 4.77.7-3.45 3.36.82 4.75L8 12l-4.27 2.23.82-4.75L1.1 6.12l4.77-.7L8 1.1Z"
+            fill="currentColor"
+          />
+        </svg>
         <span>Star on GitHub</span>
         <span class="github-stars" hidden></span>
       </a>
@@ -27,14 +39,25 @@
     <main id="top">
       <section class="hero wrap" aria-labelledby="hero-title">
         <div class="hero-copy">
-          <h1 id="hero-title">Close the lid.<br><em>Keep AI agents running.</em></h1>
-          <p class="intro">Keep your Mac awake for long-running agent sessions, builds, and local servers, even when you close the lid.</p>
+          <h1 id="hero-title">Close the lid<br /><em>not your agents.</em></h1>
+          <p class="intro">
+            Keep your Mac awake for long-running agent sessions, builds, and local servers, even
+            when you close the lid.
+          </p>
           <div class="hero-actions">
-            <a class="button button-primary" href="https://github.com/nandoolle/Taurine/releases/latest">
+            <a
+              class="button button-primary"
+              href="https://github.com/nandoolle/Taurine/releases/latest"
+            >
               Download for macOS <span aria-hidden="true">↓</span>
             </a>
             <a class="button button-outline" href="https://github.com/nandoolle/Taurine">
-              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656" fill="currentColor"/></svg>
+              <svg viewBox="0 0 16 16" aria-hidden="true">
+                <path
+                  d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+                  fill="currentColor"
+                />
+              </svg>
               View on GitHub
             </a>
           </div>
@@ -42,47 +65,70 @@
         </div>
         <figure class="shot shot-menu">
           <div class="shot-visual">
-            <img src="img/menu.png" alt="The Taurine menu, showing duration options" width="734" height="598">
+            <img
+              src="img/menu.png"
+              alt="The Taurine menu, showing duration options"
+              width="734"
+              height="598"
+            />
           </div>
           <figcaption>Right-click for durations, preferences, and a quick way out.</figcaption>
         </figure>
       </section>
       <section class="why wrap" id="why" aria-labelledby="why-title">
         <div class="section-intro">
-          <h2 id="why-title">Energy when you need it.<br>Sleep when you don't.</h2>
+          <h2 id="why-title">Energy when you need it.<br />Sleep when you don't.</h2>
         </div>
         <div class="benefits">
           <article>
             <h3>Lid closed</h3>
-            <p>Shut the lid and keep going. No sleep, dimmed screen, or screen saver interrupting the work.</p>
+            <p>
+              Shut the lid and keep going. No sleep, dimmed screen, or screen saver interrupting the
+              work.
+            </p>
           </article>
           <article>
             <h3>Battery protection</h3>
-            <p>On battery, Taurine taps out at the charge level you choose. Plugged in, it keeps going.</p>
+            <p>
+              On battery, Taurine taps out at the charge level you choose. Plugged in, it keeps
+              going.
+            </p>
           </article>
           <article>
             <h3>Sleep restores</h3>
-            <p>Quit, crash, force quit, log out, or delete the app while your Mac is running: sleep returns.</p>
+            <p>
+              Quit, crash, force quit, log out, or delete the app while your Mac is running: sleep
+              returns.
+            </p>
           </article>
         </div>
       </section>
       <section class="inside wrap" id="inside" aria-labelledby="inside-title">
         <div class="section-intro inside-intro">
-          <h2 id="inside-title">One can.<br>Clear controls.</h2>
+          <h2 id="inside-title">One can.<br />Clear controls.</h2>
           <p>Click to keep your Mac awake. Right-click for the details.</p>
         </div>
         <figure class="shot shot-preferences">
           <div class="shot-visual">
             <div class="shot-crop">
-              <img src="img/preferences.png" alt="Taurine preferences window with battery protection" width="1424" height="1084" loading="lazy">
+              <img
+                src="img/preferences.png"
+                alt="Taurine preferences window with battery protection"
+                width="1424"
+                height="1084"
+                loading="lazy"
+              />
             </div>
           </div>
           <figcaption>Battery protection taps out on its own at the level you pick.</figcaption>
         </figure>
       </section>
       <section class="closing wrap" aria-labelledby="closing-title">
-        <h2 id="closing-title">A little more energy<br>for the work ahead.</h2>
-        <a class="button button-primary" href="https://github.com/nandoolle/Taurine/releases/latest">
+        <h2 id="closing-title">A little more energy<br />for the work ahead.</h2>
+        <a
+          class="button button-primary"
+          href="https://github.com/nandoolle/Taurine/releases/latest"
+        >
           Download Taurine <span aria-hidden="true">↓</span>
         </a>
       </section>
@@ -98,23 +144,22 @@
       </div>
     </footer>
     <script>
-      const githubStars = document.querySelector('.github-stars');
+      const githubStars = document.querySelector(".github-stars");
 
-      fetch('https://api.github.com/repos/nandoolle/Taurine')
+      fetch("https://api.github.com/repos/nandoolle/Taurine")
         .then((response) => {
           if (!response.ok) {
-            throw new Error('GitHub repository request failed');
+            throw new Error("GitHub repository request failed");
           }
           return response.json();
         })
         .then(({ stargazers_count: stargazersCount }) => {
           if (Number.isInteger(stargazersCount) && stargazersCount >= 0) {
-            githubStars.textContent = stargazersCount.toLocaleString('en-US');
+            githubStars.textContent = stargazersCount.toLocaleString("en-US");
             githubStars.hidden = false;
           }
         })
         .catch(() => {});
-
     </script>
   </body>
 </html>
