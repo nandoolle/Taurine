@@ -71,3 +71,5 @@
 "Waiting for your approval" = "承認を待っています";
 "Later" = "あとで";
 "Taurine - Preferences" = "Taurine - 設定";
+"Taurine stopped protecting sleep" = "Taurine がスリープの防止を停止しました";
+"Play a quiet sound when toggling Taurine" = "Taurine のオン/オフ時に小さな音を鳴らす";

@@ -8,7 +8,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var menuBarController: MenuBarController?
     private var lockDescriptor: Int32 = -1
 
-    func applicationDidFinishLaunching(_ notification: Notification) {
+    func applicationDidFinishLaunching(_: Notification) {
         DockPresence.apply(showInDock: UserDefaults.standard.bool(forKey: PreferenceKeys.showInDock))
         self.setupMainMenu()
         do {
@@ -24,7 +24,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 NSApp.terminate(nil)
                 return
             }
-            self.menuBarController = MenuBarController(launchSource: LaunchSource.from(launchUserInfo: notification.userInfo))
+            self.menuBarController = MenuBarController()
             self.offerToEjectInstallDisk()
         } catch {
             let alert = NSAlert(error: error)

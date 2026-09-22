@@ -5,7 +5,6 @@ import SwiftUI
 
 @MainActor
 class TaurineViewModel: ObservableObject {
-    @Published var showPreferences = false
     // Não é @Published de propósito: recalculado a cada segundo e não lido por
     // nenhuma view. Publicar reconstruía as Preferências 1x/s.
     private(set) var timeRemaining: TimeInterval?
@@ -17,12 +16,9 @@ class TaurineViewModel: ObservableObject {
     private var batterySource: CFRunLoopSource?
     private var timer: Timer?
     private var ticks = 0
-    private lazy var activationSound: NSSound? = {
-        guard let url = Bundle.main.url(forResource: "can-opening", withExtension: "wav") else { return nil }
-        let sound = NSSound(contentsOf: url, byReference: false)
-        sound?.volume = 0.15
-        return sound
-    }()
+    private lazy var activationSound: NSSound? = Self.sound(named: "can-opening")
+    private lazy var deactivationSound: NSSound? = Self.sound(named: "fizz-out")
+    private let notifier: StopNotifying
     private var cancellables = Set<AnyCancellable>()
 
     var isActive: Bool { self.session.state == .active }
@@ -36,7 +32,15 @@ class TaurineViewModel: ObservableObject {
     /// próprio: a saída é o usuário habilitar lá, não reinstalar aqui.
     @Published private(set) var helperRequiresApproval = false
 
-    init() {
+    private static func sound(named name: String) -> NSSound? {
+        guard let url = Bundle.main.url(forResource: name, withExtension: "wav") else { return nil }
+        let sound = NSSound(contentsOf: url, byReference: false)
+        sound?.volume = 0.15
+        return sound
+    }
+
+    init(notifier: StopNotifying = StopNotifier()) {
+        self.notifier = notifier
         UserDefaults.standard.register(defaults: [PreferenceKeys.batteryThreshold: BatteryPolicy.defaultThreshold, PreferenceKeys.batteryProtectionEnabled: true, PreferenceKeys.playActivationSound: true, PreferenceKeys.showInDock: false])
         let battery = SystemBattery()
         self.battery = battery
@@ -47,6 +51,7 @@ class TaurineViewModel: ObservableObject {
             battery: battery,
             batteryThreshold: { UserDefaults.standard.integer(forKey: PreferenceKeys.batteryThreshold) },
             batteryProtectionEnabled: { UserDefaults.standard.bool(forKey: PreferenceKeys.batteryProtectionEnabled) },
+            notifier: notifier,
             helperStatus: { installer.status() }
         )
         self.session.objectWillChange
@@ -54,12 +59,16 @@ class TaurineViewModel: ObservableObject {
             .store(in: &self.cancellables)
         self.session.$state
             .removeDuplicates()
-            .sink { state in
+            .scan((PowerSession.State.inactive, PowerSession.State.inactive)) { ($0.1, $1) }
+            .sink { [weak self] previous, state in
                 if state == .active, UserDefaults.standard.bool(forKey: PreferenceKeys.keepAppsActive) {
                     ActivitySimulator.shared.startMonitoring()
                 } else {
                     ActivitySimulator.shared.stopMonitoring()
                 }
+                // Um único ponto para todas as paradas: clique, prazo vencido,
+                // bateria e perda do helper passam por esta transição.
+                if previous == .active, state != .active { self?.playDeactivationSound() }
             }
             .store(in: &self.cancellables)
 
@@ -89,10 +98,7 @@ class TaurineViewModel: ObservableObject {
 
     // Called after menu observers are installed, so launch errors and welcome
     // UI cannot be lost during controller initialization.
-    func start(launchSource: LaunchSource = .user) {
-        // Abrir o app é um pedido explícito de atenção; subir como item de login
-        // não é, e a janela roubaria a tela no meio do login.
-        self.showPreferences = launchSource == .user
+    func start() {
         self.batterySource = IOPSNotificationCreateRunLoopSource({ _ in
             Task { @MainActor in
                 NotificationCenter.default.post(name: Notification.Name("TaurineBatteryChanged"), object: nil)
@@ -134,6 +140,7 @@ class TaurineViewModel: ObservableObject {
         let duration = timeout.map { $0 > 0 ? $0 : 0 } ?? self.defaultDuration
         Task {
             guard await self.ensureSleepControlAvailable() else { return }
+            self.requestNotificationAuthorizationOnce()
             let wasActive = self.isActive
             await self.session.activate(duration: duration)
             if !wasActive, self.isActive, UserDefaults.standard.bool(forKey: PreferenceKeys.playActivationSound) {
@@ -162,6 +169,18 @@ class TaurineViewModel: ObservableObject {
     func checkBattery() async {
         guard !self.installingHelper else { return }
         await self.session.enforceBatteryLimit()
+    }
+
+    private func requestNotificationAuthorizationOnce() {
+        guard !UserDefaults.standard.bool(forKey: PreferenceKeys.didRequestNotifications) else { return }
+        UserDefaults.standard.set(true, forKey: PreferenceKeys.didRequestNotifications)
+        self.notifier.requestAuthorization()
+    }
+
+    private func playDeactivationSound() {
+        guard UserDefaults.standard.bool(forKey: PreferenceKeys.playActivationSound) else { return }
+        self.deactivationSound?.stop()
+        self.deactivationSound?.play()
     }
 
     func batteryThresholdChanged() {
@@ -235,6 +254,7 @@ class TaurineViewModel: ObservableObject {
 
 enum PreferenceKeys {
     static let playActivationSound = "TaurinePlayActivationSound"
+    static let didRequestNotifications = "TaurineDidRequestNotifications"
     static let batteryProtectionEnabled = "TaurineBatteryProtectionEnabled"
     static let batteryThreshold = "TaurineBatteryThreshold"
     static let activateAtLaunch = "TaurineActivateAtLaunch"

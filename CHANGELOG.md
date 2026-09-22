@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.1 — 2026-09-21
+
+- As Preferências não abrem mais sozinhas ao iniciar o Taurine. A janela agora só aparece quando você pede: pelo menu, por ⌘, ou clicando no ícone do Dock.
+- A proteção de bateria passa a desligar o bloqueio em 25%, e não mais em 60%. Quem já ajustou o valor nas Preferências mantém o seu.
+- Quando a proteção de bateria libera o repouso, o Taurine avisa por uma notificação do sistema, com o motivo da parada. O aviso existe porque essa parada costuma acontecer com ninguém por perto — antes o motivo só aparecia no menu. A permissão de notificação é pedida na primeira vez que você ativa o Taurine.
+- Um som discreto marca também o desligamento, não só a ativação. Vale para todas as formas de parar: o clique, o fim do tempo e a proteção de bateria. O mesmo ajuste nas Preferências continua controlando os dois sons.
+
 ## 0.5.0 — 2026-09-10
 
 - O componente auxiliar passa a ser registrado por `SMAppService` e roda de dentro do bundle do app: nada é copiado para `/Library/PrivilegedHelperTools` nem para `/Library/LaunchDaemons`. Atualizar o app atualiza o componente.

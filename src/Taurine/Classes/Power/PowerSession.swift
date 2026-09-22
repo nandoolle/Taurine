@@ -19,15 +19,17 @@ final class PowerSession: ObservableObject {
     private let batteryThreshold: () -> Int
     private let batteryProtectionEnabled: () -> Bool
     private let helperStatus: @MainActor () -> HelperInstallStatus
+    private let notifier: StopNotifying
     private var lastSafetyAttempt: Date?
 
-    init(settings: PowerSettings, assertions: WakePreventing, now: @escaping () -> Date = Date.init, battery: BatteryReadingProvider? = nil, batteryThreshold: @escaping () -> Int = { BatteryPolicy.defaultThreshold }, batteryProtectionEnabled: @escaping () -> Bool = { true }, helperStatus: @escaping @MainActor () -> HelperInstallStatus) {
+    init(settings: PowerSettings, assertions: WakePreventing, now: @escaping () -> Date = Date.init, battery: BatteryReadingProvider? = nil, batteryThreshold: @escaping () -> Int = { BatteryPolicy.defaultThreshold }, batteryProtectionEnabled: @escaping () -> Bool = { true }, notifier: StopNotifying? = nil, helperStatus: @escaping @MainActor () -> HelperInstallStatus) {
         self.settings = settings
         self.assertions = assertions
         self.now = now
         self.battery = battery
         self.batteryThreshold = batteryThreshold
         self.batteryProtectionEnabled = batteryProtectionEnabled
+        self.notifier = notifier ?? SilentStopNotifier()
         self.helperStatus = helperStatus
         self.state = helperStatus() == .installed ? .inactive : .needsHelper
     }
@@ -129,6 +131,9 @@ final class PowerSession: ObservableObject {
         if await self.deactivate(reportErrors: false) {
             self.automaticStopMessage = reason
             self.lastSafetyAttempt = nil
+            // O Mac fica livre para dormir sem ninguém por perto: sem o aviso
+            // do sistema o motivo só existiria no menu.
+            self.notifier.notifyBatteryStop(reason: reason)
         }
     }
 

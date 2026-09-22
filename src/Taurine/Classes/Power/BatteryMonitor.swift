@@ -56,7 +56,7 @@ final class SystemBattery: BatteryReadingProvider {
 }
 
 enum BatteryPolicy {
-    nonisolated static let defaultThreshold = 60
+    nonisolated static let defaultThreshold = 25
     nonisolated static let range = 1...100
 
     static func sanitizedThresholdText(_ text: String) -> String {

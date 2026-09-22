@@ -18,19 +18,3 @@ enum LaunchAtStartup {
         }
     }
 }
-
-/// Quem pediu a abertura do app: só uma abertura deliberada deve trazer a
-/// janela de Preferências à frente.
-enum LaunchSource: Equatable {
-    case user
-    case automatic
-
-    /// `NSApplicationLaunchIsDefaultLaunchKey` é `false` para toda abertura que
-    /// não é um launch comum — login item, estado de sessão restaurado, abrir
-    /// arquivo, Serviço. Nenhuma delas é o usuário pedindo o app, então todas
-    /// entram em `.automatic`. Chave ausente conta como usuário: é o duplo clique.
-    static func from(launchUserInfo: [AnyHashable: Any]?) -> LaunchSource {
-        guard let isDefaultLaunch = launchUserInfo?[NSApplication.launchIsDefaultUserInfoKey] as? Bool else { return .user }
-        return isDefaultLaunch ? .user : .automatic
-    }
-}

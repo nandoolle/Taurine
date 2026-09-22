@@ -205,7 +205,7 @@ struct PreferencesView: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 Toggle("Activate when starting Taurine", isOn: self.$activateAtLaunch)
-                Toggle("Play a quiet sound when activating Taurine", isOn: self.$playActivationSound)
+                Toggle("Play a quiet sound when toggling Taurine", isOn: self.$playActivationSound)
                 HStack(alignment: .firstTextBaseline, spacing: 8) {
                     Toggle("Keep apps active", isOn: Binding(
                         get: { self.keepAppsActive },

@@ -18,14 +18,14 @@ class MenuBarController: NSObject {
     private lazy var activeIcon = self.statusIcon(named: "active")
     private lazy var inactiveIcon = self.statusIcon(named: "inactive")
 
-    init(launchSource: LaunchSource = .user) {
+    override init() {
         self.viewModel = TaurineViewModel()
         super.init()
         self.setupMenuBar()
         self.setupObservers()
 
         self.updateIcon()
-        self.viewModel.start(launchSource: launchSource)
+        self.viewModel.start()
     }
 
     func cleanup() {
@@ -65,14 +65,6 @@ class MenuBarController: NSObject {
             .compactMap { $0 }
             .sink { [weak self] message in
                 DispatchQueue.main.async { self?.showError(message) }
-            }
-            .store(in: &self.cancellables)
-
-        self.viewModel.$showPreferences
-            .sink { [weak self] show in
-                if show {
-                    self?.showPreferencesWindow()
-                }
             }
             .store(in: &self.cancellables)
     }
